@@ -60,10 +60,10 @@ public class Color
 	
 	public static int argbToIntValue( int alpha, int r, int g, int b )
 	{
-		if( alpha > 255 ) { throw new IllegalArgumentException( "'alpha' value must be between 0 and 255." ); }
-		if( r > 255 ) { throw new IllegalArgumentException( "'r' value must be between 0 and 255." ); }
-		if( g > 255 ) { throw new IllegalArgumentException( "'g' value must be between 0 and 255." ); }
-		if( b > 255 ) { throw new IllegalArgumentException( "'b' value must be between 0 and 255." ); }
+		if( alpha < 0 || alpha > 255 ) { throw new IllegalArgumentException( "'alpha' value must be between 0 and 255." ); }
+		if( r < 0 || r > 255 ) { throw new IllegalArgumentException( "'r' value must be between 0 and 255." ); }
+		if( g < 0 || g > 255 ) { throw new IllegalArgumentException( "'g' value must be between 0 and 255." ); }
+		if( b < 0 || b > 255 ) { throw new IllegalArgumentException( "'b' value must be between 0 and 255." ); }
 		
 		return ((alpha & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));		
 	}
