@@ -1,4 +1,4 @@
-package de.alaoli.games.minecraft.mods.lib.ui.util;
+package de.alaoli.games.minecraft.mods.lib.ui.element.state;
 
 public interface Hoverable<T extends Hoverable<T>>
 {

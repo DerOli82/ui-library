@@ -1,4 +1,4 @@
-package de.alaoli.games.minecraft.mods.lib.ui.util;
+package de.alaoli.games.minecraft.mods.lib.ui.element.state;
 
 public interface Disableable<T extends Disableable<T>>
 {
