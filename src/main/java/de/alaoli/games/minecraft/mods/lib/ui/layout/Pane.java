@@ -6,47 +6,96 @@ import java.util.List;
 import java.util.Optional;
 
 import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
+import de.alaoli.games.minecraft.mods.lib.ui.element.ElementGroup;
+import de.alaoli.games.minecraft.mods.lib.ui.element.style.Box;
+import de.alaoli.games.minecraft.mods.lib.ui.element.style.BoxStyle;
 
-public class Pane extends AbstractPane<Pane> 
+public class Pane extends ElementGroup<Pane> implements Box<Pane>, Layout
 {
-	/****************************************************************************************************
+	/* **************************************************************************************************************
 	 * Attribute
-	 ****************************************************************************************************/
+	 ************************************************************************************************************** */
 
 	private final List<Element> elements = new ArrayList<>();
+	private BoxStyle boxStyle;
 
-	/****************************************************************************************************
+	/* **************************************************************************************************************
 	 * Method 
-	 ****************************************************************************************************/
+	 ************************************************************************************************************** */
 	
-	public Pane addElement( Element element )
+	public Pane add( Element element )
 	{
-		element.setElementParent( this );
+		element.setParent( this );
 		this.elements.add(element);
 		
 		return this;
 	}
-	
-	/****************************************************************************************************
-	 * Method - Implements AbstractPane
-	 ****************************************************************************************************/
-	
-	@Override
-	public Optional<Collection<Element>> getElements()
+
+	public Pane remove( Element element )
 	{
-		return Optional.of( this.elements );
+		if( this.elements.contains( element ) )
+		{
+			element.setParent( null );
+			this.elements.remove( element );
+		}
+		return this;
 	}
 
-	/****************************************************************************************************
+	/* **************************************************************************************************************
+	 * Method - Implements Element
+	 ************************************************************************************************************** */
+
+	@Override
+	public void drawElement( int mouseX, int mouseY, float partialTicks )
+	{
+		if( this.boxStyle != null ) { this.boxStyle.drawOn( this ); }
+
+		super.drawElement(mouseX, mouseY, partialTicks);
+	}
+
+	/* **************************************************************************************************************
+	 * Method - Implements ElementGroup
+	 ************************************************************************************************************** */
+
+	public Collection<Element> getElements()
+	{
+		return this.elements;
+	}
+
+	/* **************************************************************************************************************
+	 * Method - Implements Box
+	 ************************************************************************************************************** */
+
+	public Pane setBoxStyle( BoxStyle style )
+	{
+		this.boxStyle = style;
+
+		return this;
+	}
+
+	public Optional<BoxStyle> getBoxStyle()
+	{
+		return Optional.ofNullable( this.boxStyle );
+	}
+
+	/* **************************************************************************************************************
 	 * Method - Implements Layout
-	 ****************************************************************************************************/
-		
+	 ************************************************************************************************************** */
+
+	@Override
+	public void layout()
+	{
+		this.doLayout();
+
+		this.elements
+			.stream()
+			.filter( element -> element instanceof Layout )
+			.forEach( element -> ((Layout)element).layout() );
+	}
 
 	@Override
 	public void doLayout() 
 	{
-		super.doLayout();
-
 		int x = this.box.getX();
 		int y = this.box.getY();
 
@@ -55,5 +104,4 @@ public class Pane extends AbstractPane<Pane>
 			element.box.translate( x, y );
 		}
 	}
-	
 }
