@@ -1,11 +1,12 @@
 package de.alaoli.games.minecraft.mods.lib.ui.element.style;
 
-import java.util.Optional;
-
 import de.alaoli.games.minecraft.mods.lib.ui.drawable.Drawable;
 import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 
-public class BoxStyle implements Style, Drawable<Element>
+import java.util.Optional;
+
+public class BoxStyle<T extends Element<T> & Box<T>> implements Style, Drawable<T>
 {
     /* **************************************************************************************************************
      * Attribute
@@ -13,7 +14,13 @@ public class BoxStyle implements Style, Drawable<Element>
 	
 	private Drawable background;
 	private Drawable border;
-	
+	private Align align;
+
+	public int marginTop = 0;
+	public int marginLeft = 0;
+	public int marginRight = 0;
+	public int marginBottom = 0;
+
 	public int paddingTop = 0;
 	public int paddingLeft = 0;
 	public int paddingRight = 0;
@@ -22,7 +29,19 @@ public class BoxStyle implements Style, Drawable<Element>
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
-	
+
+    public BoxStyle extend()
+	{
+		return new BoxStyle()
+			.setBackground( this.background)
+			.setBorder( this.border )
+			.setAlign( this.align )
+			.setMargin( this.marginTop, this.marginLeft, this.marginRight, this.marginBottom )
+			.setPadding( this.paddingTop, this.paddingLeft, this.paddingRight, this.paddingBottom );
+
+	}
+
+
 	public Optional<Drawable> getBackground()
 	{
 		return Optional.ofNullable( this.background );
@@ -47,8 +66,49 @@ public class BoxStyle implements Style, Drawable<Element>
 		return this;
 	}
 
+	public Optional<Align> getAlign()
+	{
+		return Optional.ofNullable( this.align );
+	}
+
+	public BoxStyle setAlign( Align align )
+	{
+		this.align = align;
+
+		return this;
+	}
+
+	public BoxStyle setMargin( int margin )
+	{
+		if( margin < 0 ) { throw new IllegalArgumentException( "Negative 'margin' value not allowed" ); }
+
+		this.marginTop = margin;
+		this.marginLeft = margin;
+		this.marginRight = margin;
+		this.marginBottom = margin;
+
+		return this;
+	}
+
+	public BoxStyle setMargin( int top, int left, int right, int bottom )
+	{
+		if( top < 0 ) { throw new IllegalArgumentException( "Negative 'margin-top' value not allowed" ); }
+		if( left < 0 ) { throw new IllegalArgumentException( "Negative 'margin-left' value not allowed" ); }
+		if( right < 0 ) { throw new IllegalArgumentException( "Negative 'margin-right' value not allowed" ); }
+		if( bottom < 0 ) { throw new IllegalArgumentException( "Negative 'margin-bottom' value not allowed" ); }
+
+		this.marginTop = top;
+		this.marginLeft = left;
+		this.marginRight = right;
+		this.marginBottom = bottom;
+
+		return this;
+	}
+
 	public BoxStyle setPadding( int padding )
 	{
+		if( padding < 0 ) { throw new IllegalArgumentException( "Negative 'padding' value not allowed" ); }
+
 		this.paddingTop = padding;
 		this.paddingLeft = padding;
 		this.paddingRight = padding;
@@ -59,6 +119,11 @@ public class BoxStyle implements Style, Drawable<Element>
 
 	public BoxStyle setPadding( int top, int left, int right, int bottom )
 	{
+		if( top < 0 ) { throw new IllegalArgumentException( "Negative 'padding-top' value not allowed" ); }
+		if( left < 0 ) { throw new IllegalArgumentException( "Negative 'padding-left' value not allowed" ); }
+		if( right < 0 ) { throw new IllegalArgumentException( "Negative 'padding-right' value not allowed" ); }
+		if( bottom < 0 ) { throw new IllegalArgumentException( "Negative 'padding-bottom' value not allowed" ); }
+
 		this.paddingTop = top;
 		this.paddingLeft = left;
 		this.paddingRight = right;
@@ -67,12 +132,93 @@ public class BoxStyle implements Style, Drawable<Element>
 		return this;
 	}
 
+	public void applyAlignOn( T parent, Element child )
+	{
+		int parentX = parent.box.getX(),
+			parentY = parent.box.getY(),
+			parentWidth = parent.box.getWidth(),
+			parentHeight = parent.box.getHeight(),
+			childWidth = child.box.getWidth(),
+			childHeight = child.box.getHeight();
+		Align align = (this.align!=null) ? this.align : Align.TOPLEFT;
+
+		switch( align )
+		{
+			case TOPLEFT:
+				child.setLocation( parentX, parentY );
+				break;
+			case TOP:
+				child.setLocation(
+					(parentX + Math.round( 0.5f*parentWidth ) - Math.round( 0.5f*childWidth )),
+					parentY
+				);
+				break;
+			case TOPRIGHT:
+				child.setLocation(
+					(parentX + parentWidth - childWidth),
+					parentY
+				);
+				break;
+
+			case LEFT:
+				child.setLocation(
+					parentX,
+					(parentY + Math.round( 0.5f*parentHeight ) - Math.round( 0.5f*childHeight ))
+				);
+				break;
+			case CENTER:
+				child.setLocation(
+					(parentX + Math.round( 0.5f*parentWidth ) - Math.round( 0.5f*childWidth )),
+					(parentY + Math.round( 0.5f*parentHeight ) - Math.round( 0.5f*childHeight ))
+				);
+				break;
+			case RIGHT:
+				child.setLocation(
+					(parentX + parentWidth - childWidth),
+					(parentY + Math.round( 0.5f*parentHeight ) - Math.round( 0.5f*childHeight ))
+				);
+				break;
+
+			case BOTTOMLEFT:
+				child.setLocation(
+					parentX,
+					(parentY + parentHeight - childHeight)
+				);
+				break;
+			case BOTTOM:
+				child.setLocation(
+					(parentX + Math.round( 0.5f*parentWidth ) - Math.round( 0.5f*childWidth )),
+					(parentY + parentHeight - childHeight)
+				);
+				break;
+			case BOTTOMRIGHT:
+				child.setLocation(
+					(parentX + parentWidth - childWidth),
+					(parentY + parentHeight - childHeight)
+				);
+				break;
+
+			default:
+				child.setLocation( parentX, parentY );
+				break;
+		}
+	}
+
+	public void applyMarginOn( T element )
+	{
+		element.box.translate( this.marginLeft, this. marginTop );
+		element.box.setSize(
+			element.box.getWidth() - this.marginLeft - this.marginRight,
+			element.box.getHeight() - this.marginTop - this.marginBottom
+		);
+	}
+
     /* **************************************************************************************************************
      * Method - Implement Drawable
      ************************************************************************************************************** */
 
 	@Override
-	public void drawOn( Element element )
+	public void drawOn( T element )
 	{
 		if( this.background != null ) { this.background.drawOn(element); }
 		if( this.border != null ) { this.border.drawOn(element); }
