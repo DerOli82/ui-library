@@ -14,10 +14,10 @@ public class Border extends Gui implements Drawable<Element>
 	
 	private Color color;
 	
-	private boolean hideTop = false;
-	private boolean hideLeft = false;
-	private boolean hideRight = false;
-	private boolean hideBottom = false;
+	public boolean hideTop = false;
+	public boolean hideLeft = false;
+	public boolean hideRight = false;
+	public boolean hideBottom = false;
 	
 	/******************************************************************************************
 	 * Method
@@ -51,35 +51,17 @@ public class Border extends Gui implements Drawable<Element>
 		
 		return this;
 	}
-	
-	public Border hideTop( boolean hide )
+
+	public Border hide( boolean top, boolean left, boolean right, boolean bottom )
 	{
-		this.hideTop = hide;
-		
+		this.hideTop = top;
+		this.hideLeft = left;
+		this.hideRight = right;
+		this.hideBottom = bottom;
+
 		return this;
 	}
-	
-	public Border hideLeft( boolean hide )
-	{
-		this.hideLeft = hide;
-		
-		return this;
-	}
-	
-	public Border hideRight( boolean hide )
-	{
-		this.hideRight = hide;
-		
-		return this;
-	}
-	
-	public Border hideBottom( boolean hide )
-	{
-		this.hideBottom = hide;
-		
-		return this;
-	}
-	
+
 	/******************************************************************************************
 	 * Method - Implement Drawable
 	 ******************************************************************************************/
@@ -87,7 +69,7 @@ public class Border extends Gui implements Drawable<Element>
 	@Override
 	public void drawOn( Element element )
 	{
-		int color = this.getColor().map( Color::getValue ).orElse( Color.DEFAULT ),
+		int color = (this.color!=null) ? this.color.value : Color.DEFAULT,
 			width = element.box.getWidth(),
 			height = element.box.getHeight(),
 			x = element.box.getX(),
