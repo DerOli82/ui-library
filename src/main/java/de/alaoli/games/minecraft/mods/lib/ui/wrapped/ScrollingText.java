@@ -1,21 +1,20 @@
 package de.alaoli.games.minecraft.mods.lib.ui.wrapped;
 
 import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
+import de.alaoli.games.minecraft.mods.lib.ui.element.style.Box;
+import de.alaoli.games.minecraft.mods.lib.ui.element.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.TextStyle;
-import de.alaoli.games.minecraft.mods.lib.ui.layout.AbstractPane;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
+import de.alaoli.games.minecraft.mods.lib.ui.layout.Layout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.GuiScrollingList;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class ScrollingText extends AbstractPane<ScrollingText>
+public class ScrollingText extends Element<ScrollingText> implements Layout, Box<ScrollingText>
 {
     /* **************************************************************************************************************
      * Attribute
@@ -25,6 +24,8 @@ public class ScrollingText extends AbstractPane<ScrollingText>
 
     private final List<String> lines = new ArrayList<>();
     private ScrollingList wrapped;
+
+    private BoxStyle boxStyle;
     private TextStyle textStyle;
 
     /* **************************************************************************************************************
@@ -46,7 +47,8 @@ public class ScrollingText extends AbstractPane<ScrollingText>
     public ScrollingText setLines( List<String> lines )
     {
         this.lines.clear();
-        this.lines.addAll( lines );
+        if( lines == null ) { return this; }
+        this.lines.addAll(lines);
 
         return this;
     }
@@ -62,11 +64,25 @@ public class ScrollingText extends AbstractPane<ScrollingText>
     }
 
     /* **************************************************************************************************************
-     * Method - Implements AbstractPane
+     * Method - Implement Element
      ************************************************************************************************************** */
 
     @Override
-    public Optional<Collection<Element>> getElements() { return Optional.empty(); }
+    public void drawElement( int mouseX, int mouseY, float partialTicks)
+    {
+        if( this.boxStyle != null ) { this.boxStyle.drawOn( this ); }
+        this.wrapped.drawScreen( mouseX, mouseY, partialTicks );
+    }
+
+    /* **************************************************************************************************************
+     * Method - Implement Layout
+     ************************************************************************************************************** */
+
+    @Override
+    public void layout()
+    {
+        this.doLayout();
+    }
 
     @Override
     public void doLayout()
@@ -74,13 +90,21 @@ public class ScrollingText extends AbstractPane<ScrollingText>
         this.wrapped = new ScrollingList( this );
     }
 
-    @Override
-    public void drawElement( int mouseX, int mouseY, float partialTicks)
+	/* **************************************************************************************************************
+	 * Method - Implements Box
+	 ************************************************************************************************************** */
+
+    public ScrollingText setBoxStyle(BoxStyle style )
     {
-        super.drawElement( mouseX, mouseY, partialTicks );
-        this.wrapped.drawScreen( mouseX, mouseY, partialTicks );
+        this.boxStyle = style;
+
+        return this;
     }
 
+    public Optional<BoxStyle> getBoxStyle()
+    {
+        return Optional.ofNullable( this.boxStyle );
+    }
     /* **************************************************************************************************************
      * Class - GuiScrollingList
      ************************************************************************************************************** */
@@ -125,37 +149,14 @@ public class ScrollingText extends AbstractPane<ScrollingText>
         @Override
         protected void drawSlot(int index, int right, int y, int height, Tessellator tess)
         {
-            String line = (this.parent.lines != null ) ? this.parent.lines.get( index ) : null;
+            /*
+             * @TODO text padding
+             */
+            String line = (this.parent.lines != null) && (this.parent.lines.size() >= index) ? this.parent.lines.get( index ) : null;
 
-            if( line == null ) { return; }
-            if( this.parent.textStyle == null ) { this.parent.textStyle = new TextStyle(); }
+            if( ( line == null )||( this.parent.textStyle == null ) ) { return; }
 
-            y += 2;
-            int x = this.left+2;
-            int color = this.parent.textStyle.getColor().map( Color::getValue ).orElse( Color.DEFAULT );
-            Align align = this.parent.textStyle.getAlign().orElse( Align.LEFT );
-
-            switch( align )
-            {
-                case RIGHT:
-                    x =	this.listWidth - FONTRENDERER.getStringWidth( line );
-                    break;
-                case CENTER:
-                    x =	Math.round( (0.5f * this.listWidth) - (0.5f * FONTRENDERER.getStringWidth( line )) );
-                    break;
-                case LEFT:
-                default:
-                    //Nothing to do
-                    break;
-            }
-            if( this.parent.textStyle.hasShadow() )
-            {
-                FONTRENDERER.drawStringWithShadow( line, x, y, color );
-            }
-            else
-            {
-                FONTRENDERER.drawString( line, x, y, color );
-            }
+            this.parent.textStyle.drawTextAt( this.parent.box.getX()+3, y, this.listWidth-3, height, line );
         }
     }
 }
