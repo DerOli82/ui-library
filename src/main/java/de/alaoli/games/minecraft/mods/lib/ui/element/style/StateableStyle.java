@@ -1,6 +1,6 @@
 package de.alaoli.games.minecraft.mods.lib.ui.element.style;
 
-import de.alaoli.games.minecraft.mods.lib.ui.util.State;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.State;
 
 import java.util.HashMap;
 import java.util.Map;
