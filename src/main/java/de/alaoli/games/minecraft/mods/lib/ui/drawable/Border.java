@@ -69,7 +69,7 @@ public class Border extends Gui implements Drawable<Element>
 	@Override
 	public void drawOn( Element element )
 	{
-		int color = (this.color!=null) ? this.color.value : Color.DEFAULT,
+		int color = (this.color!=null) ? this.color.value : Color.BLACK,
 			width = element.box.getWidth(),
 			height = element.box.getHeight(),
 			x = element.box.getX(),

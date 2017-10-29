@@ -44,7 +44,7 @@ public class Background extends Gui implements Drawable<Element>
 	@Override
 	public void drawOn( Element element )
 	{
-		int color = this.getColor().map( Color::getValue ).orElse( Color.DEFAULT ),
+		int color = this.getColor().map( Color::getValue ).orElse( Color.BLACK ),
 			x = element.box.getX(),
 			y = element.box.getY();
 
