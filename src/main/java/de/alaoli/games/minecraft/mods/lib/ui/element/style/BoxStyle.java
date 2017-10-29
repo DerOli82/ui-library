@@ -38,9 +38,7 @@ public class BoxStyle<T extends Element<T> & Box<T>> implements Style, Drawable<
 			.setAlign( this.align )
 			.setMargin( this.marginTop, this.marginLeft, this.marginRight, this.marginBottom )
 			.setPadding( this.paddingTop, this.paddingLeft, this.paddingRight, this.paddingBottom );
-
 	}
-
 
 	public Optional<Drawable> getBackground()
 	{
