@@ -1,22 +1,28 @@
 package de.alaoli.games.minecraft.mods.lib.ui.element;
 
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Disableable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Hoverable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.StateableStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.TextStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseEvent;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseListener;
-import de.alaoli.games.minecraft.mods.lib.ui.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class Button extends Element<Button> implements Hoverable<Button>, Disableable<Button>, MouseListener
+public class Button extends Element<Button>
+	implements Text<Button>,
+		Hoverable<Button>, Disableable<Button>, MouseListener<Button>
 {
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Attribute
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	public static final FontRenderer FONTRENDERER = Minecraft.getMinecraft().fontRenderer;
 
@@ -28,13 +34,13 @@ public class Button extends Element<Button> implements Hoverable<Button>, Disabl
 
 	private String text;
 
-	private Consumer<? super Button> onEntered;
-	private Consumer<? super Button> onExited;
-	private Consumer<? super Button> onClicked;
+	private Consumer<? super MouseEvent> onEntered;
+	private Consumer<? super MouseEvent> onExited;
+	private Consumer<? super MouseEvent> onClicked;
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	public Optional<StateableStyle<BoxStyle>> getBoxStyle()
 	{
@@ -60,6 +66,11 @@ public class Button extends Element<Button> implements Hoverable<Button>, Disabl
 		return this;
 	}
 
+	/**
+	 * @deprecated
+	 * @param text
+	 * @return
+	 */
 	public Button setText( String text )
 	{
 		this.text = text;
@@ -67,6 +78,10 @@ public class Button extends Element<Button> implements Hoverable<Button>, Disabl
 		return this;
 	}
 
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public Optional<String> getText()
 	{
 		return Optional.ofNullable( this.text );
@@ -80,78 +95,70 @@ public class Button extends Element<Button> implements Hoverable<Button>, Disabl
 		return State.NONE;
 	}
 
-	public Button onMouseEntered( Consumer<? super Button> consumer )
-	{
-		this.onEntered = consumer;
-
-		return this;
-	}
-
-	public Button onMouseExited( Consumer<? super Button> consumer )
-	{
-		this.onExited = consumer;
-
-		return this;
-	}
-
-	public Button onMouseClicked( Consumer<? super Button> consumer )
-	{
-		this.onClicked = consumer;
-
-		return this;
-	}
-
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Element
-	 ******************************************************************************************/
-	
+	 ************************************************************************************************************** */
+
 	@Override
 	public void drawElement( int mouseX, int mouseY, float partialTicks )
 	{
 		State state = this.getState();
 
 		if( this.boxStyle != null ) { this.boxStyle.get(state).ifPresent( style -> style.drawOn( this ) ); }
-
-			if( ( this.textStyle != null ) &&
-					( this.text != null ) ) {
-				this.textStyle.get(state).ifPresent(style -> {
-					int lineHeight = style.getLineHeight();
-					int width = this.box.getWidth();
-					int height = this.box.getHeight();
-					int x = this.box.getX();
-					int y = this.box.getY();
-					int centerY = Math.round(y + (0.5f * height) - (0.5f * lineHeight));
-					int color = style.getColor().map(Color::getValue).orElse(Color.DEFAULT);
-					Align align = style.getAlign().orElse(Align.LEFT);
-					String text = FONTRENDERER.trimStringToWidth(this.text, this.box.getWidth() - 4);
-
-					switch (align) {
-						case RIGHT:
-							x = width - FONTRENDERER.getStringWidth(this.text) - 2;
-							break;
-						case CENTER:
-							x = Math.round((0.5f * width) - (0.5f * FONTRENDERER.getStringWidth(this.text)));
-							break;
-						case LEFT:
-							x += 2;
-						default:
-							//Nothing to do
-							break;
-					}
-
-					if (style.hasShadow()) {
-						FONTRENDERER.drawStringWithShadow(text, x, centerY, color);
-					} else {
-						FONTRENDERER.drawString(text, x, centerY, color);
-					}
-				});
-			}
-
+		if( this.textStyle != null ) { this.textStyle.get(state).ifPresent( style -> style.drawOn( this )); }
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
+	 * Method - Implement Text
+	 ************************************************************************************************************** */
+
+	@Override
+	public Optional<String> getTextline()
+	{
+		return Optional.ofNullable( this.text );
+	}
+
+	@Override
+	public Collection<String> getTextlines()
+	{
+		Collection<String> result = new ArrayList<>();
+
+		if( this.text != null )
+		{
+			result.add( this.text );
+		}
+		return result;
+	}
+
+	@Override
+	public Button setTextline( String text )
+	{
+		this.text = text;
+
+		return this;
+	}
+
+	@Override
+	public Button setTextlines(Collection<String> lines)
+	{
+		if( lines != null )
+		{
+			StringBuilder builder = new StringBuilder( " " );
+			lines.forEach(builder::append);
+			this.text = builder.toString();
+		}
+		return this;
+	}
+
+	@Override
+	public int countTextlines()
+	{
+		return ( ( this.text != null ) && ( !this.text.isEmpty() ) ) ? 1 : 0;
+	}
+
+	/* **************************************************************************************************************
 	 * Method - Implement Hoverable
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public Button setHover(boolean hover)
@@ -167,9 +174,9 @@ public class Button extends Element<Button> implements Hoverable<Button>, Disabl
 		return this.hovered;
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Disableable
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public Button setDisable(boolean disable)
@@ -184,25 +191,49 @@ public class Button extends Element<Button> implements Hoverable<Button>, Disabl
 		return this.disabled;
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implements MouseListener
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public void mouseEntered( MouseEvent event )
 	{
-		if( this.onEntered != null ) { this.onEntered.accept( this );}
+		if( this.onEntered != null ) { this.onEntered.accept( event );}
 	}
 
 	@Override
 	public void mouseExited( MouseEvent event )
 	{
-		if( this.onExited != null ) { this.onExited.accept( this );}
+		if( this.onExited != null ) { this.onExited.accept( event );}
 	}
 
 	@Override
 	public void mouseClicked( MouseEvent event )
 	{
-		if( this.onClicked != null ) { this.onClicked.accept( this );}
+		if( this.onClicked != null ) { this.onClicked.accept( event );}
+	}
+
+	@Override
+	public Button onMouseEntered( Consumer<? super MouseEvent> consumer )
+	{
+		this.onEntered = consumer;
+
+		return this;
+	}
+
+	@Override
+	public Button onMouseExited( Consumer<? super MouseEvent> consumer )
+	{
+		this.onExited = consumer;
+
+		return this;
+	}
+
+	@Override
+	public Button onMouseClicked( Consumer<? super MouseEvent> consumer )
+	{
+		this.onClicked = consumer;
+
+		return this;
 	}
 }

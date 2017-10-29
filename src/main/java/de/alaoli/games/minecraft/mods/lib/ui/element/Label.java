@@ -1,27 +1,23 @@
 package de.alaoli.games.minecraft.mods.lib.ui.element;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.TextStyle;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 
-public class Label extends Element<Label>
+public class Label extends Element<Label> implements Text<Label>
 {
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Attribute
-	 ******************************************************************************************/
-	
-	public static final FontRenderer FONTRENDERER = Minecraft.getMinecraft().fontRenderer;
-		
+	 ************************************************************************************************************** */
+
 	private TextStyle textStyle;
 	private String text;
 	
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	public Label setText( String text )
 	{
@@ -47,44 +43,61 @@ public class Label extends Element<Label>
 		return Optional.ofNullable( this.textStyle );
 	}
 	
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Element
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public void drawElement( int mouseX, int mouseY, float partialTicks )
 	{
-		if( this.text == null ) { return; }
-		if( this.textStyle == null ) { this.textStyle = new TextStyle(); }
+		if( this.textStyle != null ) { this.textStyle.drawOn( this ); }
+	}
 
-		int width = this.box.getWidth();
-		int height = this.box.getHeight();
-		int x = this.box.getX();
-		int y = Math.round( this.box.getY() + (0.5f * height ) - ( 0.5f * this.textStyle.getLineHeight() ) );
-		int color = this.textStyle.getColor().map( Color::getValue ).orElse( Color.DEFAULT );
-		Align align = this.textStyle.getAlign().orElse( Align.LEFT );
-		
-		switch( align )
+	/* **************************************************************************************************************
+	 * Method - Implement Text
+	 ************************************************************************************************************** */
+
+	@Override
+	public Optional<String> getTextline()
+	{
+		return Optional.ofNullable( this.text );
+	}
+
+	@Override
+	public Collection<String> getTextlines()
+	{
+		Collection<String> result = new ArrayList<>();
+
+		if( this.text != null )
 		{
-			case RIGHT:
-				x =	width - FONTRENDERER.getStringWidth( this.text);
-				break;
-			case CENTER:
-				x =	Math.round( ( 0.5f * width ) - ( 0.5f * FONTRENDERER.getStringWidth( this.text) ) );
-				break;
-			case LEFT:
-			default:
-				//Nothing to do
-				break;
+			result.add( this.text );
 		}
-		
-		if( this.textStyle.hasShadow() )
+		return result;
+	}
+
+	@Override
+	public Label setTextline( String text )
+	{
+		this.text = text;
+
+		return this;
+	}
+
+	@Override
+	public Label setTextlines(Collection<String> lines)
+	{
+		if( lines != null )
 		{
-			FONTRENDERER.drawStringWithShadow( this.text, x, y, color );
+			StringBuilder builder = new StringBuilder( " " );
+			lines.forEach(builder::append);
+			this.text = builder.toString();
 		}
-		else
-		{
-			FONTRENDERER.drawString( this.text, x, y, color );
-		}
+		return this;
+	}
+
+	@Override
+	public int countTextlines()
+	{
+		return 1;
 	}
 }

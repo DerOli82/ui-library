@@ -1,7 +1,14 @@
 package de.alaoli.games.minecraft.mods.lib.ui.element;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
 
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Disableable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Focusable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Hoverable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.StateableStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.TextStyle;
@@ -16,7 +23,9 @@ import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.input.Keyboard;
 
 public class TextField extends Element<TextField>
-		implements Focusable<TextField>, Hoverable<TextField>, Disableable<TextField>, MouseListener, KeyboardListener
+	implements Text<TextField>, Placeholder<TextField>,
+		Focusable<TextField>, Hoverable<TextField>, Disableable<TextField>,
+		MouseListener<TextField>, KeyboardListener
 {
 	/******************************************************************************************
 	 * Attribute 
@@ -30,6 +39,10 @@ public class TextField extends Element<TextField>
 
 	private StateableStyle<BoxStyle> boxStyle;
 	private StateableStyle<TextStyle> textStyle;
+
+	private Consumer<? super MouseEvent> onEntered;
+	private Consumer<? super MouseEvent> onExited;
+	private Consumer<? super MouseEvent> onClicked;
 
 	private String placeholder;
 	private String text = "";
@@ -64,23 +77,20 @@ public class TextField extends Element<TextField>
 		return this;
 	}
 
-	public Optional<String> getPlaceholder()
-	{
-		return Optional.ofNullable( this.placeholder );
-	}
-
-	public TextField setPlaceholder( String placeholder)
-	{
-		this.placeholder = placeholder;
-
-		return this;
-	}
-
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public Optional<String> getText()
 	{
 		return Optional.ofNullable( this.text );
 	}
 
+	/**
+	 * @deprecated
+	 * @param text
+	 * @return
+	 */
 	public TextField setText( String text )
 	{
 		this.text = text;
@@ -115,7 +125,7 @@ public class TextField extends Element<TextField>
 		if( ( !this.disabled ) &&
 			( ChatAllowedCharacters.isAllowedCharacter( c ) ) &&
 			( pos >= 0 ) &&
-			( pos <= this.text.length()))
+			( pos <= Math.min( this.text.length(), this.maxLength)))
 		{
 			this.text = this.text.substring( 0, pos ) + c + this.text.substring( pos );
 
@@ -154,73 +164,93 @@ public class TextField extends Element<TextField>
 		State state = this.getState();
 
 		if( this.boxStyle != null ) { this.boxStyle.get(state).ifPresent( style -> style.drawOn( this ) ); }
-
 		if( this.textStyle != null )
 		{
-			this.textStyle.get( state ).ifPresent( style -> {
-				int lineHeight = style.getLineHeight();
-				int width = this.box.getWidth();
-				int height = this.box.getHeight();
-				int x = this.box.getX();
-				int y = this.box.getY();
-				int centerY = Math.round(y + (0.5f * height) - (0.5f * lineHeight));
-				Align align = style.getAlign().orElse(Align.LEFT);
-				String text = "";
-				int color = Color.DEFAULT;
+			this.textStyle.get(state).ifPresent( style -> {
+				style.drawOn( this );
 
-				if( ( this.text != null ) &&
-					( !this.text.isEmpty() ) )
+				//Cursor if focused
+				if( ( this.focused ) &&
+					( !this.disabled ) )
 				{
-					text = FONTRENDERER.trimStringToWidth(this.text, this.box.getWidth() - 4);
-					color =  style.getColor().map(Color::getValue).orElse(Color.DEFAULT);
-				}
-				else if(( this.placeholder != null ) &&
-						( !this.placeholder.isEmpty()) &&
-						( !this.focused ) &&
-						( !this.disabled ) )
-				{
-					text = FONTRENDERER.trimStringToWidth(this.placeholder, this.box.getWidth() - 4);
-					color = this.textStyle.get( State.DISABLED )
-						.map( TextStyle::getColor )
-						.orElse( Optional.of( new Color() ) )
-							.map( Color::getValue )
-							.orElse( Color.DEFAULT );
-				}
-
-				switch (align) {
-					case RIGHT:
-						x = width - FONTRENDERER.getStringWidth(this.text) - 2;
-						break;
-					case CENTER:
-						x = Math.round((0.5f * width) - (0.5f * FONTRENDERER.getStringWidth(this.text)));
-						break;
-					case LEFT:
-						x += 1;
-					default:
-						//Nothing to do
-						break;
-				}
-
-				if (style.hasShadow()) {
-					FONTRENDERER.drawStringWithShadow(text, x, centerY, color);
-				} else {
-					FONTRENDERER.drawString(text, x, centerY, color);
-				}
-
-				if( (!this.disabled) &&
-					(this.focused))
-				{
-					this.drawVerticalLine(
-							x + FONTRENDERER.getStringWidth(text.substring(0, this.cursorPos)),
-							y + 1,
-							y + height - 1,
-							color
-					);
+					int x = this.box.getX() + FONTRENDERER.getStringWidth( this.text.substring( 0,this.cursorPos ) )+2,
+						y = this.box.getY(),
+						height = this.box.getHeight(),
+						color = ((Optional<Color>)style.getColor()).map( Color::getValue ).orElse( Color.BLACK );
+					this.drawVerticalLine( x, y+1, y+height-2, color );
 				}
 			});
 		}
+
+
 	}
-	
+
+	/* **************************************************************************************************************
+	 * Method - Implement Text
+	 ************************************************************************************************************** */
+
+	@Override
+	public Optional<String> getTextline()
+	{
+		return Optional.ofNullable( this.text );
+	}
+
+	@Override
+	public Collection<String> getTextlines()
+	{
+		Collection<String> result = new ArrayList<>();
+
+		if( this.text != null )
+		{
+			result.add( this.text );
+		}
+		return result;
+	}
+
+	@Override
+	public TextField setTextline( String text )
+	{
+		this.text = text;
+
+		return this;
+	}
+
+	@Override
+	public TextField setTextlines(Collection<String> lines)
+	{
+		if( lines != null )
+		{
+			StringBuilder builder = new StringBuilder( " " );
+			lines.forEach(builder::append);
+			this.text = builder.toString();
+		}
+		return this;
+	}
+
+	@Override
+	public int countTextlines()
+	{
+		return ( ( this.text != null ) && ( !this.text.isEmpty() ) ) ? 1 : 0;
+	}
+
+	/******************************************************************************************
+	 * Method - Implement Placeholder
+	 ******************************************************************************************/
+
+	@Override
+	public Optional<String> getPlaceholder()
+	{
+		return Optional.ofNullable( this.placeholder );
+	}
+
+	@Override
+	public TextField setPlaceholder( String placeholder)
+	{
+		this.placeholder = placeholder;
+
+		return this;
+	}
+
 	/******************************************************************************************
 	 * Method - Implement Focusable
 	 ******************************************************************************************/
@@ -278,22 +308,47 @@ public class TextField extends Element<TextField>
 	 * Method - Implements MouseListener
 	 ******************************************************************************************/
 
+
 	@Override
 	public void mouseEntered( MouseEvent event )
 	{
-
+		if( this.onEntered != null ) { this.onEntered.accept( event );}
 	}
 
 	@Override
 	public void mouseExited( MouseEvent event )
 	{
-
+		if( this.onExited != null ) { this.onExited.accept( event );}
 	}
 
 	@Override
 	public void mouseClicked( MouseEvent event )
 	{
+		if( this.onClicked != null ) { this.onClicked.accept( event );}
+	}
 
+	@Override
+	public TextField onMouseEntered( Consumer<? super MouseEvent> consumer )
+	{
+		this.onEntered = consumer;
+
+		return this;
+	}
+
+	@Override
+	public TextField onMouseExited( Consumer<? super MouseEvent> consumer )
+	{
+		this.onExited = consumer;
+
+		return this;
+	}
+
+	@Override
+	public TextField onMouseClicked( Consumer<? super MouseEvent> consumer )
+	{
+		this.onClicked = consumer;
+
+		return this;
 	}
 
 	/******************************************************************************************

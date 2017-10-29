@@ -1,5 +1,9 @@
 package de.alaoli.games.minecraft.mods.lib.ui.element;
 
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Disableable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Focusable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Hoverable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.StateableStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.TextStyle;
@@ -13,14 +17,19 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class TextArea extends Element<TextArea>
-		implements Focusable<TextArea>, Hoverable<TextArea>, Disableable<TextArea>, MouseListener, KeyboardListener
+    implements Text<TextArea>, Placeholder<TextArea>,
+        Focusable<TextArea>, Hoverable<TextArea>, Disableable<TextArea>,
+        MouseListener<TextArea>, KeyboardListener
 {
-    /******************************************************************************************
+    /* **************************************************************************************************************
      * Attribute
-     ******************************************************************************************/
+     ************************************************************************************************************** */
 
     public static final FontRenderer FONTRENDERER = Minecraft.getMinecraft().fontRenderer;
 
@@ -31,6 +40,10 @@ public class TextArea extends Element<TextArea>
     private StateableStyle<BoxStyle> boxStyle;
     private StateableStyle<TextStyle> textStyle;
 
+    private Consumer<? super MouseEvent> onEntered;
+    private Consumer<? super MouseEvent> onExited;
+    private Consumer<? super MouseEvent> onClicked;
+
     private String placeholder;
     private String[] lines = new String[5];
 
@@ -39,9 +52,9 @@ public class TextArea extends Element<TextArea>
     private int cursorPos = 0;
     private int cursorLine = 0;
 
-    /******************************************************************************************
+    /* **************************************************************************************************************
      * Method
-     ******************************************************************************************/
+     ************************************************************************************************************** */
 
     public Optional<StateableStyle<BoxStyle>> getBoxStyle()
     {
@@ -67,18 +80,10 @@ public class TextArea extends Element<TextArea>
         return this;
     }
 
-    public Optional<String> getPlaceholder()
-    {
-        return Optional.ofNullable( this.placeholder );
-    }
-
-    public TextArea setPlaceholder( String placeholder)
-    {
-        this.placeholder = placeholder;
-
-        return this;
-    }
-
+    /**
+     * @deprecated
+     * @return
+     */
     public Optional<String> getText()
     {
         StringBuilder builder = new StringBuilder( " " );
@@ -107,6 +112,14 @@ public class TextArea extends Element<TextArea>
     public TextArea setMaxLength( int maxLength )
     {
         this.maxLength = maxLength;
+
+        return this;
+    }
+
+    public TextArea setMaxLines( int maxLines )
+    {
+        this.maxLines = maxLines;
+        this.lines = new String[maxLines];
 
         return this;
     }
@@ -162,19 +175,15 @@ public class TextArea extends Element<TextArea>
     protected boolean validCursorPosAt( int pos, int line )
     {
 
-        if( ( line >= 0 ) &&
-            ( line < maxLines ) &&
-            ( pos >= 0) &&
-            ( pos <= ((this.lines[line] ==null) ? 0 : this.lines[line].length() )) )
-        {
-            return true;
-        }
-        return false;
+        return ((line >= 0) &&
+                (line < this.maxLines) &&
+                (pos >= 0) &&
+                (pos <= ((this.lines[line] == null) ? 0 : Math.min(this.lines[line].length(), this.maxLength))));
     }
 
-    /******************************************************************************************
+    /* **************************************************************************************************************
      * Method - Implement Element
-     ******************************************************************************************/
+     ************************************************************************************************************** */
 
     @Override
     public void drawElement( int mouseX, int mouseY,float partialTicks )
@@ -183,77 +192,101 @@ public class TextArea extends Element<TextArea>
 
         if( this.boxStyle != null ) { this.boxStyle.get(state).ifPresent( style -> style.drawOn( this ) ); }
 
-        if( this.textStyle != null )
-        {
-            this.textStyle.get( state ).ifPresent( style -> {
-                int lineHeight = style.getLineHeight();
-                int width = this.box.getWidth();
-                int height = this.box.getHeight();
-                int x = this.box.getX();
-                int y = this.box.getY();
-                Align align = style.getAlign().orElse(Align.LEFT);
-                String text;
-                int color = Color.DEFAULT;
+        this.textStyle.get(state).ifPresent( style -> {
+            style.drawOn( this );
 
-
-                for( int i=0; i < this.maxLines-1; i++ )
-                {
-                    text = (this.lines[i] == null ) ? "" : this.lines[i];
-
-                    if ((text != null) &&
-                        (!text.isEmpty())) {
-                        text = FONTRENDERER.trimStringToWidth(text, this.box.getWidth() - 4);
-                        color = style.getColor().map(Color::getValue).orElse(Color.DEFAULT);
-                    } else if ((this.placeholder != null) &&
-                            (!this.placeholder.isEmpty()) &&
-                            (!this.focused) &&
-                            (!this.disabled)&&
-                            ( i == 0)) {
-                        text = FONTRENDERER.trimStringToWidth(this.placeholder, this.box.getWidth() - 4);
-                        color = this.textStyle.get(State.DISABLED)
-                                .map(TextStyle::getColor)
-                                .orElse(Optional.of(new Color()))
-                                .map(Color::getValue)
-                                .orElse(Color.DEFAULT);
-                    }
-
-                    switch (align) {
-                        case RIGHT:
-                            x = width - FONTRENDERER.getStringWidth(text) - 2;
-                            break;
-                        case CENTER:
-                            x = Math.round((0.5f * width) - (0.5f * FONTRENDERER.getStringWidth(text)));
-                            break;
-                        case LEFT:
-                            x += 1;
-                        default:
-                            //Nothing to do
-                            break;
-                    }
-
-                    if (style.hasShadow()) {
-                        FONTRENDERER.drawStringWithShadow(text, x, y + lineHeight/ 2+ i*lineHeight , color);
-                    } else {
-                        FONTRENDERER.drawString(text, x, y + lineHeight/2 + i*lineHeight , color);
-                    }
-                }
-                text = (this.lines[this.cursorLine] == null ) ? "" : this.lines[this.cursorLine];
-                if ((!this.disabled) &&
-                        (this.focused)) {
-                    this.drawVerticalLine(
-                            x + FONTRENDERER.getStringWidth(text.substring(0, this.cursorPos)),
-                            y+ this.cursorLine*lineHeight + 1,
-                            y + lineHeight + this.cursorLine*lineHeight+ 2,
-                            color
-                    );
-                }
-            });
-        }
+            //Cursor if focused
+            if( ( this.focused ) &&
+                    ( !this.disabled ) )
+            {
+                String text = (this.lines[this.cursorLine] != null) ? this.lines[this.cursorLine] : "";
+                int x = this.box.getX() + FONTRENDERER.getStringWidth( text.substring( 0,this.cursorPos ) )+2,
+                        lineheight = style.getLineHeight(),
+                        y = this.box.getY() + lineheight*this.cursorLine,
+                        color = ((Optional<Color>)style.getColor()).map( Color::getValue ).orElse( Color.BLACK );
+                this.drawVerticalLine( x, y+1, y+lineheight, color );
+            }
+        });
     }
 
-    /******************************************************************************************
+	/* **************************************************************************************************************
+	 * Method - Implement Text
+	 ************************************************************************************************************** */
+
+    @Override
+    public Optional<String> getTextline()
+    {
+        return Optional.ofNullable( this.lines[0] );
+    }
+
+    @Override
+    public Collection<String> getTextlines()
+    {
+        Collection<String> result = new ArrayList<>();
+
+        for( String line : this.lines )
+        {
+            if (line != null) {
+                result.add(line);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public TextArea setTextline( String text )
+    {
+        this.lines[0] = text;
+
+        return this;
+    }
+
+    @Override
+    public TextArea setTextlines(Collection<String> lines)
+    {
+        /*
+         * @TODO
+         *
+        if( lines != null )
+        {
+
+        }*/
+        return this;
+    }
+
+    @Override
+    public int countTextlines()
+    {
+        int count = 0;
+
+        for (String line : this.lines)
+        {
+            if( (line != null) && (!line.isEmpty()) ) { count++; }
+        }
+        return count;
+    }
+
+    /* **************************************************************************************************************
+     * Method - Implement Placeholder
+     ************************************************************************************************************** */
+
+    @Override
+    public Optional<String> getPlaceholder()
+    {
+        return Optional.ofNullable( this.placeholder );
+    }
+
+    @Override
+    public TextArea setPlaceholder( String placeholder)
+    {
+        this.placeholder = placeholder;
+
+        return this;
+    }
+
+    /* **************************************************************************************************************
      * Method - Implement Focusable
-     ******************************************************************************************/
+     ************************************************************************************************************** */
 
     @Override
     public TextArea setFocus( boolean focus )
@@ -269,9 +302,9 @@ public class TextArea extends Element<TextArea>
         return this.focused;
     }
 
-    /******************************************************************************************
+    /* **************************************************************************************************************
      * Method - Implement Hoverable
-     ******************************************************************************************/
+     ************************************************************************************************************** */
 
     @Override
     public TextArea setHover(boolean hover)
@@ -287,9 +320,9 @@ public class TextArea extends Element<TextArea>
         return this.hovered;
     }
 
-    /******************************************************************************************
+    /* **************************************************************************************************************
      * Method - Implement Disableable
-     ******************************************************************************************/
+     ************************************************************************************************************** */
 
     @Override
     public TextArea setDisable(boolean disable)
@@ -304,31 +337,55 @@ public class TextArea extends Element<TextArea>
         return this.disabled;
     }
 
-    /******************************************************************************************
+    /* **************************************************************************************************************
      * Method - Implements MouseListener
-     ******************************************************************************************/
+     ************************************************************************************************************** */
 
     @Override
     public void mouseEntered( MouseEvent event )
     {
-
+        if( this.onEntered != null ) { this.onEntered.accept( event );}
     }
 
     @Override
     public void mouseExited( MouseEvent event )
     {
-
+        if( this.onExited != null ) { this.onExited.accept( event );}
     }
 
     @Override
     public void mouseClicked( MouseEvent event )
     {
-
+        if( this.onClicked != null ) { this.onClicked.accept( event );}
     }
 
-    /******************************************************************************************
+    @Override
+    public TextArea onMouseEntered( Consumer<? super MouseEvent> consumer )
+    {
+        this.onEntered = consumer;
+
+        return this;
+    }
+
+    @Override
+    public TextArea onMouseExited( Consumer<? super MouseEvent> consumer )
+    {
+        this.onExited = consumer;
+
+        return this;
+    }
+
+    @Override
+    public TextArea onMouseClicked( Consumer<? super MouseEvent> consumer )
+    {
+        this.onClicked = consumer;
+
+        return this;
+    }
+
+    /* **************************************************************************************************************
      * Method - Implements KeyboardListener
-     ******************************************************************************************/
+     ************************************************************************************************************** */
 
     @Override
     public void keyPressed( KeyboardEvent event )
@@ -372,7 +429,7 @@ public class TextArea extends Element<TextArea>
                 break;
 
             case Keyboard.KEY_TAB:
-                /**
+                /*
                  * @TODO FOCUSABLE
                  */
                 break;
