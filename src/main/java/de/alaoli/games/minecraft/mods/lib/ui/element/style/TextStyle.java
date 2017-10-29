@@ -31,6 +31,15 @@ public class TextStyle<T extends Element<T> & Text<T>> extends Gui implements St
      * Method
      ************************************************************************************************************** */
 
+	public TextStyle extend()
+	{
+		return new TextStyle()
+			.setColor( this.color )
+			.setAlign( this.align )
+			.setLineHeight( this.lineHeight )
+			.setShadow( this.hasShadow );
+	}
+
 	public Optional<Color> getColor()
 	{
 		return Optional.ofNullable( this.color );
@@ -83,7 +92,7 @@ public class TextStyle<T extends Element<T> & Text<T>> extends Gui implements St
 	{
 		this.drawTextAt(
 			x, y, width, height, text,
-			(this.color!=null) ? this.color.value : Color.DEFAULT,
+			(this.color!=null) ? this.color.value : Color.BLACK,
 			(this.align!=null) ? this.align : Align.LEFT
 		);
 	}
@@ -159,7 +168,7 @@ public class TextStyle<T extends Element<T> & Text<T>> extends Gui implements St
 			y = element.box.getY(),
 			width = element.box.getWidth(),
 			height = element.box.getHeight(),
-			color = (this.color!=null) ? this.color.value : Color.DEFAULT;
+			color = (this.color!=null) ? this.color.value : Color.BLACK;
 		Align align = (this.align!=null) ? this.align : Align.LEFT;
 
 		//Text
