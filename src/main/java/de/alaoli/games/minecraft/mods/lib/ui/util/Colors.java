@@ -17,12 +17,22 @@ public class Colors
 
     public static Color factory()
     {
-        return factory( Color.DEFAULT );
+        return factory( Color.BLACK );
     }
 
-    public static Color factory( int value )
+    public static Color factory( int rgb )
     {
-        return new Color( value );
+        return factory( 255, rgb );
+    }
+
+    public static Color factory( float alpha, int rgb )
+    {
+        return factory( (int)(alpha*255), rgb );
+    }
+
+    public static Color factory( int alpha, int rgb )
+    {
+        return new Color( alpha, rgb );
     }
 
     public static Color factory( int r, int g, int b )
@@ -38,5 +48,17 @@ public class Colors
     public static Color factory( int alpha, int r, int g, int b )
     {
         return new Color( alpha, r, g, b);
+    }
+
+    public static Color modifyDarker( Color color, float factor )
+    {
+       // if( factor > 0.0f ) { throw new IllegalArgumentException( "'factor' value must be greater than 0." ); }
+
+        return new Color(
+            color.getAlpha(),
+            Math.min( (int)(color.getRed()/factor ), 0 ),
+            Math.min( (int)(color.getGreen()/factor ), 0 ),
+            Math.min( (int)(color.getBlue()/factor ), 0 )
+        );
     }
 }
