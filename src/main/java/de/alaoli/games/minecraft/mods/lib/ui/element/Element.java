@@ -6,80 +6,79 @@ import org.lwjgl.util.Rectangle;
 
 import net.minecraft.client.gui.Gui;
 
-public abstract class Element<T extends Element<T>> extends Gui
+public abstract class Element<T extends Element> extends Gui
 {
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Attribute 
-	 ******************************************************************************************/
-
-	private Element parent;
+	 ************************************************************************************************************** */
 
 	public final Rectangle box = new Rectangle();
+	private Element parent;
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method
-	 ******************************************************************************************/
-	
-	public T setElementParent(Element parent )
+	 ************************************************************************************************************** */
+
+	public Optional<Element> getParent()
+	{
+		return Optional.ofNullable( this.parent );
+	}
+
+	public T setParent(Element parent )
 	{
 		this.parent = parent;
 
 		return (T)this;
 	}
-	
-	public Optional<Element> getElementParent()
-	{
-		return Optional.ofNullable( this.parent );
-	}
 
-	public boolean hasElementParent()
+	public boolean hasParent()
 	{
 		return this.parent != null;
 	}
 
-	public T setElementBounds( int posX, int posY, int width, int height )
+	public T setBounds(int posX, int posY, int width, int height )
 	{
 		this.box.setBounds( posX, posY, width, height );
 
 		return (T)this;
 	}
 
-	public T setElementLocation( int posX, int posY )
+	public T setLocation( int posX, int posY )
 	{
 		this.box.setLocation( posX, posY );
 
 		return (T)this;
 	}
 
-	public T setElementPosX( int posX )
+	public T setPosX( int posX )
 	{
 		this.box.setX( posX );
 
 		return (T)this;
 	}
 
-	public T setElementPosY( int posY )
+	public T setPosY( int posY )
 	{
 		this.box.setY( posY );
 
 		return (T)this;
 	}
 
-	public T setElementSize( int width, int height )
+	public T setSize( int width, int height )
 	{
 		this.box.setSize( width, height );
 
 		return (T)this;
 	}
 
-	public T setElementWidth( int width )
+	public T setWidth(int width )
 	{
 		this.box.setWidth( width );
 
 		return (T)this;
 	}
 
-	public T setElementHeight( int height )
+	public T setHeight(int height )
 	{
 		this.box.setHeight( height );
 
