@@ -25,7 +25,7 @@ import org.lwjgl.input.Keyboard;
 public class TextField extends Element<TextField>
 	implements Text<TextField>, Placeholder<TextField>,
 		Focusable<TextField>, Hoverable<TextField>, Disableable<TextField>,
-		MouseListener<TextField>, KeyboardListener
+		MouseListener<TextField>, KeyboardListener<TextField>
 {
 	/******************************************************************************************
 	 * Attribute 
@@ -43,6 +43,8 @@ public class TextField extends Element<TextField>
 	private Consumer<? super MouseEvent> onEntered;
 	private Consumer<? super MouseEvent> onExited;
 	private Consumer<? super MouseEvent> onClicked;
+
+	private Consumer<? super KeyboardEvent> onKeyPressed;
 
 	private String placeholder;
 	private String text = "";
@@ -377,11 +379,6 @@ public class TextField extends Element<TextField>
 				this.cursorPos = this.text.length();
 				break;
 
-			case Keyboard.KEY_TAB:
-				/**
-				 * @TODO FOCUSABLE
-				 */
-				break;
 			case Keyboard.KEY_BACK:
 				if( this.cursorPos > 0 ) { this.removeCharAt( --this.cursorPos ); }
 				break;
@@ -394,5 +391,14 @@ public class TextField extends Element<TextField>
 				if( this.writeCharAt(this.cursorPos, event.eventChar) ) { this.cursorPos++; }
 				break;
 		}
+		if( this.onKeyPressed != null ) { this.onKeyPressed.accept( event ); }
+	}
+
+	@Override
+	public TextField onKeyPressed(  Consumer<? super KeyboardEvent> consumer )
+	{
+		this.onKeyPressed = consumer;
+
+		return this;
 	}
 }

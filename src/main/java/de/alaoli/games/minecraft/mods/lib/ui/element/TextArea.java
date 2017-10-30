@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 public class TextArea extends Element<TextArea>
     implements Text<TextArea>, Placeholder<TextArea>,
         Focusable<TextArea>, Hoverable<TextArea>, Disableable<TextArea>,
-        MouseListener<TextArea>, KeyboardListener
+        MouseListener<TextArea>, KeyboardListener<TextArea>
 {
     /* **************************************************************************************************************
      * Attribute
@@ -43,6 +43,8 @@ public class TextArea extends Element<TextArea>
     private Consumer<? super MouseEvent> onEntered;
     private Consumer<? super MouseEvent> onExited;
     private Consumer<? super MouseEvent> onClicked;
+
+    private Consumer<? super KeyboardEvent> onKeyPressed;
 
     private String placeholder;
     private String[] lines = new String[5];
@@ -428,11 +430,6 @@ public class TextArea extends Element<TextArea>
                 this.cursorPos = this.lines[this.cursorLine].length();
                 break;
 
-            case Keyboard.KEY_TAB:
-                /*
-                 * @TODO FOCUSABLE
-                 */
-                break;
             case Keyboard.KEY_RETURN:
                 if( this.cursorLine < this.maxLines-1 )
                 {
@@ -453,5 +450,14 @@ public class TextArea extends Element<TextArea>
                 if( this.writeCharAt(this.cursorPos, this.cursorLine, event.eventChar) ) { this.cursorPos++; }
                 break;
         }
+        if( this.onKeyPressed != null ) { this.onKeyPressed.accept( event ); }
+    }
+
+    @Override
+    public TextArea onKeyPressed(  Consumer<? super KeyboardEvent> consumer )
+    {
+        this.onKeyPressed = consumer;
+
+        return this;
     }
 }
