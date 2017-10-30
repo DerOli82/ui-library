@@ -1,11 +1,14 @@
 package de.alaoli.games.minecraft.mods.lib.ui.element;
 
 import de.alaoli.games.minecraft.mods.lib.ui.element.state.Disableable;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Focusable;
 import de.alaoli.games.minecraft.mods.lib.ui.element.state.Hoverable;
 import de.alaoli.games.minecraft.mods.lib.ui.element.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.StateableStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.TextStyle;
+import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardEvent;
+import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardListener;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseEvent;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseListener;
 import net.minecraft.client.Minecraft;
@@ -18,7 +21,8 @@ import java.util.function.Consumer;
 
 public class Button extends Element<Button>
 	implements Text<Button>,
-		Hoverable<Button>, Disableable<Button>, MouseListener<Button>
+		Focusable<Button>, Hoverable<Button>, Disableable<Button>,
+		MouseListener<Button>, KeyboardListener<Button>
 {
 	/* **************************************************************************************************************
 	 * Attribute
@@ -26,6 +30,7 @@ public class Button extends Element<Button>
 
 	public static final FontRenderer FONTRENDERER = Minecraft.getMinecraft().fontRenderer;
 
+	private boolean focused = false;
 	private boolean hovered = false;
 	private boolean disabled = false;
 
@@ -37,6 +42,8 @@ public class Button extends Element<Button>
 	private Consumer<? super MouseEvent> onEntered;
 	private Consumer<? super MouseEvent> onExited;
 	private Consumer<? super MouseEvent> onClicked;
+
+	private Consumer<? super KeyboardEvent> onKeyPressed;
 
 	/* **************************************************************************************************************
 	 * Method
@@ -90,6 +97,7 @@ public class Button extends Element<Button>
 	public State getState()
 	{
 		if( this.disabled ) {return State.DISABLED; }
+		if( this.focused ) {return State.FOCUSED; }
 		if( this.hovered ) {return State.HOVERED; }
 
 		return State.NONE;
@@ -154,6 +162,24 @@ public class Button extends Element<Button>
 	public int countTextlines()
 	{
 		return ( ( this.text != null ) && ( !this.text.isEmpty() ) ) ? 1 : 0;
+	}
+
+    /* **************************************************************************************************************
+     * Method - Implement Focusable
+     ************************************************************************************************************** */
+
+	@Override
+	public Button setFocus( boolean focus )
+	{
+		this.focused = focus;
+
+		return this;
+	}
+
+	@Override
+	public boolean isFocused()
+	{
+		return this.focused;
 	}
 
 	/* **************************************************************************************************************
@@ -233,6 +259,26 @@ public class Button extends Element<Button>
 	public Button onMouseClicked( Consumer<? super MouseEvent> consumer )
 	{
 		this.onClicked = consumer;
+
+		return this;
+	}
+
+    /* **************************************************************************************************************
+     * Method - Implements KeyboardListener
+     ************************************************************************************************************** */
+
+	@Override
+	public void keyPressed( KeyboardEvent event )
+	{
+		if( !this.focused ) { return; }
+
+		if( this.onKeyPressed != null ) { this.onKeyPressed.accept( event ); }
+	}
+
+	@Override
+	public Button onKeyPressed(  Consumer<? super KeyboardEvent> consumer )
+	{
+		this.onKeyPressed = consumer;
 
 		return this;
 	}
