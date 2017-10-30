@@ -2,6 +2,7 @@ package de.alaoli.games.minecraft.mods.lib.ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,8 +24,11 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 	 * Attribute
 	 ******************************************************************************************/
 
-	private Layout layout;
 	private final List<Element> listeners = new ArrayList<>();
+	private final LinkedList<Element> focusable = new LinkedList<>();
+
+	private Layout layout;
+	private Element focused;
 
 	/******************************************************************************************
 	 * Method
@@ -45,7 +49,11 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 	}
 	
 	public <L extends Element & InputListener> T addListener( L listener )
-	{		
+	{
+		if( listener instanceof Focusable )
+		{
+			this.focusable.add( listener );
+		}
 		this.listeners.add( listener );
 		
 		return (T)this;
@@ -53,6 +61,10 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 	
 	public <L extends Element & InputListener> T removeListener( L listener )
 	{
+		if( listener instanceof Focusable )
+		{
+			this.focusable.remove( listener );
+		}
 		this.listeners.remove( listener );
 		
 		return (T)this;
@@ -66,6 +78,71 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 	public void clearListener()
 	{
 		this.listeners.clear();
+	}
+
+	public Optional<Element> getFocused()
+	{
+		return Optional.ofNullable( this.focused );
+	}
+
+	public T setFocus( Element element )
+	{
+		if( this.focusable.contains( element ) )
+		{
+			if( focused != null ) { ((Focusable)this.focused).setFocus( false ); }
+			this.focused = element;
+			((Focusable)this.focused).setFocus( true );
+
+			Element first = this.focusable.peekFirst();
+
+			while( !first.equals( element ) )
+			{
+				first = this.focusable.pollFirst();
+				this.focusable.addLast( first );
+				first = this.focusable.peekFirst();
+			}
+		}
+		return (T)this;
+	}
+
+	public void focusFirst()
+	{
+		this.listeners
+			.stream()
+			.filter( listener -> listener instanceof Focusable )
+			.findFirst()
+			.ifPresent(this::setFocus);
+	}
+
+	public void focusPrev()
+	{
+		if( this.focused == null )
+		{
+			this.focusFirst();
+		}
+		else
+		{
+			((Focusable)this.focused).setFocus( false );
+			this.focused = this.focusable.pollLast();
+			this.focusable.addFirst( this.focused );
+			((Focusable)this.focused).setFocus( true );
+		}
+	}
+
+	public void focusNext()
+	{
+		if( this.focused == null )
+		{
+			this.focusFirst();
+		}
+		else
+		{
+			((Focusable)this.focused).setFocus( false );
+			Element first = this.focusable.pollFirst();
+			this.focused = this.focusable.peekFirst();
+			this.focusable.addLast( first );
+			((Focusable)this.focused).setFocus( true );
+		}
 	}
 
 	public void close()
@@ -151,12 +228,7 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 					if( ( listener instanceof Focusable ) &&
 						( !((Focusable)listener).isFocused() ))
 					{
-						this.listeners
-							.stream()
-							.filter( focus -> focus instanceof Focusable )
-							.forEach( focus -> ((Focusable)focus).setFocus( false ) );
-
-						((Focusable)listener).setFocus( true );
+						this.setFocus( listener );
 					}
 					((MouseListener)listener).mouseClicked( event );
 					MinecraftForge.EVENT_BUS.post( new MouseClickedEvent( (Element&MouseListener)listener, event ) );
@@ -172,7 +244,23 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 
 		//Close Screen
 		if( eventKey == Keyboard.KEY_ESCAPE ) { this.close(); return; }
-		
+
+		//Focus change
+		if( ( !this.focusable.isEmpty() ) &&
+			( Keyboard.getEventKeyState() ) &&
+			( eventKey == Keyboard.KEY_TAB ) )
+		{
+			if( ( Keyboard.isKeyDown( Keyboard.KEY_LSHIFT ) ) ||
+				( Keyboard.isKeyDown( Keyboard.KEY_RSHIFT ) ) )
+			{
+				this.focusPrev();
+			}
+			else
+			{
+				this.focusNext();
+			}
+		}
+
 		//Nothing to do
 		if ( this.listeners.isEmpty() ) { return; }
 		
