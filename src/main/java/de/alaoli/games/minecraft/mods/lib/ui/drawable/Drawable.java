@@ -27,6 +27,9 @@ import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
 public interface Drawable<T extends Element>
 {
 	/**
+	 * Drawing something on the given {@link Element}, if the {@link Element} is null,
+	 * drawing will be skipped.
+	 *
 	 * @param element The element on which you want to draw something
 	 */
 	void drawOn( T element );
