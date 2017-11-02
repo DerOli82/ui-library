@@ -1,7 +1,28 @@
+/* *************************************************************************************************************
+ * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see:
+ *
+ * https://www.gnu.org/licenses/lgpl-3.0.html
+ ************************************************************************************************************ */
 package de.alaoli.games.minecraft.mods.lib.ui.util;
 
-/*
- * @// TODO: color pool
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author DerOli82 <https://github.com/DerOli82>
  */
 public class Colors
 {
@@ -9,20 +30,47 @@ public class Colors
      * Attribute
      ************************************************************************************************************** */
 
+    private static class LazyHolder
+    {
+        public static final Colors INSTANCE = new Colors();
+    }
+
+    private final Map<Integer, Color> colors = new HashMap<>();
+
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
     private Colors() {}
 
-    public static Color factory()
+    private Color getColor( int argb )
     {
-        return factory( Color.BLACK );
+        Color color;
+
+        if( this.colors.containsKey( argb ) )
+        {
+            color = this.colors.get( argb );
+        }
+        else
+        {
+            color = new Color( argb, true );
+            this.colors.put( argb, color );
+        }
+        return color;
+    }
+
+    /* **************************************************************************************************************
+     * Method - Static
+     ************************************************************************************************************** */
+
+    private static Colors getInstance()
+    {
+        return LazyHolder.INSTANCE;
     }
 
     public static Color factory( int rgb )
     {
-        return factory( 255, rgb );
+        return getInstance().getColor( Color.combineARGB( 255, rgb ) );
     }
 
     public static Color factory( float alpha, int rgb )
@@ -32,7 +80,7 @@ public class Colors
 
     public static Color factory( int alpha, int rgb )
     {
-        return new Color( alpha, rgb );
+        return getInstance().getColor( Color.combineARGB( alpha, rgb ) );
     }
 
     public static Color factory( int r, int g, int b )
@@ -47,18 +95,11 @@ public class Colors
 
     public static Color factory( int alpha, int r, int g, int b )
     {
-        return new Color( alpha, r, g, b);
+        return getInstance().getColor( Color.combineARGB( alpha, r, g, b ) );
     }
 
-    public static Color modifyDarker( Color color, float factor )
+    public static void clear()
     {
-       // if( factor > 0.0f ) { throw new IllegalArgumentException( "'factor' value must be greater than 0." ); }
-
-        return new Color(
-            color.getAlpha(),
-            Math.min( (int)(color.getRed()/factor ), 0 ),
-            Math.min( (int)(color.getGreen()/factor ), 0 ),
-            Math.min( (int)(color.getBlue()/factor ), 0 )
-        );
+        getInstance().colors.clear();
     }
 }

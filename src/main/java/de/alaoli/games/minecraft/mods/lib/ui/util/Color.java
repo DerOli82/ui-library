@@ -1,10 +1,34 @@
+/* *************************************************************************************************************
+ * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see:
+ *
+ * https://www.gnu.org/licenses/lgpl-3.0.html
+ ************************************************************************************************************ */
 package de.alaoli.games.minecraft.mods.lib.ui.util;
 
+/**
+ * You shouldn't use this clas.
+ * For creating and handling color instances, use the static methods in {@link Colors}.
+ *
+ * @author DerOli82 <https://github.com/DerOli82>
+ */
 public class Color 
 {	
-	/********************************************************************************
+	/* **************************************************************************************************************
 	 * Attribute
-	 ********************************************************************************/
+	 ************************************************************************************************************** */
 
 	public static final int BLACK = 0x000000;
 	public static final int DARKBLUE = 0x0000AA;
@@ -25,13 +49,21 @@ public class Color
 
 	public final int value;
 	
-	/********************************************************************************
+	/* **************************************************************************************************************
 	 * Method
-	 ********************************************************************************/
+	 ************************************************************************************************************** */
 
-	public Color()
+	public Color( int argb, boolean includesAlpha )
 	{
-		this( BLACK );
+		if( includesAlpha )
+		{
+			this.value = argb;
+		}
+		else
+		{
+			this.value = combineARGB( 255, argb );
+		}
+
 	}
 
 	public Color( int rgb )
@@ -46,7 +78,7 @@ public class Color
 
 	public Color( int alpha, int rgb )
 	{
-		this.value = argbToIntValue( alpha, rgb );
+		this.value = combineARGB( alpha, rgb );
 	}
 
 	public Color( int r, int g, int b )
@@ -61,7 +93,7 @@ public class Color
 	
 	public Color( int alpha, int r, int g, int b )
 	{
-		this.value = argbToIntValue( alpha, r, g, b );
+		this.value = combineARGB( alpha, r, g, b );
 	}
 
 	@Override
@@ -97,7 +129,18 @@ public class Color
 		return (this.value) & 0xFF;
 	}
 
-	public static int argbToIntValue( int alpha, int r, int g, int b )
+	/**
+	 * Combines alpha, red, green, blue value into argb value
+	 *
+	 * @throws IllegalArgumentException, if alpha, r, g or b value isn't between 0 and 255
+	 *
+	 * @param alpha	Transparency value
+	 * @param r		Red color value
+	 * @param g		Green color value
+	 * @param b		Blue color value
+	 * @return		Returns argb value
+	 */
+	public static int combineARGB(int alpha, int r, int g, int b ) throws IllegalArgumentException
 	{
 		if( alpha < 0 || alpha > 255 ) { throw new IllegalArgumentException( "'alpha' value must be between 0 and 255." ); }
 		if( r < 0 || r > 255 ) { throw new IllegalArgumentException( "'r' value must be between 0 and 255." ); }
@@ -107,11 +150,21 @@ public class Color
 		return ((alpha & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
 	}
 
-	public static int argbToIntValue( int alpha, int rgb )
+	/**
+	 * Combines alpha and rgb value into argb value
+	 *
+	 * @throws IllegalArgumentException, if alpha value isn't between 0 and 255
+	 * @throws IllegalArgumentException, if rgb value isn't between 0 and 16777215
+	 *
+	 * @param alpha	Transparency value
+	 * @param rgb	Combined Red, green and blue color value
+	 * @return		Returns argb value
+	 */
+	public static int combineARGB(int alpha, int rgb ) throws IllegalArgumentException
 	{
 		if( alpha < 0 || alpha > 255 ) { throw new IllegalArgumentException( "'alpha' value must be between 0 and 255." ); }
 		if( rgb < 0 || rgb > 16777215 ) { throw new IllegalArgumentException( "'rgb' value must be between 0 and 16777215." ); }
 
-		return ((0xFF) << 24) | rgb;
+		return ((alpha & 0xFF) << 24) | rgb;
 	}
 }
