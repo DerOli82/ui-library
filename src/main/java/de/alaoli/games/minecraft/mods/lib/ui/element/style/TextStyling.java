@@ -1,3 +1,21 @@
+/* *************************************************************************************************************
+ * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see:
+ *
+ * https://www.gnu.org/licenses/lgpl-3.0.html
+ ************************************************************************************************************ */
 package de.alaoli.games.minecraft.mods.lib.ui.element.style;
 
 import java.util.Optional;
@@ -13,7 +31,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 
-public class TextStyle<T extends Element<T> & Text<T>> extends Gui implements Style, Drawable<T>
+/**
+ * @author DerOli82 <https://github.com/DerOli82>
+ * @param <T> The type will be passed on to {@link Drawable}
+ */
+public class TextStyling<T extends Element<T> & Text<T>> extends Gui implements TextStyle<TextStyling, T>
 {
     /* **************************************************************************************************************
      * Attribute
@@ -31,72 +53,23 @@ public class TextStyle<T extends Element<T> & Text<T>> extends Gui implements St
      * Method
      ************************************************************************************************************** */
 
-	public TextStyle extend()
+	public TextStyling extend()
 	{
-		return new TextStyle()
+		return new TextStyling()
 			.setColor( this.color )
 			.setAlign( this.align )
 			.setLineHeight( this.lineHeight )
 			.setShadow( this.hasShadow );
 	}
 
-	public Optional<Color> getColor()
-	{
-		return Optional.ofNullable( this.color );
-	}
-	
-	public TextStyle setColor( Color color )
-	{
-		this.color = color;
-		
-		return this;
-	}
-	
-	public Optional<Align> getAlign()
-	{
-		return Optional.ofNullable( this.align );
-	}
-	
-	public TextStyle setAlign( Align align )
-	{
-		this.align = align;
-		
-		return this;
-	}
-	
-	public TextStyle setLineHeight( int lineHeight )
-	{
-		this.lineHeight = lineHeight;
-				
-		return this;
-	}
-	
-	public int getLineHeight()
-	{
-		return this.lineHeight;
-	}
-	
-	public TextStyle setShadow( boolean shadow )
-	{
-		this.hasShadow = shadow;
-		
-		return this;
-	}
-	
-	public boolean hasShadow()
-	{
-		return this.hasShadow;
-	}
-
 	public void drawTextAt( int x, int y, int width, int height, String text )
 	{
 		this.drawTextAt(
-			x, y, width, height, text,
-			(this.color!=null) ? this.color.value : Color.BLACK,
-			(this.align!=null) ? this.align : Align.LEFT
+				x, y, width, height, text,
+				(this.color!=null) ? this.color.value : Color.BLACK,
+				(this.align!=null) ? this.align : Align.LEFT
 		);
 	}
-
 	public void drawTextAt( int x, int y, int width, int height, String text, int color, Align align )
 	{
 		int textWidth = Math.min( width, FONTRENDERER.getStringWidth( text ) );
@@ -155,6 +128,74 @@ public class TextStyle<T extends Element<T> & Text<T>> extends Gui implements St
 		{
 			FONTRENDERER.drawString( text, x, y, color );
 		}
+	}
+
+    /* **************************************************************************************************************
+     * Method - Implement TextStyle
+     ************************************************************************************************************** */
+
+	@Override
+	public int getLineHeight()
+	{
+		return this.lineHeight;
+	}
+
+	@Override
+	public TextStyling setLineHeight(int lineHeight )
+	{
+		this.lineHeight = lineHeight;
+
+		return this;
+	}
+
+	@Override
+	public boolean hasShadow()
+	{
+		return this.hasShadow;
+	}
+
+	@Override
+	public TextStyling setShadow(boolean shadow )
+	{
+		this.hasShadow = shadow;
+
+		return this;
+	}
+
+    /* **************************************************************************************************************
+     * Method - Implement ColorStyle
+     ************************************************************************************************************** */
+
+	@Override
+	public Optional<Color> getColor()
+	{
+		return Optional.ofNullable( this.color );
+	}
+
+	@Override
+	public TextStyling setColor(Color color )
+	{
+		this.color = color;
+
+		return this;
+	}
+
+    /* **************************************************************************************************************
+     * Method - Implement AlignmentStyle
+     ************************************************************************************************************** */
+
+	@Override
+	public Optional<Align> getAlign()
+	{
+		return Optional.ofNullable( this.align );
+	}
+
+	@Override
+	public TextStyling setAlign(Align align )
+	{
+		this.align = align;
+
+		return this;
 	}
 
     /* **************************************************************************************************************
