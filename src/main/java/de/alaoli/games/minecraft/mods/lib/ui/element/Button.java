@@ -1,3 +1,22 @@
+/* **************************************************************************************************************
+ * Copyright 2017 DerOli82 <https://github.com/DerOli82>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see:
+ *
+ * https://www.gnu.org/licenses/lgpl-3.0.html
+ *
+ ************************************************************************************************************** */
 package de.alaoli.games.minecraft.mods.lib.ui.element;
 
 import de.alaoli.games.minecraft.mods.lib.ui.element.state.Disableable;
@@ -7,18 +26,20 @@ import de.alaoli.games.minecraft.mods.lib.ui.element.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.StateableStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.element.style.TextStyle;
+import de.alaoli.games.minecraft.mods.lib.ui.element.style.TextStyling;
 import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardEvent;
 import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardListener;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseEvent;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseListener;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * @author DerOli82 <https://github.com/DerOli82>
+ */
 public class Button extends Element<Button>
 	implements Text<Button>,
 		Focusable<Button>, Hoverable<Button>, Disableable<Button>,
@@ -28,16 +49,14 @@ public class Button extends Element<Button>
 	 * Attribute
 	 ************************************************************************************************************** */
 
-	public static final FontRenderer FONTRENDERER = Minecraft.getMinecraft().fontRenderer;
+	private BoxStyle boxStyle;
+	private TextStyle textStyle;
+
+	private String text;
 
 	private boolean focused = false;
 	private boolean hovered = false;
 	private boolean disabled = false;
-
-	private StateableStyle<BoxStyle> boxStyle;
-	private StateableStyle<TextStyle> textStyle;
-
-	private String text;
 
 	private Consumer<? super MouseEvent> onEntered;
 	private Consumer<? super MouseEvent> onExited;
@@ -49,56 +68,35 @@ public class Button extends Element<Button>
 	 * Method
 	 ************************************************************************************************************** */
 
-	public Optional<StateableStyle<BoxStyle>> getBoxStyle()
+	public Optional<BoxStyle> getBoxStyle()
 	{
 		return Optional.ofNullable( this.boxStyle );
 	}
 
-	public Button setBoxStyle( StateableStyle<BoxStyle> boxStyle )
+	public Button setBoxStyle( BoxStyle boxStyle )
 	{
 		this.boxStyle = boxStyle;
 
 		return this;
 	}
 
-	public Optional<StateableStyle<TextStyle>> getTextStyle()
+	public Optional<TextStyle> getTextStyle()
 	{
 		return Optional.ofNullable( this.textStyle );
 	}
 
-	public Button setTextStyle( StateableStyle<TextStyle> textStyle )
+	public Button setTextStyle( TextStyle textStyle )
 	{
 		this.textStyle = textStyle;
 
 		return this;
 	}
 
-	/**
-	 * @deprecated
-	 * @param text
-	 * @return
-	 */
-	public Button setText( String text )
-	{
-		this.text = text;
-
-		return this;
-	}
-
-	/**
-	 * @deprecated
-	 * @return
-	 */
-	public Optional<String> getText()
-	{
-		return Optional.ofNullable( this.text );
-	}
-
 	public State getState()
 	{
-		if( this.disabled ) {return State.DISABLED; }
-		if( this.focused ) {return State.FOCUSED; }
-		if( this.hovered ) {return State.HOVERED; }
+		if( this.disabled ) { return State.DISABLED; }
+		if( this.focused ) { return State.FOCUSED; }
+		if( this.hovered ) { return State.HOVERED; }
 
 		return State.NONE;
 	}
@@ -110,10 +108,47 @@ public class Button extends Element<Button>
 	@Override
 	public void drawElement( int mouseX, int mouseY, float partialTicks )
 	{
+		this.validateLayout();
+
+		if( this.boxStyle != null ) { this.boxStyle.drawOn( this ); }
+		if( this.textStyle != null ) { this.textStyle.drawOn( this ); }
+	}
+
+	/* **************************************************************************************************************
+	 * Method - Implement Layout
+	 ************************************************************************************************************** */
+
+	@Override
+	public void layout()
+	{
 		State state = this.getState();
 
-		if( this.boxStyle != null ) { this.boxStyle.get(state).ifPresent( style -> style.drawOn( this ) ); }
-		if( this.textStyle != null ) { this.textStyle.get(state).ifPresent( style -> style.drawOn( this )); }
+		/*
+		 * @TODO if box- or textstyle null set default style
+		 */
+		if( ( this.boxStyle != null ) &&
+			( this.boxStyle instanceof StateableStyle) )
+		{
+			((StateableStyle)this.boxStyle).setState( state );
+		}
+
+		if( ( this.textStyle != null ) &&
+			( this.textStyle instanceof StateableStyle ) )
+		{
+			((StateableStyle)this.textStyle).setState( state );
+		}
+	}
+
+	@Override
+	public int getPrefWidth()
+	{
+		return Math.max( TextStyling.FONTRENDERER.getStringWidth( this.text ), this.box.getWidth() );
+	}
+
+	@Override
+	public int getPrefHeight()
+	{
+		return Math.max( (this.textStyle!=null)?this.textStyle.getLineHeight():0, TextStyling.DEFAULT_LINEHEIGHT );
 	}
 
 	/* **************************************************************************************************************
@@ -172,6 +207,7 @@ public class Button extends Element<Button>
 	public Button setFocus( boolean focus )
 	{
 		this.focused = focus;
+		this.invalidateLayout();
 
 		return this;
 	}
@@ -190,6 +226,7 @@ public class Button extends Element<Button>
 	public Button setHover(boolean hover)
 	{
 		this.hovered = hover;
+		this.invalidateLayout();
 
 		return this;
 	}
@@ -208,6 +245,7 @@ public class Button extends Element<Button>
 	public Button setDisable(boolean disable)
 	{
 		this.disabled = disable;
+		this.invalidateLayout();
 
 		return this;
 	}

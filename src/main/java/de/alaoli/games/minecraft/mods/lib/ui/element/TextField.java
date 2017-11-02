@@ -1,3 +1,21 @@
+/* *************************************************************************************************************
+ * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see:
+ *
+ * https://www.gnu.org/licenses/lgpl-3.0.html
+ ************************************************************************************************************ */
 package de.alaoli.games.minecraft.mods.lib.ui.element;
 
 import java.util.ArrayList;
@@ -16,20 +34,23 @@ import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardEvent;
 import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardListener;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseEvent;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseListener;
-import de.alaoli.games.minecraft.mods.lib.ui.util.*;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.input.Keyboard;
 
+/**
+ * @author DerOli82 <https://github.com/DerOli82>
+ */
 public class TextField extends Element<TextField>
 	implements Text<TextField>, Placeholder<TextField>,
 		Focusable<TextField>, Hoverable<TextField>, Disableable<TextField>,
 		MouseListener<TextField>, KeyboardListener<TextField>
 {
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Attribute 
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	public static final FontRenderer FONTRENDERER = Minecraft.getMinecraft().fontRenderer;
 
@@ -37,8 +58,8 @@ public class TextField extends Element<TextField>
 	private boolean hovered = false;
 	private boolean disabled = false;
 
-	private StateableStyle<BoxStyle> boxStyle;
-	private StateableStyle<TextStyle> textStyle;
+	private BoxStyle boxStyle;
+	private TextStyle textStyle;
 
 	private Consumer<? super MouseEvent> onEntered;
 	private Consumer<? super MouseEvent> onExited;
@@ -51,28 +72,28 @@ public class TextField extends Element<TextField>
 	private int maxLength = 32;
 	private int cursorPos = 0;
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
-	public Optional<StateableStyle<BoxStyle>> getBoxStyle()
+	public Optional<BoxStyle> getBoxStyle()
 	{
 		return Optional.ofNullable( this.boxStyle );
 	}
 
-	public TextField setBoxStyle( StateableStyle<BoxStyle> boxStyle )
+	public TextField setBoxStyle( BoxStyle boxStyle )
 	{
 		this.boxStyle = boxStyle;
 
 		return this;
 	}
 
-	public Optional<StateableStyle<TextStyle>> getTextStyle()
+	public Optional<TextStyle> getTextStyle()
 	{
 		return Optional.ofNullable( this.textStyle );
 	}
 
-	public TextField setTextStyle( StateableStyle<TextStyle> textStyle )
+	public TextField setTextStyle( TextStyle textStyle )
 	{
 		this.textStyle = textStyle;
 
@@ -156,35 +177,69 @@ public class TextField extends Element<TextField>
 		}
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Element 
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public void drawElement( int mouseX, int mouseY, float partialTicks )
 	{
-		State state = this.getState();
+		this.validateLayout();
 
-		if( this.boxStyle != null ) { this.boxStyle.get(state).ifPresent( style -> style.drawOn( this ) ); }
+		if( this.boxStyle != null ) { this.boxStyle.drawOn( this ); }
 		if( this.textStyle != null )
 		{
-			this.textStyle.get(state).ifPresent( style -> {
-				style.drawOn( this );
+			this.textStyle.drawOn( this );
 
-				//Cursor if focused
-				if( ( this.focused ) &&
-					( !this.disabled ) )
-				{
-					int x = this.box.getX() + FONTRENDERER.getStringWidth( this.text.substring( 0,this.cursorPos ) )+2,
-						y = this.box.getY(),
-						height = this.box.getHeight(),
-						color = ((Optional<Color>)style.getColor()).map( Color::getValue ).orElse( Color.BLACK );
-					this.drawVerticalLine( x, y+1, y+height-2, color );
-				}
-			});
+			//Cursor if focused
+			if( ( this.focused ) &&
+				( !this.disabled ) )
+			{
+				int x = this.box.getX() + FONTRENDERER.getStringWidth( this.text.substring( 0,this.cursorPos ) )+2,
+					y = this.box.getY(),
+					height = this.box.getHeight(),
+					color = ((Optional<Color>)this.textStyle.getColor()).map( Color::getValue ).orElse( Color.BLACK );
+
+				this.drawVerticalLine( x, y+1, y+height-2, color );
+			}
+		}
+	}
+
+	/* **************************************************************************************************************
+	 * Method - Implement Layout
+	 ************************************************************************************************************** */
+
+	@Override
+	public void layout()
+	{
+		State state = this.getState();
+
+		/*
+		 * @TODO if box- or textstyle null set default style
+		 */
+		if( ( this.boxStyle != null ) &&
+				( this.boxStyle instanceof StateableStyle ) )
+		{
+			((StateableStyle)this.boxStyle).setState( state );
 		}
 
+		if( ( this.textStyle != null ) &&
+				( this.textStyle instanceof StateableStyle ) )
+		{
+			((StateableStyle)this.textStyle).setState( state );
+		}
+	}
 
+	@Override
+	public int getPrefWidth()
+	{
+		return this.box.getWidth();
+	}
+
+	@Override
+	public int getPrefHeight()
+	{
+		return this.box.getHeight();
 	}
 
 	/* **************************************************************************************************************
@@ -235,9 +290,9 @@ public class TextField extends Element<TextField>
 		return ( ( this.text != null ) && ( !this.text.isEmpty() ) ) ? 1 : 0;
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Placeholder
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public Optional<String> getPlaceholder()
@@ -253,14 +308,15 @@ public class TextField extends Element<TextField>
 		return this;
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Focusable
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public TextField setFocus( boolean focus )
 	{
 		this.focused = focus;
+		this.invalidateLayout();
 
 		return this;
 	}
@@ -271,14 +327,15 @@ public class TextField extends Element<TextField>
 		return this.focused;
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Hoverable
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public TextField setHover(boolean hover)
 	{
 		this.hovered = hover;
+		this.invalidateLayout();
 
 		return this;
 	}
@@ -289,14 +346,15 @@ public class TextField extends Element<TextField>
 		return this.hovered;
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Disableable
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
 	public TextField setDisable(boolean disable)
 	{
 		this.disabled = disable;
+		this.invalidateLayout();
 
 		return this;
 	}
@@ -306,9 +364,9 @@ public class TextField extends Element<TextField>
 		return this.disabled;
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implements MouseListener
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 
 	@Override
@@ -353,9 +411,9 @@ public class TextField extends Element<TextField>
 		return this;
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implements KeyboardListener
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 	
 	@Override
 	public void keyPressed( KeyboardEvent event )

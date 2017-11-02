@@ -1,3 +1,21 @@
+/* *************************************************************************************************************
+ * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see:
+ *
+ * https://www.gnu.org/licenses/lgpl-3.0.html
+ ************************************************************************************************************ */
 package de.alaoli.games.minecraft.mods.lib.ui.element;
 
 import de.alaoli.games.minecraft.mods.lib.ui.element.state.Disableable;
@@ -11,7 +29,7 @@ import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardEvent;
 import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardListener;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseEvent;
 import de.alaoli.games.minecraft.mods.lib.ui.event.MouseListener;
-import de.alaoli.games.minecraft.mods.lib.ui.util.*;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ChatAllowedCharacters;
@@ -22,6 +40,9 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * @author DerOli82 <https://github.com/DerOli82>
+ */
 public class TextArea extends Element<TextArea>
     implements Text<TextArea>, Placeholder<TextArea>,
         Focusable<TextArea>, Hoverable<TextArea>, Disableable<TextArea>,
@@ -37,8 +58,8 @@ public class TextArea extends Element<TextArea>
     private boolean hovered = false;
     private boolean disabled = false;
 
-    private StateableStyle<BoxStyle> boxStyle;
-    private StateableStyle<TextStyle> textStyle;
+    private BoxStyle boxStyle;
+    private TextStyle textStyle;
 
     private Consumer<? super MouseEvent> onEntered;
     private Consumer<? super MouseEvent> onExited;
@@ -58,24 +79,24 @@ public class TextArea extends Element<TextArea>
      * Method
      ************************************************************************************************************** */
 
-    public Optional<StateableStyle<BoxStyle>> getBoxStyle()
+    public Optional<BoxStyle> getBoxStyle()
     {
         return Optional.ofNullable( this.boxStyle );
     }
 
-    public TextArea setBoxStyle( StateableStyle<BoxStyle> boxStyle )
+    public TextArea setBoxStyle( BoxStyle boxStyle )
     {
         this.boxStyle = boxStyle;
 
         return this;
     }
 
-    public Optional<StateableStyle<TextStyle>> getTextStyle()
+    public Optional<TextStyle> getTextStyle()
     {
         return Optional.ofNullable( this.textStyle );
     }
 
-    public TextArea setTextStyle( StateableStyle<TextStyle> textStyle )
+    public TextArea setTextStyle( TextStyle textStyle )
     {
         this.textStyle = textStyle;
 
@@ -192,10 +213,10 @@ public class TextArea extends Element<TextArea>
     {
         State state = this.getState();
 
-        if( this.boxStyle != null ) { this.boxStyle.get(state).ifPresent( style -> style.drawOn( this ) ); }
-
-        this.textStyle.get(state).ifPresent( style -> {
-            style.drawOn( this );
+        if( this.boxStyle != null ) { this.boxStyle.drawOn( this ); }
+        if( this.textStyle != null )
+        {
+            this.textStyle.drawOn( this );
 
             //Cursor if focused
             if( ( this.focused ) &&
@@ -203,12 +224,50 @@ public class TextArea extends Element<TextArea>
             {
                 String text = (this.lines[this.cursorLine] != null) ? this.lines[this.cursorLine] : "";
                 int x = this.box.getX() + FONTRENDERER.getStringWidth( text.substring( 0,this.cursorPos ) )+2,
-                        lineheight = style.getLineHeight(),
+                        lineheight = this.textStyle.getLineHeight(),
                         y = this.box.getY() + lineheight*this.cursorLine,
-                        color = ((Optional<Color>)style.getColor()).map( Color::getValue ).orElse( Color.BLACK );
+                        color = ((Optional<Color>)this.textStyle.getColor()).map( Color::getValue ).orElse( Color.BLACK );
+
                 this.drawVerticalLine( x, y+1, y+lineheight, color );
             }
-        });
+        }
+    }
+
+	/* **************************************************************************************************************
+	 * Method - Implement Layout
+	 ************************************************************************************************************** */
+
+    @Override
+    public void layout()
+    {
+        State state = this.getState();
+
+		/*
+		 * @TODO if box- or textstyle null set default style
+		 */
+        if( ( this.boxStyle != null ) &&
+                ( this.boxStyle instanceof StateableStyle) )
+        {
+            ((StateableStyle)this.boxStyle).setState( state );
+        }
+
+        if( ( this.textStyle != null ) &&
+                ( this.textStyle instanceof StateableStyle ) )
+        {
+            ((StateableStyle)this.textStyle).setState( state );
+        }
+    }
+
+    @Override
+    public int getPrefWidth()
+    {
+        return this.box.getWidth();
+    }
+
+    @Override
+    public int getPrefHeight()
+    {
+        return this.box.getHeight();
     }
 
 	/* **************************************************************************************************************
