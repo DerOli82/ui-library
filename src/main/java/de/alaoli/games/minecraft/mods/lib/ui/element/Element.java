@@ -1,4 +1,3 @@
-
 /* *************************************************************************************************************
  * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
  *  
@@ -22,29 +21,19 @@ package de.alaoli.games.minecraft.mods.lib.ui.element;
 import java.util.Optional;
 
 import de.alaoli.games.minecraft.mods.lib.ui.layout.Layout;
-import org.lwjgl.util.Rectangle;
-
-import net.minecraft.client.gui.Gui;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Region;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
- * @param <T> The type of the child class, required for returning child class in all setter methods
  */
-public abstract class Element<T extends Element> extends Gui implements Layout
+public abstract class Element extends Region implements Layout
 {
 	/* **************************************************************************************************************
 	 * Attribute 
 	 ************************************************************************************************************** */
 
-	/**
-	 * Contains the element bounds
-	 */
-	public final Rectangle box = new Rectangle();
-
-	private boolean needsLayout = true;
-	private boolean fillParent = false;
-
 	private Element parent;
+	private boolean needsLayout = true;
 
 	/* **************************************************************************************************************
 	 * Method
@@ -54,128 +43,61 @@ public abstract class Element<T extends Element> extends Gui implements Layout
 	{
 		return Optional.ofNullable( this.parent );
 	}
-	public boolean hasParent()
-	{
-		return this.parent != null;
-	}
 
 	/**
 	 * You shouldn't use this, it's for internal usage only.
 	 *
-	 * @param parent	Sets parent element of this element
+	 * @param parent	Sets parent of this {@link Element}
 	 * @return			Returns this object
 	 */
-	public T setParent( Element parent )
+	public Element setParent( Element parent )
 	{
 		this.parent = parent;
 
-		return (T)this;
+		return this;
 	}
 
 	/**
-	 * Pass trough {@link #box#setBounds(int, int, int, int)}
-	 *
-	 * @param posX		Sets X-Position of this element
-	 * @param posY		Sets Y-Position of this element
-	 * @param width		Sets width of this Element
-	 * @param height	Sets height of this Element
-	 * @return 			Returns this object
-	 */
-	public T setBounds(int posX, int posY, int width, int height )
-	{
-		this.box.setBounds( posX, posY, width, height );
-
-		return (T)this;
-	}
-
-	/**
-	 * Pass trough {@link #box#setLocation(int, int)}
-	 *
-	 * @param posX 	Sets X-Position of this element
-	 * @param posY 	Sets Y-Position of this element
-	 * @return 		Returns this object
-	 */
-	public T setLocation( int posX, int posY )
-	{
-		this.box.setLocation( posX, posY );
-
-		return (T)this;
-	}
-
-	/**
-	 * Pass trough {@link #box#setPosX(int)}
-	 *
-	 * @param posX	Sets X-Position of this element
-	 * @return 		Returns this object
-	 */
-	public T setPosX( int posX )
-	{
-		this.box.setX( posX );
-
-		return (T)this;
-	}
-
-	/**
-	 * Pass trough {@link #box#setPosY(int)}
-	 *
-	 * @param posY	Sets Y-Position of this element
-	 * @return 		Returns this object
-	 */
-	public T setPosY( int posY )
-	{
-		this.box.setY( posY );
-
-		return (T)this;
-	}
-
-	/**
-	 * Pass trough {@link #box#setSize(int, int)}
-	 *
-	 * @param width		Sets width of this Element
-	 * @param height	Sets height of this Element
-	 * @return 			Returns this object
-	 */
-	public T setSize( int width, int height )
-	{
-		this.box.setSize( width, height );
-
-		return (T)this;
-	}
-
-	/**
-	 * Pass trough {@link #box#setWidth(int)}
-	 *
-	 * @param width	Sets width of this Element
-	 * @return 		Returns this object
-	 */
-	public T setWidth(int width )
-	{
-		this.box.setWidth( width );
-
-		return (T)this;
-	}
-
-	/**
-	 * Pass trough {@link #box#setHeight(int)}
-	 *
-	 * @param height	Sets height of this Element
-	 * @return 			Returns this object
-	 */
-	public T setHeight(int height )
-	{
-		this.box.setHeight( height );
-
-		return (T)this;
-	}
-
-	/**
-	 * Drawing this element
+	 * Drawing this {@link Element} within the given {@link Region}, if the region has no dimension,
+	 * drawing will be skipped.
 	 *
 	 * @param mouseX		X-Position of the mouse, only needed for wrapped Minecraft GUI elements
 	 * @param mouseY		Y-Position of the mouse, only needed for wrapped Minecraft GUI elements
 	 * @param partialTicks	The amount of time, in fractions of a tick, that has passed since the last full tick.
 	 */
-	public abstract void drawElement( int mouseX, int mouseY, float partialTicks );
+	public void drawElement( int mouseX, int mouseY, float partialTicks )
+	{
+		this.validateLayout();
+
+		if( ( this.getWidth() <= 0 ) || ( this.getHeight() <= 0 ) ) { return; }
+
+		this.drawElementAt( this.getX(), this.getY(), this.getWidth(), this.getHeight(), mouseX, mouseY, partialTicks );
+	}
+
+	/**
+	 * Drawing this element at the given location and dimension, if it has no dimension,
+	 * drawing will be skipped.
+	 *
+	 * @param x				Drawing x-position
+	 * @param y				Drawing y-position
+	 * @param width			Drawing width
+	 * @param height		Drawing height
+	 * @param mouseX		X-Position of the mouse, only needed for wrapped Minecraft GUI elements
+	 * @param mouseY		Y-Position of the mouse, only needed for wrapped Minecraft GUI elements
+	 * @param partialTicks	The amount of time, in fractions of a tick, that has passed since the last full tick.
+	 */
+	public abstract void drawElementAt( int x, int y, int width, int height, int mouseX, int mouseY, float partialTicks );
+
+	/* **************************************************************************************************************
+	 * Method - Implement Region
+	 ************************************************************************************************************** */
+
+	@Override
+	public void onUpdate()
+	{
+		super.onUpdate();
+		this.invalidateLayout();
+	}
 
 	/* **************************************************************************************************************
 	 * Method - Implement Layout
@@ -184,19 +106,10 @@ public abstract class Element<T extends Element> extends Gui implements Layout
 	@Override
 	public void validateLayout()
 	{
-		if( ( this.fillParent ) &&
-			( this.parent != null ) )
-		{
-			this.box.setSize(
-				this.parent.box.getWidth(),
-				this.parent.box.getHeight()
-			);
-		}
-
 		if( this.needsLayout )
 		{
-			this.needsLayout = false;
 			this.layout();
+			this.needsLayout = false;
 		}
 	}
 
@@ -210,35 +123,5 @@ public abstract class Element<T extends Element> extends Gui implements Layout
 	public boolean needsLayout()
 	{
 		return this.needsLayout;
-	}
-
-	@Override
-	public void setFillParent(boolean fillParent)
-	{
-		this.fillParent = fillParent;
-	}
-
-	@Override
-	public int getMinWidth()
-	{
-		return this.getPrefWidth();
-	}
-
-	@Override
-	public int getMinHeight()
-	{
-		return this.getPrefHeight();
-	}
-
-	@Override
-	public int getMaxWidth()
-	{
-		return (this.parent!=null) ? this.parent.getMaxWidth() : 0;
-	}
-
-	@Override
-	public int getMaxHeight()
-	{
-		return (this.parent!=null) ? this.parent.getMaxHeight() : 0;
 	}
 }
