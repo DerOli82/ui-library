@@ -18,16 +18,14 @@
  ************************************************************************************************************ */
 package de.alaoli.games.minecraft.mods.lib.ui.event;
 
-import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
-
 import java.util.function.Consumer;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public interface KeyboardListener<T extends Element> extends InputListener
+public interface KeyboardListener extends InputListener
 {
 	void keyPressed(KeyboardEvent event);
 
-	T onKeyPressed(  Consumer<? super KeyboardEvent> consumer );
+	KeyboardListener onKeyPressed(  Consumer<? super KeyboardEvent> consumer );
 }
