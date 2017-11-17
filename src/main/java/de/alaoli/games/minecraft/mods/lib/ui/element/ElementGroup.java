@@ -23,9 +23,8 @@ import java.util.Collection;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
- * @param <T> The type will be passed on to {@link Element}
  */
-public abstract class ElementGroup<T extends ElementGroup> extends Element<T>
+public abstract class ElementGroup extends Element
 {
 	/* **************************************************************************************************************
 	 * Method
@@ -39,10 +38,12 @@ public abstract class ElementGroup<T extends ElementGroup> extends Element<T>
 	/* **************************************************************************************************************
 	 * Method - Implement Element
 	 ************************************************************************************************************** */
-	
+
 	@Override
 	public void drawElement( int mouseX, int mouseY, float partialTicks )
 	{
+		super.drawElement( mouseX, mouseY, partialTicks );
+
 		this.getElements().forEach( element -> element.drawElement( mouseX, mouseY, partialTicks ) );
-	}	
+	}
 }
