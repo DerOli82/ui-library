@@ -10,6 +10,6 @@ import java.util.Optional;
  */
 public interface Box<T extends Element>
 {
-    T setBoxStyle( BoxStyling style );
-    Optional<BoxStyling> getBoxStyle();
+    T setBoxStyle( BoxStyle style );
+    Optional<BoxStyle> getBoxStyle();
 }
