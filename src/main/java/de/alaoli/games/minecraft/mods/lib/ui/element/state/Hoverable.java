@@ -20,10 +20,9 @@ package de.alaoli.games.minecraft.mods.lib.ui.element.state;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
- * @param <T> The type of the child class, required for returning child class in {@link #setHover(boolean)}
  */
-public interface Hoverable<T extends Hoverable<T>>
+public interface Hoverable
 {
-    T setHover( boolean hover );
+    Hoverable setHover( boolean hover );
     boolean isHovered();
 }

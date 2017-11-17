@@ -20,10 +20,9 @@ package de.alaoli.games.minecraft.mods.lib.ui.element.state;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
- * @param <T> The type of the child class, required for returning child class in {@link #setFocus(boolean)}
  */
-public interface Focusable<T extends Focusable<T>>
+public interface Focusable
 {
-	T setFocus( boolean focus );
+	Focusable setFocus( boolean focus );
 	boolean isFocused();
 }

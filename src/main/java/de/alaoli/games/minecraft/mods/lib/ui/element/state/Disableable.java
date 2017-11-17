@@ -20,10 +20,9 @@ package de.alaoli.games.minecraft.mods.lib.ui.element.state;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
- * @param <T> The type of the child class, required for returning child class in {@link #setDisable(boolean)}
  */
-public interface Disableable<T extends Disableable<T>>
+public interface Disableable
 {
-    T setDisable( boolean disable );
+    Disableable setDisable( boolean disable );
     boolean isDisabled();
 }
