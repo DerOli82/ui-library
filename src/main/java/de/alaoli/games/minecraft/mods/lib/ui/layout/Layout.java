@@ -47,25 +47,4 @@ public interface Layout
 	 * @return Returns true, if this element needs to call {@link #layout()}
 	 */
 	boolean needsLayout();
-
-	/**
-	 * @param fillParent If true, this element will be sized to the parent element in {@link #validateLayout()} ()}
-	 */
-	void setFillParent( boolean fillParent );
-
-	int getMinWidth ();
-	int getMinHeight ();
-
-	int getPrefWidth ();
-	int getPrefHeight ();
-
-	/**
-	 * Zero indicates no max width limitation.
-	 */
-	int getMaxWidth ();
-
-	/**
-	 * Zero indicates no max height limitation.
-	 */
-	int getMaxHeight ();
 }
