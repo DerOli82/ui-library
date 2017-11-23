@@ -18,23 +18,19 @@
  ************************************************************************************************************ */
 package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 
-import java.util.Optional;
-
-import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
-import de.alaoli.games.minecraft.mods.lib.ui.element.style.ColorStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import net.minecraft.client.gui.Gui;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class Background extends Gui implements ColorStyle<Background>, Drawable<Element>
+public class Background implements Drawable
 {
 	/* **************************************************************************************************************
 	 * Attribute
 	 ************************************************************************************************************** */
 
-	private Color color;
+	private final Color color;
 	
 	/* **************************************************************************************************************
 	 * Method
@@ -46,36 +42,14 @@ public class Background extends Gui implements ColorStyle<Background>, Drawable<
 	}
 
 	/* **************************************************************************************************************
-	 * Method - Implement ColorStyle
-	 ************************************************************************************************************** */
-
-	@Override
-	public Optional<Color> getColor()
-	{
-		return Optional.ofNullable( this.color );
-	}
-
-	@Override
-	public Background setColor( Color color )
-	{
-		this.color = color;
-
-		return this;
-	}
-
-	/* **************************************************************************************************************
 	 * Method - Implement Drawable
 	 ************************************************************************************************************** */
 	
 	@Override
-	public void drawOn( Element element )
+	public void drawAt( int x, int y, int width, int height )
 	{
-		int x = element.box.getX(),
-			y = element.box.getY(),
-			width = element.getPrefWidth(),
-			height = element.getPrefHeight(),
-			color = (this.color!=null) ? this.color.value : Color.BLACK;
+		int color = (this.color!=null) ? this.color.value : Color.BLACK;
 
-		Gui.drawRect( x, y, x + width, y + height, color );
+		Gui.drawRect( x, y, x+width, y+height, color );
 	}
 }

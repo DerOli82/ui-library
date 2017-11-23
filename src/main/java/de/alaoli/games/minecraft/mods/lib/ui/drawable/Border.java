@@ -18,23 +18,19 @@
  ************************************************************************************************************ */
 package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 
-import java.util.Optional;
-
-import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
-import de.alaoli.games.minecraft.mods.lib.ui.element.style.ColorStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import net.minecraft.client.gui.Gui;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class Border extends Gui implements ColorStyle<Border>, Drawable<Element>
+public class Border extends Gui implements Drawable
 {
 	/* **************************************************************************************************************
 	 * Attribute
 	 ************************************************************************************************************** */
 	
-	private Color color;
+	private final Color color;
 	
 	private boolean hideTop = false;
 	private boolean hideLeft = false;
@@ -50,16 +46,6 @@ public class Border extends Gui implements ColorStyle<Border>, Drawable<Element>
 		this.color = color;
 	}
 
-	public Border hide( boolean hide )
-	{
-		this.hideTop = hide;
-		this.hideLeft = hide;
-		this.hideRight = hide;
-		this.hideBottom = hide;
-		
-		return this;
-	}
-
 	public Border hide( boolean top, boolean left, boolean right, boolean bottom )
 	{
 		this.hideTop = top;
@@ -71,39 +57,19 @@ public class Border extends Gui implements ColorStyle<Border>, Drawable<Element>
 	}
 
 	/* **************************************************************************************************************
-	 * Method - Implement ColorStyle
-	 ************************************************************************************************************** */
-
-	@Override
-	public Optional<Color> getColor()
-	{
-		return Optional.ofNullable( this.color );
-	}
-
-	@Override
-	public Border setColor( Color color )
-	{
-		this.color = color;
-
-		return this;
-	}
-
-	/* **************************************************************************************************************
 	 * Method - Implement Drawable
 	 ************************************************************************************************************** */
 	
 	@Override
-	public void drawOn( Element element )
+	public void drawAt( int left, int top, int width, int height )
 	{
-		int x = element.box.getX(),
-			y = element.box.getY(),
-			width = element.box.getWidth(),
-			height = element.box.getHeight(),
+		int right = left + width,
+			bottom = top + height,
 			color = (this.color!=null) ? this.color.value : Color.BLACK;
 
-		if( !this.hideTop ) { this.drawHorizontalLine( x, x+width-1, y, color ); }
-		if( !this.hideLeft ) { this.drawVerticalLine( x, y, y+height, color ); }
-		if( !this.hideRight ) { this.drawVerticalLine( x+width-1, y, y+height, color ); }
-		if( !this.hideBottom ) { this.drawHorizontalLine( x, x+width-1, y+height-1, color ); }
+		if( !this.hideTop ) { this.drawHorizontalLine( left, right-1, top, color ); }
+		if( !this.hideLeft ) { this.drawVerticalLine( left, top, bottom, color ); }
+		if( !this.hideRight ) { this.drawVerticalLine( right-1, top, bottom, color ); }
+		if( !this.hideBottom ) { this.drawHorizontalLine( left, right-1, bottom-1, color ); }
 	}
 }
