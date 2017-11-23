@@ -29,6 +29,9 @@ public class MouseEvent
      * Attribute
      ************************************************************************************************************** */
 
+    public static final int BUTTON_LEFT = 0;
+	public static final int BUTTON_RIGHT = 1;
+
 	public final int x;
 	public final int y;
 	public final int button;
