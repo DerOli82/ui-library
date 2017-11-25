@@ -1,3 +1,22 @@
+/* **************************************************************************************************************
+ * Copyright 2017 DerOli82 <https://github.com/DerOli82>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see:
+ *
+ * https://www.gnu.org/licenses/lgpl-3.0.html
+ *
+ ************************************************************************************************************** */
 package de.alaoli.games.minecraft.mods.lib.ui;
 
 import java.io.IOException;
@@ -7,9 +26,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import de.alaoli.games.minecraft.mods.lib.ui.event.*;
+import de.alaoli.games.minecraft.mods.lib.ui.element.state.Disableable;
 import de.alaoli.games.minecraft.mods.lib.ui.element.state.Focusable;
 import de.alaoli.games.minecraft.mods.lib.ui.element.state.Hoverable;
+import de.alaoli.games.minecraft.mods.lib.ui.event.*;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -18,37 +39,45 @@ import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
 import de.alaoli.games.minecraft.mods.lib.ui.layout.Layout;
 import net.minecraft.client.gui.GuiScreen;
 
-public abstract class Screen<T extends Screen> extends GuiScreen implements Layout
+/**
+ * @author DerOli82 <https://github.com/DerOli82>
+ */
+public abstract class Screen extends GuiScreen implements Layout
 {
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Attribute
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	private final List<Element> listeners = new ArrayList<>();
 	private final LinkedList<Element> focusable = new LinkedList<>();
 
-	private Layout layout;
+	private boolean initialized = false;
+	private boolean needsLayout = true;
+
+	private Element layout;
 	private Element focused;
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
-	public <L extends Element & Layout> T setLayout( L layout )
+	public abstract void init();
+
+	public Optional<Layout> getLayout()
+	{
+		return Optional.ofNullable( this.layout );
+	}
+
+	public Screen setLayout( Element layout )
 	{
 		this.layout = layout;
 
 		layout.setBounds(0, 0, this.width, this.height );
 
-		return (T)this;
+		return this;
 	}
-	
-	public Optional<Layout> getLayout()
-	{
-		return Optional.ofNullable( this.layout );
-	}
-	
-	public <L extends Element & InputListener> T addListener( L listener )
+
+	public <L extends Element & InputListener> Screen addListener(L listener )
 	{
 		if( listener instanceof Focusable )
 		{
@@ -56,10 +85,10 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 		}
 		this.listeners.add( listener );
 		
-		return (T)this;
+		return this;
 	}
 	
-	public <L extends Element & InputListener> T removeListener( L listener )
+	public <L extends Element & InputListener> Screen removeListener( L listener )
 	{
 		if( listener instanceof Focusable )
 		{
@@ -67,27 +96,23 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 		}
 		this.listeners.remove( listener );
 		
-		return (T)this;
-	}
-	
-	public <L extends Element & InputListener> boolean hasListener( L listener )
-	{
-		return this.listeners.contains( listener );
-	}
-	
-	public void clearListener()
-	{
-		this.listeners.clear();
+		return this;
 	}
 
-	public Optional<Element> getFocused()
+ 	private boolean focusAvailable()
 	{
-		return Optional.ofNullable( this.focused );
+		return !this.focusable.isEmpty() &&
+				this.focusable.stream()
+					.filter(focusable -> !(focusable instanceof Disableable) || !((Disableable) focusable).isDisabled())
+					.count() > 0;
 	}
 
-	public T setFocus( Element element )
+	private Screen setFocus( Element element )
 	{
-		if( this.focusable.contains( element ) )
+		if( !this.focusAvailable() ) { return this; }
+
+		if( ( element instanceof Focusable ) &&
+			( this.focusable.contains( element ) ) )
 		{
 			if( focused != null ) { ((Focusable)this.focused).setFocus( false ); }
 			this.focused = element;
@@ -102,21 +127,26 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 				first = this.focusable.peekFirst();
 			}
 		}
-		return (T)this;
+		return this;
 	}
 
-	public void focusFirst()
+	private void focusFirst()
 	{
+		if( !this.focusAvailable() ) { return; }
+
 		this.listeners
 			.stream()
 			.filter( listener -> listener instanceof Focusable )
 			.findFirst()
-			.ifPresent(this::setFocus);
+			.ifPresent( this::setFocus );
 	}
 
-	public void focusPrev()
+	private void focusPrev()
 	{
-		if( this.focused == null )
+		if( !this.focusAvailable() ) { return; }
+
+		if( ( this.focused == null )||
+			( this.focusable.size() <= 1 ) )
 		{
 			this.focusFirst();
 		}
@@ -125,13 +155,26 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 			((Focusable)this.focused).setFocus( false );
 			this.focused = this.focusable.pollLast();
 			this.focusable.addFirst( this.focused );
-			((Focusable)this.focused).setFocus( true );
+
+			//Skip if disabled
+			if( ( focused instanceof Disableable ) &&
+				( ((Disableable)focused).isDisabled() ) )
+			{
+				this.focusPrev();
+			}
+			else
+			{
+				((Focusable) this.focused).setFocus( true );
+			}
 		}
 	}
 
-	public void focusNext()
+	private void focusNext()
 	{
-		if( this.focused == null )
+		if( !this.focusAvailable() ) { return; }
+
+		if( ( this.focused == null ) ||
+			( this.focusable.size() <= 1 ) )
 		{
 			this.focusFirst();
 		}
@@ -141,13 +184,22 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 			Element first = this.focusable.pollFirst();
 			this.focused = this.focusable.peekFirst();
 			this.focusable.addLast( first );
-			((Focusable)this.focused).setFocus( true );
+
+			//Skip if disabled
+			if( ( this.focused instanceof Disableable ) &&
+				( ((Disableable)this.focused).isDisabled() ) )
+			{
+				this.focusNext();
+			}
+			else
+			{
+				((Focusable) this.focused).setFocus( true );
+			}
 		}
 	}
 
-	public void close()
+	protected void close()
 	{
-
 		this.mc.displayGuiScreen(null);
 
 		if (this.mc.currentScreen == null)
@@ -156,31 +208,32 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 		}
 	}
 
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement GuiScreen
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 	
 	@Override
 	public void initGui() 
 	{
 		super.initGui();
 
-		//MinecraftForge.EVENT_BUS.register( this );
-		this.layout();
+		if( !this.initialized )
+		{
+			this.init();
+			this.initialized = true;
+		}
 	}
-	
+
 	@Override
-	public void onGuiClosed() 
+	public void onResize( Minecraft mcIn, int w, int h )
 	{
-		super.onGuiClosed();
+		super.onResize( mcIn, w, h );
 
-		//MinecraftForge.EVENT_BUS.unregister( this );
-		this.listeners.clear();
-	}
-
-	@Override
-	public void updateScreen() {
-		super.updateScreen();
+		if( this.layout != null )
+		{
+			this.layout.setSize( w, h );
+		}
+		this.invalidateLayout();
 	}
 
 	@Override
@@ -197,10 +250,10 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 		);
 		this.listeners
 			.stream()
-			.filter( listener -> listener instanceof MouseListener )
+			.filter( listener -> listener instanceof MouseListener)
 			.collect(Collectors.toCollection( ArrayList::new ))
 			.forEach( listener -> {
-				boolean hovered = listener.box.contains( event.x, event.y );
+				boolean hovered = listener.contains( event.x, event.y );
 
 				//Element entered or exited event
 				if( listener instanceof Hoverable)
@@ -283,28 +336,33 @@ public abstract class Screen<T extends Screen> extends GuiScreen implements Layo
 	{
 		if( this.layout == null ) { return; }
 
+		this.validateLayout();
 		this.layout.drawElement( mouseX, mouseY, partialTicks );
 	}
 	
-	/******************************************************************************************
+	/* **************************************************************************************************************
 	 * Method - Implement Layout
-	 ******************************************************************************************/
+	 ************************************************************************************************************** */
 
 	@Override
-	public void layout()
+	public void validateLayout()
 	{
-		this.doLayout();
-		
-		if( this.layout != null ) { this.layout.layout(); }
-		
+		if( this.needsLayout )
+		{
+			this.needsLayout = false;
+			this.layout();
+		}
 	}
-	
-	@Override
-	public void doLayout() {}
 
 	@Override
-	public void drawElement( int mouseX, int mouseY, float partialTicks )
+	public void invalidateLayout()
 	{
-		this.drawScreen( mouseX, mouseY, partialTicks );
+		this.needsLayout = true;
+	}
+
+	@Override
+	public boolean needsLayout()
+	{
+		return this.needsLayout;
 	}
 }
