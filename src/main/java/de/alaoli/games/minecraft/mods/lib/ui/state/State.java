@@ -1,5 +1,5 @@
 /* *************************************************************************************************************
- * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,14 +15,16 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************ */
-package de.alaoli.games.minecraft.mods.lib.ui.element.state;
+ ************************************************************************************************************* */
+package de.alaoli.games.minecraft.mods.lib.ui.state;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public interface Hoverable
+public enum State
 {
-    Hoverable setHover( boolean hover );
-    boolean isHovered();
+    NONE,
+    HOVERED,
+    FOCUSED,
+    DISABLED
 }
