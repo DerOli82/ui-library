@@ -1,5 +1,5 @@
 /* *************************************************************************************************************
- * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,41 +15,10 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************ */
+ ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.drawable;
-
-import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import net.minecraft.client.gui.Gui;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class Background implements Drawable
-{
-	/* **************************************************************************************************************
-	 * Attribute
-	 ************************************************************************************************************** */
-
-	private final Color color;
-	
-	/* **************************************************************************************************************
-	 * Method
-	 ************************************************************************************************************** */
-
-	public Background( Color color ) 
-	{
-		this.color = color;
-	}
-
-	/* **************************************************************************************************************
-	 * Method - Implement Drawable
-	 ************************************************************************************************************** */
-	
-	@Override
-	public void drawAt( int x, int y, int width, int height )
-	{
-		int color = (this.color!=null) ? this.color.value : Color.BLACK;
-
-		Gui.drawRect( x, y, x+width, y+height, color );
-	}
-}
+public interface Background extends Drawable {}
