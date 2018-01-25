@@ -1,5 +1,5 @@
 /* *************************************************************************************************************
- * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,27 +15,30 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************ */
+ ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 
-import de.alaoli.games.minecraft.mods.lib.ui.util.Region;
+import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
+import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
- * @param <T> The type of {@link Region} on which you want to {@link #drawOn(Region)}
+ *
+ * @param <T> The type of {@link Element} on which you want to {@link #drawOn(Element)}
  */
-public interface Drawable<T extends Region>
+public interface Drawable<T extends Element>
 {
 	/**
-	 * Drawing something on the given {@link Region}, if the {@link Region} is null,
+	 * Drawing something on the given {@link Element}, if the {@link Element} is null,
 	 * drawing will be skipped.
 	 *
-	 * @param region The element on which you want to draw something
+	 * @param element The element on which you want to draw something
 	 */
-	default void drawOn( T region )
+	default void drawOn( T element )
 	{
-		if( region == null ) { return; }
+		if( element == null ) { return; }
 
+		Region region = element.getRegion();
 		this.drawAt( region.getX(), region.getY(), region.getWidth(), region.getHeight() );
 	}
 
