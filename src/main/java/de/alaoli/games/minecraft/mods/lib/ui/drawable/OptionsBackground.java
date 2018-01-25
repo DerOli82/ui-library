@@ -1,5 +1,5 @@
 /* *************************************************************************************************************
- * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,7 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************ */
+ ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 
 import net.minecraft.client.Minecraft;
@@ -30,8 +30,20 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  *
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class OptionsBackground extends Gui implements Drawable
+public final class OptionsBackground extends Gui implements Drawable
 {
+	/* **************************************************************************************************************
+	 * Attribute
+	 ************************************************************************************************************** */
+
+	public static final OptionsBackground DEFAULT = new OptionsBackground();
+
+	/* **************************************************************************************************************
+	 * Method
+	 ************************************************************************************************************** */
+
+	private OptionsBackground() {}
+
 	/* **************************************************************************************************************
 	 * Method - Implement Drawable
 	 ************************************************************************************************************** */
