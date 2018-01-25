@@ -1,5 +1,5 @@
 /* *************************************************************************************************************
- * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,11 +15,11 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************ */
+ ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 
-import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
-import de.alaoli.games.minecraft.mods.lib.ui.element.state.State;
+import de.alaoli.games.minecraft.mods.lib.ui.state.State;
+import de.alaoli.games.minecraft.mods.lib.ui.state.Stateable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -33,22 +33,30 @@ import net.minecraft.util.ResourceLocation;
  *
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class ButtonBackground extends Gui implements Drawable<Element>
+public class StatefulButtonBackground extends Gui implements Drawable, Stateable
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
     private static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation( "textures/gui/widgets.png" );
-    private final int textureY;
+
+    private State state;
+    private int textureY;
 
 	/* **************************************************************************************************************
 	 * Method
 	 ************************************************************************************************************** */
 
-	public ButtonBackground( State state )
+	public StatefulButtonBackground()
     {
-        switch( state )
+        this.state = State.NONE;
+        this.updateState();
+    }
+
+    private void updateState()
+    {
+        switch( this.state )
         {
             case DISABLED:
                 this.textureY = 46;
@@ -66,7 +74,24 @@ public class ButtonBackground extends Gui implements Drawable<Element>
         }
     }
 
-	/* **************************************************************************************************************
+    /* **************************************************************************************************************
+     * Method - Implement Stateable
+     ************************************************************************************************************** */
+
+    @Override
+    public State getState()
+    {
+        return this.state;
+    }
+
+    @Override
+    public void setState( State state )
+    {
+        this.state = state;
+        this.updateState();
+    }
+
+    /* **************************************************************************************************************
 	 * Method - Implement Drawable
 	 ************************************************************************************************************** */
 
