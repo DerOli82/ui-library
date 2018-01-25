@@ -33,7 +33,7 @@ import net.minecraft.util.ResourceLocation;
  *
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class StatefulButtonBackground extends Gui implements Drawable, Stateable
+public class StatefulButtonBackground extends Gui implements Background, Stateable
 {
     /* **************************************************************************************************************
      * Attribute

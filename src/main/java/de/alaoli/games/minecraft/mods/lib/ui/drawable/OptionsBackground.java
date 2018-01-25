@@ -30,7 +30,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
  *
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class OptionsBackground extends Gui implements Drawable
+public final class OptionsBackground extends Gui implements Background
 {
 	/* **************************************************************************************************************
 	 * Attribute
