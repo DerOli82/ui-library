@@ -20,6 +20,7 @@ package de.alaoli.games.minecraft.mods.lib.ui.style;
 
 import de.alaoli.games.minecraft.mods.lib.ui.Constants;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Colors;
 
@@ -35,6 +36,7 @@ public final class StatelessTextStyle implements TextStyle
     public static final StatelessTextStyle DEFAULT = new StatelessTextStyle();
 
     private final Color color;
+    private final Align align;
     private final boolean shadow;
     private final int lineHeight;
 
@@ -44,13 +46,15 @@ public final class StatelessTextStyle implements TextStyle
 
     private StatelessTextStyle()
     {
+        this.align =  Constants.Style.Text.ALIGN;
         this.color = Colors.factory( Constants.Style.Text.ALPHA, Constants.Style.Text.COLOR );
         this.shadow = Constants.Style.Text.SHADOW;
         this.lineHeight = Constants.Style.Text.LINE_HEIGHT;
     }
 
-    private StatelessTextStyle( Color color, boolean shadow, int lineHeight )
+    private StatelessTextStyle( Align align, Color color, boolean shadow, int lineHeight )
     {
+        this.align = align;
         this.color = color;
         this.shadow = shadow;
         this.lineHeight = lineHeight;
@@ -59,6 +63,12 @@ public final class StatelessTextStyle implements TextStyle
     /* **************************************************************************************************************
      * Method - Implement TextStyle
      ************************************************************************************************************** */
+
+    @Override
+    public Align getAlign()
+    {
+        return this.align;
+    }
 
     @Override
     public Color getColor()
@@ -88,6 +98,7 @@ public final class StatelessTextStyle implements TextStyle
          * Attribute
          ************************************************************************************************************** */
 
+        private Align align;
         private Color color;
         private boolean shadow = Constants.Style.Text.SHADOW;
         private int lineHeight = Constants.Style.Text.LINE_HEIGHT;
@@ -95,6 +106,13 @@ public final class StatelessTextStyle implements TextStyle
         /* **************************************************************************************************************
          * Method
          ************************************************************************************************************** */
+
+        public StatelessTextStyleBuilder<P> withAlign( Align align )
+        {
+            this.align = align;
+
+            return this;
+        }
 
         public StatelessTextStyleBuilder<P> withColor( int color )
         {
@@ -141,6 +159,7 @@ public final class StatelessTextStyle implements TextStyle
         public TextStyle build()
         {
             return new StatelessTextStyle(
+                (this.align!=null) ? this.align : Constants.Style.Text.ALIGN,
                 (this.color!=null) ? this.color : Colors.factory( Constants.Style.Text.ALPHA, Constants.Style.Text.COLOR ),
                 this.shadow,
                 this.lineHeight

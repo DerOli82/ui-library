@@ -21,6 +21,7 @@ package de.alaoli.games.minecraft.mods.lib.ui.style;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Stateable;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import de.alaoli.games.minecraft.mods.lib.ui.style.StatelessTextStyle.StatelessTextStyleBuilder;
 
@@ -79,6 +80,12 @@ public final class StatefulTextStyle implements TextStyle, Stateable
     /* **************************************************************************************************************
      * Method - Implement TextStyle
      ************************************************************************************************************** */
+
+    @Override
+    public Align getAlign()
+    {
+        return this.currentStyle.getAlign();
+    }
 
     @Override
     public Color getColor()

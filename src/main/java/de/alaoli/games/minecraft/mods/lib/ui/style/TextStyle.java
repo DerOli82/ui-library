@@ -18,6 +18,7 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.style;
 
+import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 
 /**
@@ -25,6 +26,10 @@ import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
  */
 public interface TextStyle
 {
+    /**
+     * @return Returns the text align
+     */
+    Align getAlign();
     Color getColor();
     boolean hasShadow();
     int getLineHeight();
