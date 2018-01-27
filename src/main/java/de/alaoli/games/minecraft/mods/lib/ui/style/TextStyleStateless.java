@@ -27,13 +27,13 @@ import de.alaoli.games.minecraft.mods.lib.ui.util.Colors;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class StatelessTextStyle implements TextStyle
+public final class TextStyleStateless implements TextStyle
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
-    public static final StatelessTextStyle DEFAULT = new StatelessTextStyle();
+    public static final TextStyleStateless DEFAULT = new TextStyleStateless();
 
     private final Color color;
     private final Align align;
@@ -44,7 +44,7 @@ public final class StatelessTextStyle implements TextStyle
      * Method
      ************************************************************************************************************** */
 
-    private StatelessTextStyle()
+    private TextStyleStateless()
     {
         this.align =  Constants.Style.Text.ALIGN;
         this.color = Colors.factory( Constants.Style.Text.ALPHA, Constants.Style.Text.COLOR );
@@ -52,7 +52,7 @@ public final class StatelessTextStyle implements TextStyle
         this.lineHeight = Constants.Style.Text.LINE_HEIGHT;
     }
 
-    private StatelessTextStyle( Align align, Color color, boolean shadow, int lineHeight )
+    private TextStyleStateless(Align align, Color color, boolean shadow, int lineHeight )
     {
         this.align = align;
         this.color = color;
@@ -92,7 +92,7 @@ public final class StatelessTextStyle implements TextStyle
      * RegionBuilder
      ************************************************************************************************************** */
 
-    public static final class StatelessTextStyleBuilder<P> extends NestedBuilder<P, TextStyle>
+    public static final class TextStyleStatelessBuilder<P> extends NestedBuilder<P, TextStyle>
     {
         /* **************************************************************************************************************
          * Attribute
@@ -107,43 +107,43 @@ public final class StatelessTextStyle implements TextStyle
          * Method
          ************************************************************************************************************** */
 
-        public StatelessTextStyleBuilder<P> withAlign( Align align )
+        public TextStyleStatelessBuilder<P> withAlign(Align align )
         {
             this.align = align;
 
             return this;
         }
 
-        public StatelessTextStyleBuilder<P> withColor( int color )
+        public TextStyleStatelessBuilder<P> withColor(int color )
         {
             return this.withColor( 1.0f, color );
         }
 
-        public StatelessTextStyleBuilder<P> withColor( float alpha, int color )
+        public TextStyleStatelessBuilder<P> withColor(float alpha, int color )
         {
             this.color = Colors.factory( alpha, color );
 
             return this;
         }
 
-        public StatelessTextStyleBuilder<P> withShadow( boolean shadow )
+        public TextStyleStatelessBuilder<P> withShadow(boolean shadow )
         {
             this.shadow = shadow;
 
             return this;
         }
 
-        public StatelessTextStyleBuilder<P> withShadow()
+        public TextStyleStatelessBuilder<P> withShadow()
         {
             return this.withShadow( true );
         }
 
-        public StatelessTextStyleBuilder<P> withoutShadow()
+        public TextStyleStatelessBuilder<P> withoutShadow()
         {
             return this.withShadow( false );
         }
 
-        public StatelessTextStyleBuilder<P> withLineHeight( int lineHeight )
+        public TextStyleStatelessBuilder<P> withLineHeight(int lineHeight )
         {
             this.lineHeight = lineHeight;
 
@@ -152,13 +152,13 @@ public final class StatelessTextStyle implements TextStyle
 
 
         /* **************************************************************************************************************
-         * Method - Implement de.alaoli.games.minecraft.mods.lib.ui.builder.RegionBuilder<StatelessTextStyle>
+         * Method - Implement de.alaoli.games.minecraft.mods.lib.ui.builder.RegionBuilder<TextStyleStateless>
          ************************************************************************************************************** */
 
         @Override
         public TextStyle build()
         {
-            return new StatelessTextStyle(
+            return new TextStyleStateless(
                 (this.align!=null) ? this.align : Constants.Style.Text.ALIGN,
                 (this.color!=null) ? this.color : Colors.factory( Constants.Style.Text.ALPHA, Constants.Style.Text.COLOR ),
                 this.shadow,

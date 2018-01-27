@@ -23,7 +23,7 @@ import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Stateable;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import de.alaoli.games.minecraft.mods.lib.ui.style.StatelessTextStyle.StatelessTextStyleBuilder;
+import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyleStateless.TextStyleStatelessBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,31 +31,31 @@ import java.util.Map;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class StatefulTextStyle implements TextStyle, Stateable
+public final class TextStyleStateful implements TextStyle, Stateable
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
     private State state;
-    private StatelessTextStyle currentStyle;
+    private TextStyleStateless currentStyle;
 
-    private final Map<State, StatelessTextStyle> states = new HashMap<>();
+    private final Map<State, TextStyleStateless> states = new HashMap<>();
 
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
-    private StatefulTextStyle( Map<State, StatelessTextStyle> states )
+    private TextStyleStateful(Map<State, TextStyleStateless> states )
     {
         this.states.putAll( states );
     }
 
-    private StatelessTextStyle getDefault()
+    private TextStyleStateless getDefault()
     {
         if( !this.states.containsKey( State.NONE ) )
         {
-            this.states.put( State.NONE, StatelessTextStyle.DEFAULT );
+            this.states.put( State.NONE, TextStyleStateless.DEFAULT );
         }
         return this.states.get( State.NONE );
     }
@@ -110,24 +110,24 @@ public final class StatefulTextStyle implements TextStyle, Stateable
      ************************************************************************************************************** */
 
 
-    public static final class StatefulTextStyleBuilder<P> extends NestedBuilder<P, TextStyle>
+    public static final class TextStyleStatefulBuilder<P> extends NestedBuilder<P, TextStyle>
     {
         /* **************************************************************************************************************
          * Attribute
          ************************************************************************************************************** */
 
-        private final Map<State, StatelessTextStyleBuilder<P>> states = new HashMap<>();
+        private final Map<State, TextStyleStatelessBuilder<P>> states = new HashMap<>();
 
         /* **************************************************************************************************************
          * Method
          ************************************************************************************************************** */
 
         @SuppressWarnings("unchecked")
-        public StatelessTextStyleBuilder<P> addState( State state )
+        public TextStyleStatelessBuilder<P> addState(State state )
         {
             if( !this.states.containsKey( state ) )
             {
-                StatelessTextStyleBuilder<P> builder = new StatelessTextStyleBuilder<>();
+                TextStyleStatelessBuilder<P> builder = new TextStyleStatelessBuilder<>();
                 builder.withParentBuilder( (P) this );
 
                 this.states.put( state, builder );
@@ -148,8 +148,8 @@ public final class StatefulTextStyle implements TextStyle, Stateable
          ************************************************************************************************************** */
 
         /**
-         * @return  Returns StatefulTextStyle, if there're multiple states or
-         *          StatelessTextStyle if there is only the NONE state.
+         * @return  Returns TextStyleStateful, if there're multiple states or
+         *          TextStyleStateless if there is only the NONE state.
          */
         @Override
         public TextStyle build()
@@ -158,16 +158,16 @@ public final class StatefulTextStyle implements TextStyle, Stateable
 
             if( this.hasMultipleStates() )
             {
-                Map<State, StatelessTextStyle> states = new HashMap<>();
+                Map<State, TextStyleStateless> states = new HashMap<>();
 
-                this.states.forEach( (state, style) -> states.put( state, (StatelessTextStyle)style.build() ) );
+                this.states.forEach( (state, style) -> states.put( state, (TextStyleStateless)style.build() ) );
 
                 //Check if default state exists
                 if ( !states.containsKey(State.NONE) )
                 {
-                    states.put( State.NONE, StatelessTextStyle.DEFAULT );
+                    states.put( State.NONE, TextStyleStateless.DEFAULT );
                 }
-                textStyle = new StatefulTextStyle( states );
+                textStyle = new TextStyleStateful( states );
             }
             else
             {
@@ -177,7 +177,7 @@ public final class StatefulTextStyle implements TextStyle, Stateable
                 }
                 else
                     {
-                    textStyle = StatelessTextStyle.DEFAULT;
+                    textStyle = TextStyleStateless.DEFAULT;
                 }
             }
             return textStyle;
