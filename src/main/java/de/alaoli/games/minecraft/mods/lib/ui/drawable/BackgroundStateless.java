@@ -90,7 +90,7 @@ public final class StatelessBackground implements Background
 		}
 
 		/* **************************************************************************************************************
-		 * Method - Implement de.alaoli.games.minecraft.mods.lib.ui.builder.RegionBuilder<StatelessTextStyle>
+		 * Method - Implement de.alaoli.games.minecraft.mods.lib.ui.builder.RegionBuilder<TextStyleStateless>
 		 ************************************************************************************************************** */
 
 		@Override
