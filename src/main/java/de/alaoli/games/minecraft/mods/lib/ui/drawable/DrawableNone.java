@@ -22,19 +22,19 @@ package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class NoneDrawable implements Drawable
+public class DrawableNone implements Drawable
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
-    public static final Drawable DEFAULT = new NoneDrawable();
+    public static final Drawable DEFAULT = new DrawableNone();
 
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
-    private NoneDrawable() {}
+    private DrawableNone() {}
 
     /* **************************************************************************************************************
      * Method - Implement Drawable

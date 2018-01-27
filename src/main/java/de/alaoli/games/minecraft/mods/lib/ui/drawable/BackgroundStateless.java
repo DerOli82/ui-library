@@ -27,13 +27,13 @@ import net.minecraft.client.gui.Gui;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class StatelessBackground implements Background
+public final class BackgroundStateless implements Background
 {
 	/* **************************************************************************************************************
 	 * Attribute
 	 ************************************************************************************************************** */
 
-	public static final StatelessBackground DEFAULT = new StatelessBackground();
+	public static final BackgroundStateless DEFAULT = new BackgroundStateless();
 
 	private final Color color;
 	
@@ -41,12 +41,12 @@ public final class StatelessBackground implements Background
 	 * Method
 	 ************************************************************************************************************** */
 
-	private StatelessBackground()
+	private BackgroundStateless()
 	{
 		this.color = Colors.factory( Constants.Style.Background.ALPHA, Constants.Style.Background.COLOR );
 	}
 	
-	private StatelessBackground( Color color )
+	private BackgroundStateless(Color color )
 	{
 		this.color = color;
 	}
@@ -65,7 +65,7 @@ public final class StatelessBackground implements Background
 	 * RegionBuilder
 	 ************************************************************************************************************** */
 
-	public static final class StatelessBackgroundBuilder<P> extends NestedBuilder<P, Background>
+	public static final class BackgroundStatelessBuilder<P> extends NestedBuilder<P, Background>
 	{
 		/* **************************************************************************************************************
 		 * Attribute
@@ -77,12 +77,12 @@ public final class StatelessBackground implements Background
 		 * Method
 		 ************************************************************************************************************** */
 
-		public StatelessBackgroundBuilder<P> withColor( int color )
+		public BackgroundStatelessBuilder<P> withColor(int color )
 		{
 			return this.withColor( 1.0f, color );
 		}
 
-		public StatelessBackgroundBuilder<P> withColor( float alpha, int color )
+		public BackgroundStatelessBuilder<P> withColor(float alpha, int color )
 		{
 			this.color = Colors.factory( alpha, color );
 
@@ -96,7 +96,7 @@ public final class StatelessBackground implements Background
 		@Override
 		public Background build()
 		{
-			return new StatelessBackground(
+			return new BackgroundStateless(
 				(this.color!=null) ? this.color : Colors.factory( Constants.Style.Background.ALPHA, Constants.Style.Background.COLOR )
 			);
 		}

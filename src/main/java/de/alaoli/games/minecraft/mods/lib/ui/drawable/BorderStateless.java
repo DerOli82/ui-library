@@ -27,13 +27,13 @@ import net.minecraft.client.gui.Gui;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class StatelessBorder extends Gui implements Border
+public class BorderStateless extends Gui implements Border
 {
 	/* **************************************************************************************************************
 	 * Attribute
 	 ************************************************************************************************************** */
 
-	public static final StatelessBorder DEFAULT = new StatelessBorder();
+	public static final BorderStateless DEFAULT = new BorderStateless();
 
 	private final Color color;
 	private boolean hideTop, hideLeft, hideRight, hideBottom;
@@ -42,17 +42,17 @@ public class StatelessBorder extends Gui implements Border
 	 * Method
 	 ************************************************************************************************************** */
 
-	private StatelessBorder()
+	private BorderStateless()
 	{
 		this.color = Colors.factory( Constants.Style.Border.ALPHA, Constants.Style.Border.COLOR );
 	}
 
-	private StatelessBorder( Color color )
+	private BorderStateless(Color color )
 	{
 		this.color = color;
 	}
 
-	private StatelessBorder( Color color, boolean top, boolean left, boolean right, boolean bottom )
+	private BorderStateless(Color color, boolean top, boolean left, boolean right, boolean bottom )
 	{
 		this.color = color;
 
@@ -83,7 +83,7 @@ public class StatelessBorder extends Gui implements Border
 	 * RegionBuilder
 	 ************************************************************************************************************** */
 
-	public static final class StatelessBorderBuilder<P> extends NestedBuilder<P, Border>
+	public static final class BorderStatelessBuilder<P> extends NestedBuilder<P, Border>
 	{
 		/* **************************************************************************************************************
 		 * Attribute
@@ -99,19 +99,19 @@ public class StatelessBorder extends Gui implements Border
 		 * Method
 		 ************************************************************************************************************** */
 
-		public StatelessBorderBuilder<P> withColor(int color )
+		public BorderStatelessBuilder<P> withColor(int color )
 		{
 			return this.withColor( 1.0f, color );
 		}
 
-		public StatelessBorderBuilder<P> withColor(float alpha, int color )
+		public BorderStatelessBuilder<P> withColor(float alpha, int color )
 		{
 			this.color = Colors.factory( alpha, color );
 
 			return this;
 		}
 
-		public StatelessBorderBuilder<P> withHidden( boolean top, boolean left, boolean right, boolean bottom )
+		public BorderStatelessBuilder<P> withHidden(boolean top, boolean left, boolean right, boolean bottom )
 		{
 			this.hideTop = top;
 			this.hideLeft = left;
@@ -128,7 +128,7 @@ public class StatelessBorder extends Gui implements Border
 		@Override
 		public Border build()
 		{
-			return new StatelessBorder(
+			return new BorderStateless(
 				(this.color!=null) ? this.color : Colors.factory( Constants.Style.Border.ALPHA, Constants.Style.Border.COLOR ),
 				this.hideTop,
 				this.hideLeft,

@@ -21,7 +21,7 @@ package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Stateable;
-import de.alaoli.games.minecraft.mods.lib.ui.drawable.StatelessBorder.StatelessBorderBuilder;
+import de.alaoli.games.minecraft.mods.lib.ui.drawable.BorderStateless.BorderStatelessBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class StatefulBorder implements Border, Stateable
+public class BorderStateful implements Border, Stateable
 {
     /* **************************************************************************************************************
      * Attribute
@@ -38,13 +38,13 @@ public class StatefulBorder implements Border, Stateable
     private State state;
     private Border currentBorder;
 
-    private final Map<State, StatelessBorder> states = new HashMap<>();
+    private final Map<State, BorderStateless> states = new HashMap<>();
 
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
-    private StatefulBorder( Map<State, StatelessBorder> states )
+    private BorderStateful(Map<State, BorderStateless> states )
     {
         this.states.putAll( states );
     }
@@ -80,23 +80,23 @@ public class StatefulBorder implements Border, Stateable
      * RegionBuilder
      ************************************************************************************************************** */
 
-    public static final class StatefulBorderBuilder<P> extends NestedBuilder<P, Border>
+    public static final class BorderStatefulBuilder<P> extends NestedBuilder<P, Border>
     {
         /* **************************************************************************************************************
          * Attribute
          ************************************************************************************************************** */
 
-        private Map<State, StatelessBorderBuilder<P>> states = new HashMap<>();
+        private Map<State, BorderStatelessBuilder<P>> states = new HashMap<>();
 
         /* **************************************************************************************************************
          * Method
          ************************************************************************************************************** */
 
-        public StatelessBorderBuilder<P> addState( State state )
+        public BorderStatelessBuilder<P> addState(State state )
         {
             if( !this.states.containsKey( state ) )
             {
-                StatelessBorderBuilder<P> builder = new StatelessBorderBuilder<>();
+                BorderStatelessBuilder<P> builder = new BorderStatelessBuilder<>();
                 this.states.put( state, builder );
             }
             return this.states.get( state );
@@ -115,8 +115,8 @@ public class StatefulBorder implements Border, Stateable
          ************************************************************************************************************** */
 
         /**
-         * @return Returns StatefulBorder, if there're multiple states (incl NONE == null),
-         *         StatelessBorder, if there is only the NONE state or null, if there isn't any state
+         * @return Returns BorderStateful, if there're multiple states (incl NONE == null),
+         *         BorderStateless, if there is only the NONE state or null, if there isn't any state
          */
         @Override
         public Border build()
@@ -125,14 +125,14 @@ public class StatefulBorder implements Border, Stateable
 
             if( this.hasMultipleStates() )
             {
-                Map<State, StatelessBorder> states = new HashMap<>();
+                Map<State, BorderStateless> states = new HashMap<>();
 
-                this.states.forEach( (state,value) -> states.put( state, (StatelessBorder)value.build()) );
-                border = new StatefulBorder( states );
+                this.states.forEach( (state,value) -> states.put( state, (BorderStateless)value.build()) );
+                border = new BorderStateful( states );
             }
             else
             {
-                border = ( this.states.containsKey( State.NONE ) ) ? this.states.get( State.NONE ).build() : (Border)NoneDrawable.DEFAULT;
+                border = ( this.states.containsKey( State.NONE ) ) ? this.states.get( State.NONE ).build() : (Border) DrawableNone.DEFAULT;
             }
             return border;
         }
