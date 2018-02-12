@@ -1,5 +1,5 @@
 /* *************************************************************************************************************
- * Copyright (c) 2018 DerOli82 <https://github.com/DerOli82>
+ * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,19 +22,13 @@ package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class DrawableNone implements Drawable
+public class DrawableEmpty implements Drawable
 {
-    /* **************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************** */
-
-    public static final Drawable DEFAULT = new DrawableNone();
-
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
-    private DrawableNone() {}
+    DrawableEmpty() {}
 
     /* **************************************************************************************************************
      * Method - Implement Drawable
