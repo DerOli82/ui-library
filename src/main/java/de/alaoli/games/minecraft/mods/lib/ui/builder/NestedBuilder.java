@@ -21,10 +21,10 @@ package de.alaoli.games.minecraft.mods.lib.ui.builder;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  *
- * @param <P>   Type which contains the NestedBuilder
- * @param <B>   See {@link Builder}
+ * @param <P> Type which contains the NestedBuilder
+ * @param <S> Type refers to itself
  */
-public abstract class NestedBuilder<P, B> implements Builder<B>
+public abstract class NestedBuilder<P, S extends NestedBuilder<P,S>>
 {
     /* **************************************************************************************************************
      * Attribute
@@ -36,16 +36,20 @@ public abstract class NestedBuilder<P, B> implements Builder<B>
      * Method
      ************************************************************************************************************** */
 
+    /**
+     * @return Returns a reference to itself
+     */
+    protected abstract S self();
+
     public P done()
     {
         return this.parent;
     }
 
-    @SuppressWarnings( "unchecked" )
-    public <N extends NestedBuilder<P, B>> N withParentBuilder( P parent )
+    public S withParentBuilder( P parent )
     {
         this.parent = parent;
 
-        return (N) this;
+        return this.self();
     }
 }

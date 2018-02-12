@@ -25,5 +25,9 @@ package de.alaoli.games.minecraft.mods.lib.ui.builder;
  */
 public interface Builder<B>
 {
+    /**
+     * @return Returns the Object which is to be built
+     */
     B build();
+
 }
