@@ -1,5 +1,5 @@
 /* *************************************************************************************************************
- * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,156 +15,175 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************ */
+ ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * You shouldn't use this clas.
- * For creating and handling color instances, use the static methods in {@link Colors}.
- *
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class Color 
-{	
+public final class Color
+{
 	/* **************************************************************************************************************
 	 * Attribute
 	 ************************************************************************************************************** */
 
-	public static final int BLACK = 0x000000;
-	public static final int DARKBLUE = 0x0000AA;
-	public static final int DARKGREEN = 0x00AA00;
-	public static final int DARKAQUA = 0x00AAAA;
-	public static final int DARKRED = 0xAA0000;
-	public static final int DARKPURPLE = 0xAA00AA;
-	public static final int GOLD = 0xFFAA00;
-	public static final int GRAY = 0xAAAAAA;
-	public static final int DARKGRAY = 0x555555;
-	public static final int BLUE = 0x5555FF;
-	public static final int GREEN = 0x55FF55;
-	public static final int AQUA = 0x55FFFF;
-	public static final int RED = 0xFF5555;
-	public static final int LIGHTPURPLE = 0xFF55FF;
-	public static final int YELLOW = 0xFFFF55;
-	public static final int WHITE = 0xFFFFFF;
+	private static final Color DEFAULT = new Color(0 );
 
-	public final int value;
-	
+	/**
+	 * Default Minecraft color codes
+	 */
+	public enum Codes
+	{
+		BLACK( 0x000000 ),
+		DARKBLUE( 0x0000AA ),
+		DARKGREEN( 0x00AA00 ),
+		DARKAQUA( 0x00AAAA ),
+		DARKRED( 0xAA0000 ),
+		DARKPURPLE( 0xAA00AA ),
+		GOLD( 0xFFAA00 ),
+		GRAY( 0xAAAAAA ),
+		DARKGRAY( 0x555555 ),
+		BLUE( 0x5555FF ),
+		GREEN( 0x55FF55 ),
+		AQUA( 0x55FFFF ),
+		RED( 0xFF5555 ),
+		LIGHTPURPLE( 0xFF55FF ),
+		YELLOW( 0xFFFF55 ),
+		WHITE( 0xFFFFFF );
+
+		private final int value;
+
+		Codes( int value )
+		{
+			this.value = value;
+		}
+
+		public int getValue()
+		{
+			return this.value;
+		}
+	}
+
+	/**
+	 * ARGB color value
+	 */
+	private final int value;
+
+	/**
+	 * Cached colors to prevent creating new object for already used colors
+	 */
+	private static final Map<Integer, Color> cached = new HashMap<>();
+
 	/* **************************************************************************************************************
 	 * Method
 	 ************************************************************************************************************** */
 
-	public Color( int argb, boolean includesAlpha )
+	/**
+	 * @param value ARGB color value
+	 */
+	private Color( int value )
 	{
-		if( includesAlpha )
-		{
-			this.value = argb;
-		}
-		else
-		{
-			this.value = combineARGB( 255, argb );
-		}
-
-	}
-
-	public Color( int rgb )
-	{
-		this( 255, rgb );
-	}
-
-	public Color( float alpha, int rgb )
-	{
-		this( (int)(alpha*255), rgb );
-	}
-
-	public Color( int alpha, int rgb )
-	{
-		this.value = combineARGB( alpha, rgb );
-	}
-
-	public Color( int r, int g, int b )
-	{
-		this( 255, r, g, b );
-	}
-	
-	public Color( float alpha, int r, int g, int b )
-	{
-		this( Math.round( alpha*255 ), r, g, b );
-	}
-	
-	public Color( int alpha, int r, int g, int b )
-	{
-		this.value = combineARGB( alpha, r, g, b );
+		this.value = value;
 	}
 
 	@Override
 	public boolean equals( Object obj )
 	{
-		return obj instanceof Color && ((Color) obj).value == this.value;
+		return obj == this || ( obj instanceof Color && ((Color) obj).value == this.value );
 	}
 
 	@Override
-	public int hashCode() 
-	{
-		return this.value;
-	}
-	
-	public final int getValue()
+	public int hashCode()
 	{
 		return this.value;
 	}
 
-	public int getAlpha() {
-		return (this.value >> 24) & 0xff;
+	@Override
+	public String toString()
+	{
+		return "ARGB:" + this.value;
 	}
 
-	public int getRed() {
+	public int getValue()
+	{
+		return this.value;
+	}
+
+	public int getAlpha()
+	{
+		return (this.value >> 24) & 0xFF;
+	}
+
+	public int getRed()
+	{
 		return (this.value >> 16) & 0xFF;
 	}
 
-	public int getGreen() {
+	public int getGreen()
+	{
 		return (this.value >> 8) & 0xFF;
 	}
 
-	public int getBlue() {
+	public int getBlue()
+	{
 		return (this.value) & 0xFF;
 	}
 
-	/**
-	 * Combines alpha, red, green, blue value into argb value
-	 *
-	 * @throws IllegalArgumentException, if alpha, r, g or b value isn't between 0 and 255
-	 *
-	 * @param alpha	Transparency value
-	 * @param r		Red color value
-	 * @param g		Green color value
-	 * @param b		Blue color value
-	 * @return		Returns argb value
-	 */
-	public static int combineARGB(int alpha, int r, int g, int b ) throws IllegalArgumentException
-	{
-		if( alpha < 0 || alpha > 255 ) { throw new IllegalArgumentException( "'alpha' value must be between 0 and 255." ); }
-		if( r < 0 || r > 255 ) { throw new IllegalArgumentException( "'r' value must be between 0 and 255." ); }
-		if( g < 0 || g > 255 ) { throw new IllegalArgumentException( "'g' value must be between 0 and 255." ); }
-		if( b < 0 || b > 255 ) { throw new IllegalArgumentException( "'b' value must be between 0 and 255." ); }
+	/* **************************************************************************************************************
+	 * Method - Static
+	 ************************************************************************************************************** */
 
-		return ((alpha & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
+	public static Color valueOf( Codes code ) throws IllegalArgumentException
+	{
+		return valueOf( code.value );
 	}
 
-	/**
-	 * Combines alpha and rgb value into argb value
-	 *
-	 * @throws IllegalArgumentException, if alpha value isn't between 0 and 255
-	 * @throws IllegalArgumentException, if rgb value isn't between 0 and 16777215
-	 *
-	 * @param alpha	Transparency value
-	 * @param rgb	Combined Red, green and blue color value
-	 * @return		Returns argb value
-	 */
-	public static int combineARGB(int alpha, int rgb ) throws IllegalArgumentException
+	public static Color valueOf( int rgb ) throws IllegalArgumentException
 	{
-		if( alpha < 0 || alpha > 255 ) { throw new IllegalArgumentException( "'alpha' value must be between 0 and 255." ); }
+		return valueOf( 1.0f, rgb );
+	}
+
+	public static Color valueOf( float alpha, Codes code ) throws IllegalArgumentException
+	{
+		return valueOf( alpha, code.value );
+	}
+
+	public static Color valueOf( int red, int green, int blue ) throws IllegalArgumentException
+	{
+		return valueOf( 1.0f, red, green, blue );
+	}
+
+	public static Color valueOf( float alpha, int red, int green, int blue ) throws IllegalArgumentException
+	{
+		if( red < 0 || red > 255 ) { throw new IllegalArgumentException( "'red' value must be between 0 and 255." ); }
+		if( green < 0 || green > 255 ) { throw new IllegalArgumentException( "'green' value must be between 0 and 255." ); }
+		if( blue < 0 || blue > 255 ) { throw new IllegalArgumentException( "'blue' value must be between 0 and 255." ); }
+
+		return valueOf( alpha, ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF)) );
+	}
+
+	public static Color valueOf( float alpha, int rgb ) throws IllegalArgumentException
+	{
+		if( alpha < 0 || alpha > 1.0f ) { throw new IllegalArgumentException( "'alpha' value must be between 0.0f and 1.0f." ); }
 		if( rgb < 0 || rgb > 16777215 ) { throw new IllegalArgumentException( "'rgb' value must be between 0 and 16777215." ); }
 
-		return ((alpha & 0xFF) << 24) | rgb;
+		int value = ((((int)(alpha*255)) & 0xFF) << 24) | rgb;
+
+		if( value == DEFAULT.value ) { return DEFAULT; }
+
+		//No cache hit
+		if( !cached.containsKey( value ) )
+		{
+			cached.put( value, new Color( value ) );
+		}
+		return cached.getOrDefault( value, DEFAULT );
+	}
+
+	public static void clear()
+	{
+		cached.clear();
 	}
 }
