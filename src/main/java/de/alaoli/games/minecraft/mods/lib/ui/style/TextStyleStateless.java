@@ -1,4 +1,4 @@
-/* *************************************************************************************************************
+/**************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,49 +15,50 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************* */
+ *************************************************************************************************************/
 package de.alaoli.games.minecraft.mods.lib.ui.style;
 
 import de.alaoli.games.minecraft.mods.lib.ui.Constants;
-import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Colors;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class TextStyleStateless implements TextStyle
+final class TextStyleStateless implements TextStyle
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
-    public static final TextStyleStateless DEFAULT = new TextStyleStateless();
-
-    private final Color color;
     private final Align align;
+    private final Color color;
     private final boolean shadow;
-    private final int lineHeight;
+    private final int lineheight;
 
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
-    private TextStyleStateless()
+    TextStyleStateless()
     {
         this.align =  Constants.Style.Text.ALIGN;
-        this.color = Colors.factory( Constants.Style.Text.ALPHA, Constants.Style.Text.COLOR );
+        this.color = Color.valueOf( Constants.Style.Text.ALPHA, Constants.Style.Text.COLOR );
         this.shadow = Constants.Style.Text.SHADOW;
-        this.lineHeight = Constants.Style.Text.LINE_HEIGHT;
+        this.lineheight = Constants.Style.Text.LINE_HEIGHT;
     }
 
-    private TextStyleStateless(Align align, Color color, boolean shadow, int lineHeight )
+    TextStyleStateless( TextStyleBuilder.Stateless<?> builder )
     {
-        this.align = align;
-        this.color = color;
+        this( builder.align, builder.color, builder.shadow, builder.lineheight );
+    }
+
+    private TextStyleStateless( Align align, Color color, boolean shadow, int lineHeight )
+    {
+        this.align = (align!=null) ? align : Constants.Style.Text.ALIGN;
+        this.color = (color!=null) ? color : Color.valueOf( Constants.Style.Text.ALPHA, Constants.Style.Text.COLOR );
         this.shadow = shadow;
-        this.lineHeight = lineHeight;
+        this.lineheight = (lineHeight>0) ? lineHeight : 0;
     }
 
     /* **************************************************************************************************************
@@ -85,85 +86,6 @@ public final class TextStyleStateless implements TextStyle
     @Override
     public int getLineHeight()
     {
-        return this.lineHeight;
-    }
-
-    /* **************************************************************************************************************
-     * RegionBuilder
-     ************************************************************************************************************** */
-
-    public static final class TextStyleStatelessBuilder<P> extends NestedBuilder<P, TextStyle>
-    {
-        /* **************************************************************************************************************
-         * Attribute
-         ************************************************************************************************************** */
-
-        private Align align;
-        private Color color;
-        private boolean shadow = Constants.Style.Text.SHADOW;
-        private int lineHeight = Constants.Style.Text.LINE_HEIGHT;
-
-        /* **************************************************************************************************************
-         * Method
-         ************************************************************************************************************** */
-
-        public TextStyleStatelessBuilder<P> withAlign(Align align )
-        {
-            this.align = align;
-
-            return this;
-        }
-
-        public TextStyleStatelessBuilder<P> withColor(int color )
-        {
-            return this.withColor( 1.0f, color );
-        }
-
-        public TextStyleStatelessBuilder<P> withColor(float alpha, int color )
-        {
-            this.color = Colors.factory( alpha, color );
-
-            return this;
-        }
-
-        public TextStyleStatelessBuilder<P> withShadow(boolean shadow )
-        {
-            this.shadow = shadow;
-
-            return this;
-        }
-
-        public TextStyleStatelessBuilder<P> withShadow()
-        {
-            return this.withShadow( true );
-        }
-
-        public TextStyleStatelessBuilder<P> withoutShadow()
-        {
-            return this.withShadow( false );
-        }
-
-        public TextStyleStatelessBuilder<P> withLineHeight(int lineHeight )
-        {
-            this.lineHeight = lineHeight;
-
-            return this;
-        }
-
-
-        /* **************************************************************************************************************
-         * Method - Implement de.alaoli.games.minecraft.mods.lib.ui.builder.RegionBuilder<TextStyleStateless>
-         ************************************************************************************************************** */
-
-        @Override
-        public TextStyle build()
-        {
-            return new TextStyleStateless(
-                (this.align!=null) ? this.align : Constants.Style.Text.ALIGN,
-                (this.color!=null) ? this.color : Colors.factory( Constants.Style.Text.ALPHA, Constants.Style.Text.COLOR ),
-                this.shadow,
-                this.lineHeight
-            );
-        }
+        return this.lineheight;
     }
 }

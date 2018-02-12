@@ -1,4 +1,4 @@
-/* *************************************************************************************************************
+/**************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,15 +15,13 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************* */
+ *************************************************************************************************************/
 package de.alaoli.games.minecraft.mods.lib.ui.style;
 
-import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Stateable;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyleStateless.TextStyleStatelessBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,31 +29,31 @@ import java.util.Map;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class TextStyleStateful implements TextStyle, Stateable
+final class TextStyleStateful implements TextStyle, Stateable
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
     private State state;
-    private TextStyleStateless currentStyle;
+    private TextStyle currentStyle;
 
-    private final Map<State, TextStyleStateless> states = new HashMap<>();
+    private final Map<State, TextStyle> states = new HashMap<>();
 
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
-    private TextStyleStateful(Map<State, TextStyleStateless> states )
+    TextStyleStateful( TextStyleBuilder.Stateful<?> builder )
     {
-        this.states.putAll( states );
+        builder.states.forEach( (key,value) -> this.states.put( key, value.build() ) );
     }
 
-    private TextStyleStateless getDefault()
+    private TextStyle getDefault()
     {
         if( !this.states.containsKey( State.NONE ) )
         {
-            this.states.put( State.NONE, TextStyleStateless.DEFAULT );
+            this.states.put( State.NONE, Styles.getTextStyleDefault() );
         }
         return this.states.get( State.NONE );
     }
@@ -103,84 +101,5 @@ public final class TextStyleStateful implements TextStyle, Stateable
     public int getLineHeight()
     {
         return this.currentStyle.getLineHeight();
-    }
-
-    /* **************************************************************************************************************
-     * RegionBuilder
-     ************************************************************************************************************** */
-
-
-    public static final class TextStyleStatefulBuilder<P> extends NestedBuilder<P, TextStyle>
-    {
-        /* **************************************************************************************************************
-         * Attribute
-         ************************************************************************************************************** */
-
-        private final Map<State, TextStyleStatelessBuilder<P>> states = new HashMap<>();
-
-        /* **************************************************************************************************************
-         * Method
-         ************************************************************************************************************** */
-
-        @SuppressWarnings("unchecked")
-        public TextStyleStatelessBuilder<P> addState(State state )
-        {
-            if( !this.states.containsKey( state ) )
-            {
-                TextStyleStatelessBuilder<P> builder = new TextStyleStatelessBuilder<>();
-                builder.withParentBuilder( (P) this );
-
-                this.states.put( state, builder );
-            }
-            return this.states.get( state );
-        }
-
-        /**
-         * @return True, if it has more than one state or state isn't NONE
-         */
-        private boolean hasMultipleStates()
-        {
-            return ( ( this.states.size() > 1 ) || ( this.states.size() == 1 && !this.states.containsKey( State.NONE ) ) );
-        }
-
-        /* **************************************************************************************************************
-         * Method - Implement Builder<TextStyle>
-         ************************************************************************************************************** */
-
-        /**
-         * @return  Returns TextStyleStateful, if there're multiple states or
-         *          TextStyleStateless if there is only the NONE state.
-         */
-        @Override
-        public TextStyle build()
-        {
-            TextStyle textStyle;
-
-            if( this.hasMultipleStates() )
-            {
-                Map<State, TextStyleStateless> states = new HashMap<>();
-
-                this.states.forEach( (state, style) -> states.put( state, (TextStyleStateless)style.build() ) );
-
-                //Check if default state exists
-                if ( !states.containsKey(State.NONE) )
-                {
-                    states.put( State.NONE, TextStyleStateless.DEFAULT );
-                }
-                textStyle = new TextStyleStateful( states );
-            }
-            else
-            {
-                if ( states.containsKey (State.NONE ) )
-                {
-                    textStyle = this.states.get( State.NONE ).build();
-                }
-                else
-                    {
-                    textStyle = TextStyleStateless.DEFAULT;
-                }
-            }
-            return textStyle;
-        }
     }
 }
