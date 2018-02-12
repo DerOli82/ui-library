@@ -18,27 +18,26 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 
-import de.alaoli.games.minecraft.mods.lib.ui.element.Element;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
- *
- * @param <T> The type of {@link Element} on which you want to {@link #drawOn(Element)}
  */
-public interface Drawable<T extends Element>
+public interface Drawable
 {
+	interface Border extends Drawable {}
+	interface Background extends Drawable {}
+
 	/**
-	 * Drawing something on the given {@link Element}, if the {@link Element} is null,
+	 * Drawing something on the given {@link Region}, if the {@link Region} is null,
 	 * drawing will be skipped.
 	 *
-	 * @param element The element on which you want to draw something
+	 * @param region The {@link Region} on which you want to draw something
 	 */
-	default void drawOn( T element )
+	default void drawOn( Region region )
 	{
-		if( element == null ) { return; }
+		if( region == null ) { return; }
 
-		Region region = element.getRegion();
 		this.drawAt( region.getX(), region.getY(), region.getWidth(), region.getHeight() );
 	}
 
