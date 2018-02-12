@@ -19,21 +19,17 @@
 package de.alaoli.games.minecraft.mods.lib.ui.drawable;
 
 import de.alaoli.games.minecraft.mods.lib.ui.Constants;
-import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Colors;
 import net.minecraft.client.gui.Gui;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class BackgroundStateless implements Background
+public final class BackgroundStateless implements Drawable.Background
 {
 	/* **************************************************************************************************************
 	 * Attribute
 	 ************************************************************************************************************** */
-
-	public static final BackgroundStateless DEFAULT = new BackgroundStateless();
 
 	private final Color color;
 	
@@ -41,14 +37,14 @@ public final class BackgroundStateless implements Background
 	 * Method
 	 ************************************************************************************************************** */
 
-	private BackgroundStateless()
+	BackgroundStateless()
 	{
-		this.color = Colors.factory( Constants.Style.Background.ALPHA, Constants.Style.Background.COLOR );
+		this.color = Color.valueOf( Constants.Style.Background.ALPHA, Constants.Style.Background.COLOR );
 	}
-	
-	private BackgroundStateless(Color color )
+
+	BackgroundStateless(BackgroundBuilder.Stateless builder)
 	{
-		this.color = color;
+		this.color = (builder.color!=null) ? builder.color : Color.valueOf( Constants.Style.Background.ALPHA, Constants.Style.Background.COLOR );
 	}
 
 	/* **************************************************************************************************************
@@ -58,47 +54,6 @@ public final class BackgroundStateless implements Background
 	@Override
 	public void drawAt( int x, int y, int width, int height )
 	{
-		Gui.drawRect( x, y, x+width, y+height, this.color.value );
-	}
-
-	/* **************************************************************************************************************
-	 * RegionBuilder
-	 ************************************************************************************************************** */
-
-	public static final class BackgroundStatelessBuilder<P> extends NestedBuilder<P, Background>
-	{
-		/* **************************************************************************************************************
-		 * Attribute
-		 ************************************************************************************************************** */
-
-		private Color color;
-
-		/* **************************************************************************************************************
-		 * Method
-		 ************************************************************************************************************** */
-
-		public BackgroundStatelessBuilder<P> withColor(int color )
-		{
-			return this.withColor( 1.0f, color );
-		}
-
-		public BackgroundStatelessBuilder<P> withColor(float alpha, int color )
-		{
-			this.color = Colors.factory( alpha, color );
-
-			return this;
-		}
-
-		/* **************************************************************************************************************
-		 * Method - Implement de.alaoli.games.minecraft.mods.lib.ui.builder.RegionBuilder<TextStyleStateless>
-		 ************************************************************************************************************** */
-
-		@Override
-		public Background build()
-		{
-			return new BackgroundStateless(
-				(this.color!=null) ? this.color : Colors.factory( Constants.Style.Background.ALPHA, Constants.Style.Background.COLOR )
-			);
-		}
+		Gui.drawRect( x, y, x+width, y+height, this.color.getValue() );
 	}
 }
