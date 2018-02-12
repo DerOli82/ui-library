@@ -16,9 +16,13 @@
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
-package de.alaoli.games.minecraft.mods.lib.ui.drawable;
+package de.alaoli.games.minecraft.mods.lib.ui.style;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public interface Border extends Drawable {}
+public interface RegionTransformable
+{
+    void translate( int x, int y );
+    void resize( int width, int height );
+}

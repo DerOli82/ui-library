@@ -1,4 +1,4 @@
-/* *************************************************************************************************************
+/**************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,32 +15,31 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************* */
+ *************************************************************************************************************/
 package de.alaoli.games.minecraft.mods.lib.ui.style;
 
 import de.alaoli.games.minecraft.mods.lib.ui.Constants;
-import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class RegionStyle implements Region
+final class RegionStyle implements Region, RegionTransformable
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
-    public static final RegionStyle DEFAULT = new RegionStyle();
+    private Align align;
+    private int x, y, width, height;
 
-    private final Align align;
-    private final int x, y, width, height;
+    private RegionStyle transformed;
 
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
-    private RegionStyle()
+    RegionStyle()
     {
         this.align = Constants.Style.Region.ALIGN;
         this.x = 0;
@@ -49,13 +48,23 @@ public class RegionStyle implements Region
         this.height = 0;
     }
 
+    private RegionStyle( Region region )
+    {
+        this( region.getAlign(), region.getX(), region.getY(), region.getWidth(), region.getHeight() );
+    }
+
+    RegionStyle( RegionBuilder builder )
+    {
+        this( builder.align, builder.x, builder.y, builder.width, builder.height );
+    }
+
     private RegionStyle( Align align, int x, int y, int width, int height )
     {
         this.align = (align!=null) ? align : Constants.Style.Region.ALIGN;
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.width = (width>0) ? width : 0;
+        this.height = (height>0) ? height : 0;
     }
 
     /* **************************************************************************************************************
@@ -65,119 +74,71 @@ public class RegionStyle implements Region
     @Override
     public Align getAlign()
     {
-        return this.align;
+        return (this.transformed!=null) ? this.transformed.getAlign() : this.align;
     }
 
     @Override
     public int getX()
     {
-        return this.x;
+        return (this.transformed!=null) ? this.transformed.getX() : this.x;
     }
 
     @Override
     public int getY()
     {
-        return this.y;
+        return (this.transformed!=null) ? this.transformed.getY() : this.y;
     }
 
     @Override
     public int getWidth()
     {
-        return this.width;
+        return (this.transformed!=null) ? this.transformed.getWidth() : this.width;
     }
 
     @Override
     public int getHeight()
     {
-        return this.height;
+        return (this.transformed!=null) ? this.transformed.getHeight() : this.height;
+    }
+
+    @Override
+    public RegionTransformable transform( boolean fromOrigin )
+    {
+        if( this.transformed == null )
+        {
+            this.transformed = new RegionStyle( this );
+        }
+        else if( fromOrigin )
+        {
+            this.transformed.x = this.x;
+            this.transformed.y = this.y;
+            this.transformed.width = this.width;
+            this.transformed.height = this.height;
+        }
+        return this.transformed;
+    }
+
+    @Override
+    public void restoreOrigin()
+    {
+        this.transformed = null;
     }
 
     /* **************************************************************************************************************
-     * RegionBuilder
+     * Method - Implement RegionTransformable
      ************************************************************************************************************** */
 
-    public static final class RegionBuilder<P> extends NestedBuilder<P, Region>
+    @Override
+    public void translate( int x, int y )
     {
-        /* **************************************************************************************************************
-         * Attribute
-         ************************************************************************************************************** */
+        this.x += x;
+        this.y += y;
+    }
 
-        private Align align;
-        private int x, y, width, height;
-
-        /* **************************************************************************************************************
-         * Method
-         ************************************************************************************************************** */
-
-        public RegionBuilder<P> withAlign( Align align )
-        {
-            this.align = align;
-
-            return this;
-        }
-
-        public RegionBuilder<P> withX( int x )
-        {
-            this.x = x;
-
-            return this;
-        }
-
-        public RegionBuilder<P> withY( int y )
-        {
-            this.y = y;
-
-            return this;
-        }
-
-        public RegionBuilder<P> withLocation( int x, int y )
-        {
-            this.x = x;
-            this.y = y;
-
-            return this;
-        }
-
-        public RegionBuilder<P> withWidth( int width )
-        {
-            this.width = (width > 0) ? width : 0;
-
-            return this;
-        }
-
-        public RegionBuilder<P> withHeight( int height )
-        {
-            this.height = (height > 0) ? height : 0;
-
-            return this;
-        }
-
-        public RegionBuilder<P> withSize( int width, int height )
-        {
-            this.withWidth( width );
-            this.withHeight( height );
-
-            return this;
-        }
-
-        public RegionBuilder<P> withBounds( int x, int y, int width, int height )
-        {
-            this.x = x;
-            this.y = y;
-            this.withWidth( width );
-            this.withHeight( height );
-
-            return this;
-        }
-
-        /* **************************************************************************************************************
-         * Method - Implement Builder<RegionStyle>
-         ************************************************************************************************************** */
-
-        @Override
-        public Region build()
-        {
-            return new RegionStyle( this.align, this.x, this.y, this.width, this.height );
-        }
+    @Override
+    public void resize( int width, int height )
+    {
+        this.width = (width>0) ? width : 0;
+        this.height = (height>0) ? height : 0;
     }
 }

@@ -25,6 +25,9 @@ import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
  */
 public interface Region
 {
+    /**
+     * @return Returns the align relative to parent
+     */
     Align getAlign();
 
     int getX();
@@ -32,6 +35,40 @@ public interface Region
     int getWidth();
     int getHeight();
 
+    /**
+     * Restores the {@link Region} to its origin
+     */
+    void restoreOrigin();
+
+    /**
+     * @param fromOrigin    If true, the transformation starts from the origin again
+     * @return              Returns the {@link RegionTransformable} interface of this {@link Region}
+     */
+    RegionTransformable transform( boolean fromOrigin );
+
+    /**
+     * Uses the origin of this {@link Region}
+     *
+     * @return Returns the {@link RegionTransformable} interface of this {@link Region}
+     */
+    default RegionTransformable transform()
+    {
+        return this.transform( true );
+    }
+
+    /**
+     * @return Returns true, if width or height <= 0
+     */
+    default boolean isEmpty()
+    {
+        return this.getWidth() <= 0 || this.getHeight() <= 0;
+    }
+
+    /**
+     * @param x
+     * @param y
+     * @return  Returns true, if the x and y coordinate ist within this {@link Region}
+     */
     default boolean contains( int x, int y )
     {
         return this.intersects( x, y, 1, 1 );
