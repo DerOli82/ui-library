@@ -18,91 +18,143 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.style;
 
-import de.alaoli.games.minecraft.mods.lib.ui.builder.Builder;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class RegionBuilder<P> extends NestedBuilder<P, RegionBuilder<P>> implements Builder<Region>
+public final class RegionBuilder<P> extends NestedBuilder<P,RegionBuilder<P>,Region>
 {
-    /* **************************************************************************************************************
+    /* *************************************************************************************************************
      * Attribute
-     ************************************************************************************************************** */
+     ************************************************************************************************************* */
 
-    Align align;
     int x, y, width, height;
 
-    /* **************************************************************************************************************
+    /* *************************************************************************************************************
      * Method
-     ************************************************************************************************************** */
+     ************************************************************************************************************* */
 
     RegionBuilder() {}
 
-    public RegionBuilder<P> withAlign( Align align )
+    private RegionBuilder( RegionBuilder<P> builder )
     {
-        this.align = align;
-
-        return this;
+        this.x = builder.x;
+        this.y = builder.y;
+        this.width = builder.width;
+        this.height = builder.height;
     }
 
-    public RegionBuilder<P> withX( int x )
+    public boolean isEmpty()
+    {
+        return x == 0  && y == 0 && width == 0 && height == 0;
+    }
+
+    public RegionBuilder<P> withXPosition( int x )
     {
         this.x = x;
 
         return this;
     }
 
-    public RegionBuilder<P> withY( int y )
+    public RegionBuilder<P> withYPosition( int y )
     {
         this.y = y;
 
         return this;
     }
 
+    public RegionBuilder<P> withPosition( int x, int y )
+    {
+        return this.withXPosition( x ).withYPosition( y );
+    }
+
     public RegionBuilder<P> withWidth( int width )
     {
-        this.width = width;
+        this.width = Math.max( width, 0 );
 
         return this;
     }
 
     public RegionBuilder<P> withHeight( int height )
     {
-        this.height = height;
+        this.height = Math.max( height, 0 );
 
         return this;
     }
 
-    public RegionBuilder<P> withLocation(int x, int y )
-    {
-        return this.withX( x ).withY( y );
-    }
-
-    public RegionBuilder<P> withSize( int width, int height )
+    public RegionBuilder<P> withDimensions( int width, int height )
     {
         return this.withWidth( width ).withHeight( height );
     }
 
-    public RegionBuilder<P> withBounds(int x, int y, int width, int height )
+    public RegionBuilder<P> withBounds( int x, int y, int width, int height )
     {
-        return this.withX( x ).withY( y ).withWidth( width ).withHeight( height );
+        return this.withXPosition( x ).withYPosition( y ).withWidth( width ).withHeight( height );
     }
 
-    /* **************************************************************************************************************
-     * Method - Implement Builder<RegionBuilder, Region>
-     ************************************************************************************************************** */
+    public RegionBuilder<P> translate( int xy )
+    {
+        return this.translate( xy, xy );
+    }
+
+    public RegionBuilder<P> translate( int x, int y )
+    {
+        x += this.x;
+        y += this.y;
+
+        return this;
+    }
+
+    public RegionBuilder<P> grow( int size )
+    {
+        return this.grow( size, size );
+    }
+
+    public RegionBuilder<P> grow( int width, int height )
+    {
+        this.width = Math.max( this.width + width, 0 );
+        this.height = Math.max( this.height + height, 0 );
+
+        return this;
+    }
+
+    public RegionBuilder<P> shrink( int size )
+    {
+        return this.shrink( size, size );
+    }
+
+    public RegionBuilder<P> shrink( int width, int height )
+    {
+        this.width = Math.max( this.width - width, 0 );
+        this.height = Math.max( this.height - height, 0 );
+
+        return this;
+    }
+
+    /* *************************************************************************************************************
+     * Method - Implement NestedBuilder
+     ************************************************************************************************************* */
+
+    @Override
+    protected RegionBuilder<P> self()
+    {
+        return this;
+    }
+
+    @Override
+    public RegionBuilder<P> copy()
+    {
+        return new RegionBuilder<>( this );
+    }
+
+    /* *************************************************************************************************************
+     * Method - Implement Builder
+     ************************************************************************************************************* */
 
     @Override
     public Region build()
     {
-        return new RegionStyle( this );
-    }
-
-    @Override
-    public RegionBuilder<P> self()
-    {
-        return this;
+        return (!this.isEmpty()) ? new Region( this ) : Region.EMPTY;
     }
 }

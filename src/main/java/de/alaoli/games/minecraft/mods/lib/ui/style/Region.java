@@ -18,76 +18,127 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.style;
 
-import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
+import de.alaoli.games.minecraft.mods.lib.ui.builder.Rebuildable;
+
+import javax.annotation.concurrent.Immutable;
+import java.util.Objects;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public interface Region
+@Immutable
+public final class Region implements Rebuildable<RegionBuilder>
 {
-    /**
-     * @return Returns the align relative to parent
-     */
-    Align getAlign();
+    /* *************************************************************************************************************
+     * Attribute
+     ************************************************************************************************************* */
 
-    int getX();
-    int getY();
-    int getWidth();
-    int getHeight();
+    public static final Region EMPTY = new Region();
 
-    /**
-     * Restores the {@link Region} to its origin
-     */
-    void restoreOrigin();
+    private final int x, y, width, height;
+    private int hashCode;
 
-    /**
-     * @param fromOrigin    If true, the transformation starts from the origin again
-     * @return              Returns the {@link RegionTransformable} interface of this {@link Region}
-     */
-    RegionTransformable transform( boolean fromOrigin );
+    /* *************************************************************************************************************
+     * Method
+     ************************************************************************************************************* */
 
-    /**
-     * Uses the origin of this {@link Region}
-     *
-     * @return Returns the {@link RegionTransformable} interface of this {@link Region}
-     */
-    default RegionTransformable transform()
+    private Region()
     {
-        return this.transform( true );
+        this( 0, 0, 0, 0 );
+    }
+
+    private Region( int x, int y, int width, int height )
+    {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    Region( RegionBuilder<?> builder )
+    {
+        this( builder.x, builder.y, builder.width, builder.height );
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if( this == o ) { return true; }
+        if( o == null || getClass() != o.getClass() ) { return false; }
+
+        Region region = (Region) o;
+
+        return this.x == region.x && this.y == region.y && this.width == region.width && this.height == region.height;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        if( this.hashCode == 0 ) { this.hashCode = Objects.hash( this.x, this.y, this.width, this.height ); }
+
+        return this.hashCode;
+    }
+
+    public int getX()
+    {
+        return this.x;
+    }
+
+    public int getY()
+    {
+        return this.y;
+    }
+
+    public int getWidth()
+    {
+        return this.width;
+    }
+
+    public int getHeight()
+    {
+        return this.height;
     }
 
     /**
      * @return Returns true, if width or height <= 0
      */
-    default boolean isEmpty()
+    public boolean isEmpty()
     {
         return this.getWidth() <= 0 || this.getHeight() <= 0;
     }
 
     /**
-     * @param x
-     * @param y
      * @return  Returns true, if the x and y coordinate ist within this {@link Region}
      */
-    default boolean contains( int x, int y )
+    public boolean contains( int x, int y )
     {
         return this.intersects( x, y, 1, 1 );
     }
 
-    default boolean intersects( Region region )
+    public boolean intersects( Region region )
     {
         return this.intersects( region.getX(), region.getY(), region.getWidth(), region.getHeight() );
     }
 
-    default boolean intersects( int x, int y, int width, int height )
+    public boolean intersects( int x, int y, int width, int height )
     {
         //No dimension
         if( width <= 0 || height <= 0 || this.getWidth() <= 0 || this.getHeight() <= 0 ) { return false; }
 
         //Overflow or intersect
         return ( ( x + width < x || x + width > this.getX() ) &&
-            ( y + height < y || y + height > this.getY() ) &&
-            ( this.getX() + this.getWidth() < this.getX() || this.getX() + this.getWidth() > x ) &&
-            ( this.getY() + this.getHeight() < this.getY() || this.getY() + this.getHeight() > y ));
+                ( y + height < y || y + height > this.getY() ) &&
+                ( this.getX() + this.getWidth() < this.getX() || this.getX() + this.getWidth() > x ) &&
+                ( this.getY() + this.getHeight() < this.getY() || this.getY() + this.getHeight() > y ));
+    }
+
+    /* *************************************************************************************************************
+     * Method - Implement Rebuildable
+     ************************************************************************************************************* */
+
+    @Override
+    public <P> RegionBuilder<P> toBuilder()
+    {
+        return new RegionBuilder<P>().withBounds( this.x, this.y, this.width, this.height );
     }
 }
