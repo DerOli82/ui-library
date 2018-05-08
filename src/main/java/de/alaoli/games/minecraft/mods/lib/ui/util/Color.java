@@ -18,19 +18,22 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import javax.annotation.concurrent.Immutable;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
+@Immutable
 public final class Color
 {
 	/* **************************************************************************************************************
 	 * Attribute
 	 ************************************************************************************************************** */
 
-	private static final Color DEFAULT = new Color(0 );
+	public static final Color DEFAULT = new Color( 0 );
 
 	/**
 	 * Default Minecraft color codes
@@ -75,7 +78,11 @@ public final class Color
 	/**
 	 * Cached colors to prevent creating new object for already used colors
 	 */
-	private static final Map<Integer, Color> cached = new HashMap<>();
+	private static final Cache<Integer,Color> CACHE = CacheBuilder.newBuilder()
+		.maximumSize( 256 )
+		.weakValues()
+		.build();
+	static { CACHE.put( 0, DEFAULT ); }
 
 	/* **************************************************************************************************************
 	 * Method
@@ -175,15 +182,15 @@ public final class Color
 		if( value == DEFAULT.value ) { return DEFAULT; }
 
 		//No cache hit
-		if( !cached.containsKey( value ) )
+		if( !CACHE.asMap().containsKey( value ) )
 		{
-			cached.put( value, new Color( value ) );
+			CACHE.put( value, new Color( value ) );
 		}
-		return cached.getOrDefault( value, DEFAULT );
+		return CACHE.asMap().getOrDefault( value, DEFAULT );
 	}
 
 	public static void clear()
 	{
-		cached.clear();
+		CACHE.cleanUp();
 	}
 }

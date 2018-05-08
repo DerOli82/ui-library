@@ -21,7 +21,7 @@ package de.alaoli.games.minecraft.mods.lib.ui.util;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  *
- * @param <S> Type of the implementing class (self)
+ * @param <S> Refers to the Type of the implementation class (self)
  */
 public interface ColorBuilder<S extends ColorBuilder<S>>
 {
@@ -54,6 +54,5 @@ public interface ColorBuilder<S extends ColorBuilder<S>>
     {
         return this.withColor( Color.valueOf( alpha, red, green, blue ) );
     }
-
     S withColor( Color color );
 }
