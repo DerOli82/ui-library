@@ -18,8 +18,6 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.util;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
