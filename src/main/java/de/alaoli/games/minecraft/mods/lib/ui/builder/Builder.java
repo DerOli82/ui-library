@@ -21,13 +21,12 @@ package de.alaoli.games.minecraft.mods.lib.ui.builder;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  *
- * @param <B> Type which is to be built
+ * @param <B> Type of the Object to build
  */
 public interface Builder<B>
 {
     /**
-     * @return Returns the Object which is to be built
+     * @return Returns the built object
      */
     B build();
-
 }

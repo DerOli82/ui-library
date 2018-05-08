@@ -16,9 +16,16 @@
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
-package de.alaoli.games.minecraft.mods.lib.ui.drawable;
+package de.alaoli.games.minecraft.mods.lib.ui.builder;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public interface Background extends Drawable {}
+public interface Rebuildable<B extends NestedBuilder>
+{
+    /**
+     * @param <P> Type of the parent object, see {@link NestedBuilder}
+     * @return Returns a new builder instance with the values of this object
+     */
+    <P> B toBuilder();
+}
