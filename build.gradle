@@ -1,3 +1,22 @@
+/* *************************************************************************************************************
+ * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see:
+ *
+ * https://www.gnu.org/licenses/lgpl-3.0.html
+ ************************************************************************************************************ */
+ 
 buildscript {
     repositories {
         jcenter()
@@ -9,11 +28,13 @@ buildscript {
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
         classpath "org.ajoberstar:gradle-git:1.6.0"
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: "org.ajoberstar.grgit"
+apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: "com.github.johnrengelman.shadow"
 
 //Load properties
 file "build.properties" withReader {
@@ -36,10 +57,18 @@ task tagRelease {
 //Version
 version = "${config.minecraft.version}-${config.mod.version}-${grgit.head().abbreviatedId}"
 group= "de.alaoli.games.minecraft.mods.lib.ui" 
-archivesBaseName = "olis-ui-library"
+archivesBaseName = "ouilib"
 
 sourceCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
 targetCompatibility = org.gradle.api.JavaVersion.VERSION_1_8
+
+dependencies {
+    compile "com.google.inject:guice:${config.guice.version}"
+}
+
+shadowJar {
+    relocate "com.google.inject", "libs.com.google.inject"
+}
 
 minecraft {
     mappings = "${config.forge.mappings}"
@@ -67,6 +96,6 @@ processResources
     }
 }
 
-jar {
-    version = project.version
+reobf {
+    shadowJar {}
 }

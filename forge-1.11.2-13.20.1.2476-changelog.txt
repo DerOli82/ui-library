@@ -121,7 +121,7 @@ Build 1.12.1-14.22.0.2447:
 	LexManos:
 		Cleanup some output and move the Jar-In-Jar extractor to before any
 		coremods/mods are loaded so. The intention is to rework this entire
-		thing to use maven style storage, IF we can get Mojang to pass in the
+		thing to use maven styleGroup storage, IF we can get Mojang to pass in the
 		Libraries folder.
 	LexManos: Fixed missing line in logger.
 	LexManos: Fix odd NPE with list files for empty directories.
@@ -4836,7 +4836,7 @@ Build 1.8-11.14.3.1549:
 
 Build 1.8-11.14.3.1543:
 	fry: Fix color multiplier applied incorrectly for items.
-	fry: OBJ loader: fixed another whitespace-related issue; removed unused "modifyUVs" property for now; added the "flip-v" property to switch between OpenGL-style and DirextX-style model UVs; fixed normals - they are now correct in-world, still a bit strange for the items; fixed normals a little bit for B3D models too.
+	fry: OBJ loader: fixed another whitespace-related issue; removed unused "modifyUVs" property for now; added the "flip-v" property to switch between OpenGL-styleGroup and DirextX-styleGroup model UVs; fixed normals - they are now correct in-world, still a bit strange for the items; fixed normals a little bit for B3D models too.
 
 Build 1.7.10-10.13.4.1541-1.7.10:
 	cpw:
@@ -5235,7 +5235,7 @@ Build 1.8-11.14.2.1443:
 	lumien231: Added LivingExperienceDropsEvent to change the amount of experience an entity drops
 
 Build 1.8-11.14.2.1442:
-	jcoleman350: Added ItemMap type check to item frames and ItemRenderer, enabling vanilla style rendering for custom maps
+	jcoleman350: Added ItemMap type check to item frames and ItemRenderer, enabling vanilla styleGroup rendering for custom maps
 
 Build 1.8-11.14.2.1441:
 	LexManos: Redefine removal value in IRetextureableModel from null to empty string {""} due to ImmutibleMap not allowing null Values. Closes #1927
@@ -6643,7 +6643,7 @@ Build 1.7.10-10.13.1.1217:
 		MinecraftForge/FML@f75838461cf6d9c5010cbfd2d9ef5ceec03268d7 Last part is the itemstack transformer. Itemstacks should now only be loosely coupled with the items within.
 		MinecraftForge/FML@51f24e9e6d1bee371cf23cdfd0071de7c5175417 First draft of add alias. It is probably not properly persistent atm.
 		MinecraftForge/FML@2a4c6424709b20ce1e9bda0d85ce7fac47d157c2 Finally fix stupid NPE error caused by FML trying to parse the super of Object in IDEA envs.
-		MinecraftForge/FML@c1b1417ee168523154a0edae68c3180814eab1c7 FML now supports passing a json formatted modlist as an argument, as well as a comma separated argument list. These facilitate modpacks mostly, by meaning you don't need to duplicate mods. The modlist is arranged in the maven style, with mods referenced maven-like.
+		MinecraftForge/FML@c1b1417ee168523154a0edae68c3180814eab1c7 FML now supports passing a json formatted modlist as an argument, as well as a comma separated argument list. These facilitate modpacks mostly, by meaning you don't need to duplicate mods. The modlist is arranged in the maven styleGroup, with mods referenced maven-like.
 		MinecraftForge/FML@3d42cda2a2cf5b24e7a25537d883260857b2107a Build.Gradle Patch
 		MinecraftForge/FML@20c7add8455cd16a4551ed13336a9ad4f9770cd1 Merge pull request #484 from bspkrs/master
 		MinecraftForge/FML@26ed4b992eb6341d52d12fb6735415ab8e3c501d Clear button list on FML fatal error screens. The hidden cancel button should not be there. Closes #497
@@ -7626,7 +7626,7 @@ Build 1.7.2-10.12.0.1018:
 
 Build 1.7.2-10.12.0.1017:
 	LexManos: Fixed potential NPE in SlotCrafting, and added ItemStack sensitive version fo hasContainerItem. Closes #854
-	LexManos: Adds a WeatherRender in the style of SkyRender, Closes #844
+	LexManos: Adds a WeatherRender in the styleGroup of SkyRender, Closes #844
 
 Build 1.7.2-10.12.0.1016:
 	LexManos: Move change of metadata to immediatly after change of Block, should prevent any 'invalid' tile entities from breaking created. Reference: #897
@@ -8151,7 +8151,7 @@ Build 1.6.4-9.11.1.926:
 Build 1.6.4-9.11.1.925:
 	Christian:
 		Updated FML:
-		MinecraftForge/FML@58577775d277a4408bda510534eb36841b08ced4 Very minor style fixes
+		MinecraftForge/FML@58577775d277a4408bda510534eb36841b08ced4 Very minor styleGroup fixes
 		MinecraftForge/FML@96be82343c25b83dd842ada8d6e8b66eb4e4ee00 Merge pull request #280 from mc10/patch-1
 		MinecraftForge/FML@2714da10228020a6f2321f6c9a703f0d24fe1370 Primitive capability for tweakers to order. Add a "TweakOrder" integer property to your manifest, or accept the default of zero.
 
@@ -8388,7 +8388,7 @@ Build 1.6.2-9.10.1.871:
 
 Build 1.6.2-9.10.1.870:
 	Christian:
-		Revert "Added a RenderType that allows Map-style rendering w/o inheriting from"
+		Revert "Added a RenderType that allows Map-styleGroup rendering w/o inheriting from"
 		
 		This reverts commit eb4688bf5ea132cd8ddc802a7dad6d423ad50543.
 		
@@ -8419,7 +8419,7 @@ Build 1.6.2-9.10.1.865:
 
 Build 1.6.2-9.10.1.864:
 	ml:
-		Added a RenderType that allows Map-style rendering w/o inheriting from
+		Added a RenderType that allows Map-styleGroup rendering w/o inheriting from
 		ItemMap.
 	Christian: Tweak patch comment
 
@@ -10048,7 +10048,7 @@ Build 1.5-7.7.0.560:
 		MinecraftForge/FML@1642bad402efe819f4e763bf4b460d8c04194849 Fix Multi-part entity children ID issue, mobs with custom spawning must deal with child ids themselves.
 
 Build 1.5-7.7.0.559:
-	LexManos: Update patche for jad-style names.
+	LexManos: Update patche for jad-styleGroup names.
 	LexManos: Updated FML and at config for 1.5 snapshot
 	LexManos: First patches updae to 1.5, Many rendeirng related changes, most notibly removed Item/Block's getTextureFile() functions.
 	LexManos: Removed some dead code, We don't bind custom tessellators
@@ -10271,7 +10271,7 @@ Build 13w02b-7.7.0.536-snapshot15:
 	Christian: Bump the revision number for the TESR and renderpass changes
 	Christian:
 		Add in a mechanism for explicit subclassing of WeightedRandomChestItem to allow for
-		generational style chest content generation rather than static. Cleans up some old code nicely
+		generational styleGroup chest content generation rather than static. Cleans up some old code nicely
 	Christian:
 		We try and log a message if we detect a world leak: it's probably not infallible, but it should
 		help mod developers- if you see this when testing your mod with, say, mystcraft, you're probably
@@ -10433,7 +10433,7 @@ Build 1.4.7-6.6.1.520-TESRculling:
 Build 1.4.7-6.6.1.519-TESRculling:
 	Christian:
 		Add in a mechanism for explicit subclassing of WeightedRandomChestItem to allow for
-		generational style chest content generation rather than static. Cleans up some old code nicely
+		generational styleGroup chest content generation rather than static. Cleans up some old code nicely
 	Christian:
 		We try and log a message if we detect a world leak: it's probably not infallible, but it should
 		help mod developers- if you see this when testing your mod with, say, mystcraft, you're probably
@@ -10474,7 +10474,7 @@ Build 1.4.7-6.6.0.516:
 Build 1.4.7-6.6.0.515:
 	Christian:
 		Add in a mechanism for explicit subclassing of WeightedRandomChestItem to allow for
-		generational style chest content generation rather than static. Cleans up some old code nicely
+		generational styleGroup chest content generation rather than static. Cleans up some old code nicely
 
 Build 1.4.7-6.6.1.514-TESRculling:
 	Christian: Bump the revision number for the TESR and renderpass changes
@@ -12421,7 +12421,7 @@ Build 3.2.3.108:
 	LexManos: Bump version number for official release.
 
 Build 3.1.3.107:
-	LexManos: Fixed AudioMod compatibility with MultiMC style launchers.
+	LexManos: Fixed AudioMod compatibility with MultiMC styleGroup launchers.
 
 Build 3.1.3.106:
 	LexManos: Bit masked the entity ID to change the range from -127-127 to 0-255
