@@ -95,13 +95,19 @@ public final class Image
 
     public static Image get( String location, int x, int y, int width, int height )
     {
+        Image result;
         String key = location + " { x:" + x + ",y:" + y + ",width:" + width + ",height:" + height + "}";
 
         if( !IMAGES.asMap().containsKey( key ) )
         {
-            IMAGES.put( key, new Image( new ResourceLocation( location ), x, y, width, height ) );
+            result = new Image( new ResourceLocation( location ), x, y, width, height );
+            IMAGES.put( key, result );
         }
-        return IMAGES.asMap().get( key );
+        else
+        {
+            result = IMAGES.asMap().get( key );
+        }
+        return result;
     }
 
     public boolean isEmpty()
