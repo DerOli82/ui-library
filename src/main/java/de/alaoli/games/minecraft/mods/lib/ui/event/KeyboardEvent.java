@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
- * Copyright (c) 2017 DerOli82 <https://github.com/DerOli82>
+ * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or toBuilder
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,26 +11,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a toBuilder of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- ************************************************************************************************************ */
+ ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.event;
 
-import org.lwjgl.input.Keyboard;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class KeyboardEvent
+public final class KeyboardEvent extends Event
 {
 	/* **************************************************************************************************************
 	 * Attribute 
 	 ************************************************************************************************************** */
 	
-	public final char eventChar;
-	public final int eventKey;
+	private final char eventChar;
+	private final int eventKey;
 	
 	/* **************************************************************************************************************
 	 * Method
@@ -41,9 +41,14 @@ public class KeyboardEvent
 		this.eventChar = eventChar;
 		this.eventKey = eventKey;
 	}
-	
-	public static boolean isKeyDown( int key )
+
+	public char getEventChar()
 	{
-		return Keyboard.isKeyDown( key );
-	}	
+		return this.eventChar;
+	}
+
+	public int getEventKey()
+	{
+		return this.eventKey;
+	}
 }
