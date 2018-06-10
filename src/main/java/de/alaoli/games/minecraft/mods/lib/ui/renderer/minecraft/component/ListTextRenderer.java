@@ -26,6 +26,7 @@ import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
+import net.minecraftforge.fml.client.GuiScrollingList;
 
 import java.util.List;
 
