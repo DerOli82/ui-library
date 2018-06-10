@@ -22,6 +22,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.Objects;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -97,9 +98,14 @@ public final class Color
 	}
 
 	@Override
-	public boolean equals( Object obj )
+	public boolean equals( Object o )
 	{
-		return obj == this || ( obj instanceof Color && ((Color) obj).value == this.value );
+		if( this == o ) { return true; }
+		if( o == null || getClass() != o.getClass() ) { return false; }
+
+		Color color = (Color) o;
+
+		return value == color.value;
 	}
 
 	@Override
@@ -111,7 +117,7 @@ public final class Color
 	@Override
 	public String toString()
 	{
-		return "ARGB:" + this.value;
+		return "{\"type\":\"color\", \"argb\":" + this.value + "}";
 	}
 
 	public int getValue()
