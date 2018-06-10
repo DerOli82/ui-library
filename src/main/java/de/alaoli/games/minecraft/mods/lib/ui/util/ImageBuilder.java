@@ -20,6 +20,8 @@ package de.alaoli.games.minecraft.mods.lib.ui.util;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
+ *
+ * @param <S> Refers to the Type of the implementation class (self)
  */
 public interface ImageBuilder<S extends ImageBuilder<S>>
 {
