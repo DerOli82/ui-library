@@ -83,7 +83,6 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
             boolean hasShadow = this.self.tmpStyle.hasShadow();
 
             this.drawText( textLine, x, y, color, hasShadow );
-
         }
     }
     private final Entry tmpEntry = new Entry( this );
@@ -115,6 +114,12 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
      ************************************************************************************************************* */
 
     @Override
+    public int getListWidth()
+    {
+        return this.width;
+    }
+
+    @Override
     public IGuiListEntry getListEntry( int index )
     {
         return this.tmpEntry;
@@ -137,7 +142,7 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
     }
 
     @Override
-    public void render(ListText component, Context context )
+    public void render( ListText component, Context context )
     {
         Region region = component.getRegion();
 
@@ -151,6 +156,7 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
         this.right = this.left + this.width;
         this.bottom = this.top + this.height;
 
+        this.handleMouseInput();
         this.drawScreen( context.getMouseX(), context.getMouseY(), context.getPartialTicks() );
     }
 }
