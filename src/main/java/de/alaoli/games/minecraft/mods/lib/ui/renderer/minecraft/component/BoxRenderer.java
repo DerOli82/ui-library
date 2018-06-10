@@ -30,12 +30,6 @@ import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Image;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>

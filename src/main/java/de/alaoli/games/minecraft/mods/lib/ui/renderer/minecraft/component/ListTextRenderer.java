@@ -63,7 +63,7 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
          ************************************************************************************************************* */
 
         @Override
-        public void setSelected( int p_178011_1_, int p_178011_2_, int p_178011_3_) {}
+        public void updatePosition( int slotIndex, int x, int y, float partialTicks ) {}
 
         @Override
         public boolean mousePressed( int slotIndex, int mouseX, int mouseY, int mouseEvent, int relativeX, int relativeY )
@@ -75,7 +75,7 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
         public void mouseReleased( int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY ) {}
 
         @Override
-        public void drawEntry( int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected )
+        public void drawEntry( int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks )
         {
             String textLine = this.self.tmpList.get( slotIndex );
             int color = this.self.tmpStyle.getColor().getValue();
