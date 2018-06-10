@@ -50,8 +50,8 @@ public final class Background implements Rebuildable<BackgroundBuilder>
 
     private Background( Color color, Image image )
     {
-        this.color = color;
-        this.image = image;
+        this.color = (color!=null) ? color : Color.DEFAULT;
+        this.image = (image!=null) ? image : Image.EMPTY;
     }
 
     Background( BackgroundBuilder<?> builder )

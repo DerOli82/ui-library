@@ -21,9 +21,6 @@ package de.alaoli.games.minecraft.mods.lib.ui.style;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.Builder;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import de.alaoli.games.minecraft.mods.lib.ui.util.ColorBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,73 +28,83 @@ import java.util.Map;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class TextStyleBuilder<P> extends NestedBuilder<P,TextStyleBuilder<P>,TextStyle>
+public final class BoxStyleBuilder<P> extends NestedBuilder<P,BoxStyleBuilder<P>,BoxStyle>
 {
     /* *************************************************************************************************************
      * Attribute
      ************************************************************************************************************* */
 
-    public static final class Values<P> extends NestedBuilder<P,Values<P>,TextStyle.Values>
-            implements ColorBuilder<Values<P>>
+    public static final class Values<P> extends NestedBuilder<P,Values<P>,BoxStyle.Values>
     {
         /* *************************************************************************************************************
          * Attribute
          ************************************************************************************************************* */
 
-        Align align = Align.LEFT;
-        Color color = Color.DEFAULT;
-        boolean hasShadow = false;
-        int lineHeight = 0;
+        SpacingBuilder<Values<P>> margin;
+        SpacingBuilder<Values<P>> padding;
+
+        BackgroundBuilder<Values<P>> background;
+        BorderBuilder<Values<P>> border;
 
         /* *************************************************************************************************************
          * Method
          ************************************************************************************************************* */
 
-        Values() {}
+        private Values()
+        {
+            this.margin = new SpacingBuilder<>();
+            this.margin.withParentBuilder( this );
+
+            this.padding = new SpacingBuilder<>();
+            this.padding.withParentBuilder( this );
+
+            this.background = new BackgroundBuilder<>();
+            this.background.withParentBuilder( this );
+
+            this.border = new BorderBuilder<>();
+            this.border.withParentBuilder( this );
+        }
 
         private Values( Values<P> values )
         {
-            this.align = values.align;
-            this.color = values.color;
-            this.hasShadow = values.hasShadow;
-            this.lineHeight = values.lineHeight;
+            this.margin = values.margin.copy();
+            this.margin.withParentBuilder( this );
+
+            this.padding = values.padding.copy();
+            this.padding.withParentBuilder( this );
+
+            this.background = values.background.copy();
+            this.background.withParentBuilder( this );
+
+            this.border = values.border.copy();
+            this.border.withParentBuilder( this );
         }
 
-        public boolean isEmpty()
+        boolean isEmpty()
         {
-            return this.align == Align.LEFT && this.color.equals( Color.DEFAULT ) && !this.hasShadow && this.lineHeight == 0;
+            return this.margin.isEmpty() && this.padding.isEmpty() && this.background.isEmpty() && this.border.isEmpty();
         }
 
-        public Values<P> withAlign( Align align )
+        public SpacingBuilder<Values<P>> withMargin()
         {
-            this.align = (align!=null) ? align : Align.LEFT;
-
-            return this;
+            return this.margin;
         }
 
-        public Values<P> withShadow( boolean shadow )
+        public SpacingBuilder<Values<P>> withPadding()
         {
-            this.hasShadow = shadow;
-
-            return this;
+            return this.padding;
         }
 
-        public Values<P> withShadow()
+        public BackgroundBuilder<Values<P>> withBackground()
         {
-            return this.withShadow( true );
+            return this.background;
         }
 
-        public Values<P> withoutShadow()
+        public BorderBuilder<Values<P>> withBorder()
         {
-            return this.withShadow( false );
+            return this.border;
         }
 
-        public Values<P> withLineHeight( int lineHeight )
-        {
-            this.lineHeight = Math.max( lineHeight, 0 );
-
-            return this;
-        }
 
         /* *************************************************************************************************************
          * Method - Implement NestedBuilder
@@ -120,47 +127,45 @@ public final class TextStyleBuilder<P> extends NestedBuilder<P,TextStyleBuilder<
          ************************************************************************************************************* */
 
         @Override
-        public TextStyle.Values build()
+        public BoxStyle.Values build()
         {
-            return (!this.isEmpty()) ? new TextStyle.Values( this ) : TextStyle.Values.EMPTY;
-        }
-
-        /* *************************************************************************************************************
-         * Method - Implement ColorBuilder
-         ************************************************************************************************************* */
-
-        @Override
-        public Values<P> withColor( Color color )
-        {
-            this.color = (color!=null) ? color : Color.valueOf( Color.Codes.WHITE );
-
-            return this;
+            return new BoxStyle.Values( this );
         }
     }
-    final Map<State,Values<TextStyleBuilder<P>>> states = new HashMap<>();
+    final Map<State, Values<BoxStyleBuilder<P>>> states = new HashMap<>();
 
     /* *************************************************************************************************************
      * Method
      ************************************************************************************************************* */
 
-    TextStyleBuilder()
+    BoxStyleBuilder()
     {
-        Values<TextStyleBuilder<P>> value = new Values<>();
+        Values<BoxStyleBuilder<P>> value = new Values<>();
         value.withParentBuilder( this );
 
         this.states.put( State.NONE, value );
     }
 
-    private TextStyleBuilder( TextStyleBuilder<P> builder )
+    private BoxStyleBuilder( BoxStyleBuilder<P> builder )
     {
-        this.states.putAll( builder.states );
+        this();
+
+        builder.states.forEach( (state,value) -> {
+            value.withParentBuilder( this );
+            this.states.put( state, value );
+        });
     }
 
-    public Values<TextStyleBuilder<P>> withState( State state )
+    boolean isEmpty()
+    {
+        return false;
+    }
+
+    public Values<BoxStyleBuilder<P>> withState( State state )
     {
         if( !this.states.containsKey( state ) )
         {
-            Values<TextStyleBuilder<P>> value = new Values<>( this.states.get( State.NONE ) );
+            Values<BoxStyleBuilder<P>> value = new Values<>( this.states.get( State.NONE ) );
             value.withParentBuilder( this );
 
             this.states.put( state, value );
@@ -178,15 +183,15 @@ public final class TextStyleBuilder<P> extends NestedBuilder<P,TextStyleBuilder<
      ************************************************************************************************************* */
 
     @Override
-    protected TextStyleBuilder<P> self()
+    protected BoxStyleBuilder<P> self()
     {
         return this;
     }
 
     @Override
-    public TextStyleBuilder<P> copy()
+    public BoxStyleBuilder<P> copy()
     {
-        return new TextStyleBuilder<>( this );
+        return new BoxStyleBuilder<>( this );
     }
 
     /* *************************************************************************************************************
@@ -194,8 +199,8 @@ public final class TextStyleBuilder<P> extends NestedBuilder<P,TextStyleBuilder<
      ************************************************************************************************************* */
 
     @Override
-    public TextStyle build()
+    public BoxStyle build()
     {
-        return new TextStyle( this );
+        return ( !this.isEmpty() ) ? new BoxStyle( this ) : BoxStyle.EMPTY;
     }
 }
