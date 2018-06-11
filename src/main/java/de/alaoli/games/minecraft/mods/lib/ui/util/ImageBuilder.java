@@ -25,9 +25,9 @@ package de.alaoli.games.minecraft.mods.lib.ui.util;
  */
 public interface ImageBuilder<S extends ImageBuilder<S>>
 {
-    default S withImage( String location, int x, int y, int width, int height )
+    default S withImage( String location, int x, int y, float factor )
     {
-        return this.withImage( Image.get( location, x, y, width, height ) );
+        return this.withImage( Image.get( location, x, y, factor ) );
     }
     S withImage( Image image );
 }

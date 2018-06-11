@@ -18,17 +18,9 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.theme.minecraft.component;
 
-import de.alaoli.games.minecraft.mods.lib.ui.component.Pane;
 import de.alaoli.games.minecraft.mods.lib.ui.component.PaneBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
-import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
-import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import de.alaoli.games.minecraft.mods.lib.ui.theme.Theme;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Image;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiOptions;
-import net.minecraft.client.gui.GuiScreen;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -36,24 +28,17 @@ import net.minecraft.client.gui.GuiScreen;
 public final class PaneTheme implements Theme<PaneBuilder<?>>
 {
     /* *************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************* */
-
-    /* *************************************************************************************************************
      * Method - Implement Theme
      ************************************************************************************************************* */
 
     @Override
-    public void init()
-    {
-
-    }
+    public void init() {}
 
     @Override
     public void applyOn( PaneBuilder<?> builder )
     {
         builder.withBoxStyle()
-            .withState( State.NONE)
-                .withBackground().withColor( 0.5f, 0, 0, 0 );
+            .withState( State.NONE )
+                .withBackground().withImage( "textures/gui/options_background.png", 0, 0, 0.03125F );
     }
 }

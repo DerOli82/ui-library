@@ -73,19 +73,19 @@ public class ButtonTheme implements Theme<ButtonBuilder<?>>
         builder.withBoxStyle()
             .withState( State.NONE )
                 .withPadding().withSpacing( 2 ).done()
-                .withBackground().withImage( Image.get( texture, 0, 66, 200, 20 ) ).done()
+                .withBackground().withImage( texture, 0, 66, 0.00390625F ).done()
             .done()
             .withState( State.HOVERED )
                 .withPadding().withSpacing( 2 ).done()
-                .withBackground().withImage( Image.get( texture, 0, 86, 200, 20 ) ).done()
+                .withBackground().withImage( texture, 0, 86, 0.00390625F ).done()
             .done()
                 .withState( State.FOCUSED )
                 .withPadding().withSpacing( 2 ).done()
-                .withBackground().withImage( Image.get( texture, 0, 86, 200, 20 ) ).done()
+                .withBackground().withImage( texture, 0, 86, 0.00390625F ).done()
             .done()
             .withState( State.DISABLED )
                 .withPadding().withSpacing( 2 ).done()
-                .withBackground().withImage( Image.get( texture, 0, 46, 200, 20 ) ).done()
+                .withBackground().withImage(  texture, 0, 46, 0.00390625F ).done()
             .done();
     }
 }

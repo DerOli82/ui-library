@@ -16,7 +16,6 @@
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
-
 package de.alaoli.games.minecraft.mods.lib.ui.renderer.minecraft.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.component.BoxComponent;
@@ -78,7 +77,7 @@ public interface BoxRenderer<C extends Component & BoxComponent> extends Rendere
             GlStateManager.disableFog();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-            float factor = 0.00390625F;
+            float factor = bgImage.getFactor();
             int textureX = bgImage.getX(),
                 textureY = bgImage.getY();
             this.getMinecraft().getTextureManager().bindTexture( bgImage.getResource() );
@@ -88,11 +87,10 @@ public interface BoxRenderer<C extends Component & BoxComponent> extends Rendere
             bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX );
             bufferbuilder.pos( x, y + height, 0 ).tex( textureX * factor, (textureY + height) * factor ).endVertex();
             bufferbuilder.pos( x + width, y + height, 0 ).tex( (textureX + width) * factor, (textureY + height) * factor ).endVertex();
-            bufferbuilder.pos( x + width, y, 0 ).tex((double)((float)(textureX + width) * factor), textureY * factor ).endVertex();
+            bufferbuilder.pos( x + width, y, 0 ).tex( (textureX + width) * factor, textureY * factor ).endVertex();
             bufferbuilder.pos( x, y, 0 ).tex( textureX * factor, textureY * factor ).endVertex();
             tessellator.draw();
         }
-
 
         //Border
         if( !border.isEmpty() )

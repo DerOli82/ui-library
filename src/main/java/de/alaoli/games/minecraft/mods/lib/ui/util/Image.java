@@ -37,7 +37,9 @@ public final class Image
 
     public static final Image EMPTY = new Image();
 
-    private final int x, y, width, height;
+    private final int x, y;
+    private final float factor;
+
     private ResourceLocation resource;
     private int hashCode;
 
@@ -54,18 +56,17 @@ public final class Image
     {
         this.x = 0;
         this.y = 0;
-        this.width = 0;
-        this.height = 0;
+        this.factor = 1.0F;
+
     }
 
-    private Image( ResourceLocation resource,  int x, int y, int width, int height )
+    private Image( ResourceLocation resource,  int x, int y, float factor )
     {
         this.resource = resource;
 
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.factor = factor;
     }
 
     @Override
@@ -78,8 +79,7 @@ public final class Image
 
         return this.x == image.x &&
                 this.y == image.y &&
-                this.width == image.width &&
-                this.height == image.height &&
+                this.factor == image.factor &&
                 Objects.equals( this.resource, image.resource );
     }
 
@@ -88,19 +88,19 @@ public final class Image
     {
         if( this.hashCode == 0 )
         {
-            this.hashCode = Objects.hash( this.x, this.y, this.width, this.height, this.resource );
+            this.hashCode = Objects.hash( this.x, this.y, this.factor, this.resource );
         }
         return this.hashCode;
     }
 
-    public static Image get( String location, int x, int y, int width, int height )
+    public static Image get( String location, int x, int y, float factor )
     {
         Image result;
-        String key = location + " { x:" + x + ",y:" + y + ",width:" + width + ",height:" + height + "}";
+        String key = location + " { x:" + x + ",y:" + y + ",factor:" + factor + "}";
 
         if( !IMAGES.asMap().containsKey( key ) )
         {
-            result = new Image( new ResourceLocation( location ), x, y, width, height );
+            result = new Image( new ResourceLocation( location ), x, y, factor );
             IMAGES.put( key, result );
         }
         else
@@ -112,7 +112,7 @@ public final class Image
 
     public boolean isEmpty()
     {
-        return this.resource == null || width <= 0 || height <= 0;
+        return this.resource == null;
     }
 
     public int getX()
@@ -125,14 +125,9 @@ public final class Image
         return this.y;
     }
 
-    public int getWidth()
+    public float getFactor()
     {
-        return this.width;
-    }
-
-    public int getHeight()
-    {
-        return this.height;
+        return this.factor;
     }
 
     public ResourceLocation getResource()
