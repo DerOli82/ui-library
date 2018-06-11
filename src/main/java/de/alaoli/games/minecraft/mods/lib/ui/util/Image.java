@@ -57,7 +57,6 @@ public final class Image
         this.x = 0;
         this.y = 0;
         this.factor = 1.0F;
-
     }
 
     private Image( ResourceLocation resource,  int x, int y, float factor )

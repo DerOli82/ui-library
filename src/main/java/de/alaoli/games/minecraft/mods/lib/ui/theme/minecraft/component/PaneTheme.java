@@ -21,6 +21,8 @@ package de.alaoli.games.minecraft.mods.lib.ui.theme.minecraft.component;
 import de.alaoli.games.minecraft.mods.lib.ui.component.PaneBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.theme.Theme;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
+import net.minecraft.client.gui.GuiOptions;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -39,6 +41,8 @@ public final class PaneTheme implements Theme<PaneBuilder<?>>
     {
         builder.withBoxStyle()
             .withState( State.NONE )
-                .withBackground().withImage( "textures/gui/options_background.png", 0, 0, 0.03125F );
+                .withBackground()
+                    .withColor( 1.0f, 64, 64, 64 )
+                    .withImage( "textures/gui/options_background.png", 0, 0, 0.03125F );
     }
 }

@@ -120,6 +120,11 @@ public final class Color
 		return "{\"type\":\"color\", \"argb\":" + this.value + "}";
 	}
 
+	public boolean isEmpty()
+	{
+		return this.value == 0;
+	}
+
 	public int getValue()
 	{
 		return this.value;

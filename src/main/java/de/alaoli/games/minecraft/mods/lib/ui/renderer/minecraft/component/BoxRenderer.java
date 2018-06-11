@@ -26,6 +26,7 @@ import de.alaoli.games.minecraft.mods.lib.ui.style.Background;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Border;
 import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Image;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -58,37 +59,52 @@ public interface BoxRenderer<C extends Component & BoxComponent> extends Rendere
         Background background = boxStyle.getBackground();
         Image bgImage = background.getImage();
         Border border = boxStyle.getBorder();
+        Color bgColor = background.getColor();
 
         int x = region.getX(),
             y = region.getY(),
             width = region.getWidth(),
             height = region.getHeight(),
             right = x + width,
-            bottom = y + height,
-            bgColor = background.getColor().getValue();
+            bottom = y + height;
+
 
         //Background
-        Gui.drawRect( x, y, right, bottom, bgColor );
+        Gui.drawRect( x, y, right, bottom, bgColor.getValue() );
 
         //Background Image
         if( !bgImage.isEmpty() )
         {
-            GlStateManager.disableLighting();
-            GlStateManager.disableFog();
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
             float factor = bgImage.getFactor();
             int textureX = bgImage.getX(),
                 textureY = bgImage.getY();
             this.getMinecraft().getTextureManager().bindTexture( bgImage.getResource() );
 
+            GlStateManager.color( 1.0F, 1.0F, 1.0F, 1.0F );
+
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuffer();
-            bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX );
-            bufferbuilder.pos( x, y + height, 0 ).tex( textureX * factor, (textureY + height) * factor ).endVertex();
-            bufferbuilder.pos( x + width, y + height, 0 ).tex( (textureX + width) * factor, (textureY + height) * factor ).endVertex();
-            bufferbuilder.pos( x + width, y, 0 ).tex( (textureX + width) * factor, textureY * factor ).endVertex();
-            bufferbuilder.pos( x, y, 0 ).tex( textureX * factor, textureY * factor ).endVertex();
+
+            if( bgColor.isEmpty() )
+            {
+                bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX );
+                bufferbuilder.pos(x, y + height, 0).tex(textureX * factor, (textureY + height) * factor).endVertex();
+                bufferbuilder.pos(x + width, y + height, 0).tex((textureX + width) * factor, (textureY + height) * factor).endVertex();
+                bufferbuilder.pos(x + width, y, 0).tex((textureX + width) * factor, textureY * factor).endVertex();
+                bufferbuilder.pos(x, y, 0).tex(textureX * factor, textureY * factor).endVertex();
+            }
+            else
+            {
+                int r = bgColor.getRed(),
+                    g = bgColor.getGreen(),
+                    b = bgColor.getBlue(),
+                    a = bgColor.getAlpha();
+                bufferbuilder.begin( 7, DefaultVertexFormats.POSITION_TEX_COLOR );
+                bufferbuilder.pos(x, y + height, 0).tex(textureX * factor, (textureY + height) * factor).color( r, g, b, a ).endVertex();
+                bufferbuilder.pos(x + width, y + height, 0).tex((textureX + width) * factor, (textureY + height) * factor).color( r, g, b, a ).endVertex();
+                bufferbuilder.pos(x + width, y, 0).tex((textureX + width) * factor, textureY * factor).color( r, g, b, a ).endVertex();
+                bufferbuilder.pos( x, y, 0 ).tex(textureX * factor, textureY * factor).color( r, g, b, a ).endVertex();
+            }
             tessellator.draw();
         }
 
