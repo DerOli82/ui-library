@@ -24,6 +24,8 @@ import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.theme.Theme;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Image;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -31,56 +33,59 @@ import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 public class ButtonTheme implements Theme<ButtonBuilder<?>>
 {
     /* *************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************* */
-
-    /* *************************************************************************************************************
      * Method - Implement Theme
      ************************************************************************************************************* */
 
     @Override
-    public void init()
-    {
-
-    }
+    public void init() {}
 
     @Override
     public void applyOn( ButtonBuilder<?> builder )
     {
+        String texture = "textures/gui/widgets.png";
+
         builder.withTextStyle()
             .withState( State.NONE )
                 .withAlign( Align.CENTER )
                 .withColor( Color.Codes.WHITE )
-                .withoutShadow()
+                .withShadow()
+                .withLineHeight( 9 )
+            .done()
+                .withState( State.HOVERED )
+                .withAlign( Align.CENTER )
+                .withColor( Color.Codes.YELLOW )
+                .withShadow()
+                .withLineHeight( 9 )
+            .done()
+                .withState( State.FOCUSED )
+                .withAlign( Align.CENTER )
+                .withColor( Color.Codes.YELLOW )
+                .withShadow()
                 .withLineHeight( 9 )
             .done()
                 .withState( State.DISABLED )
                 .withAlign( Align.CENTER )
                 .withColor( Color.Codes.DARKGRAY )
-                .withoutShadow()
+                .withShadow()
                 .withLineHeight( 9 )
             .done();
 
         builder.withBoxStyle()
             .withState( State.NONE )
                 .withPadding().withSpacing( 2 ).done()
-                .withBackground().withColor( Color.Codes.BLACK ).done()
-                .withBorder().withBorder().withColor( Color.Codes.GRAY ).done()
+                .withBackground().withImage( Image.get( texture, 0, 66, 200, 20 ) ).done()
             .done()
             .withState( State.HOVERED )
                 .withPadding().withSpacing( 2 ).done()
-                .withBackground().withColor( Color.Codes.BLACK ).done()
-                .withBorder().withBorder().withColor( Color.Codes.WHITE ).done()
+                .withBackground().withImage( Image.get( texture, 0, 86, 200, 20 ) ).done()
             .done()
                 .withState( State.FOCUSED )
                 .withPadding().withSpacing( 2 ).done()
-                .withBackground().withColor( Color.Codes.BLACK ).done()
-                .withBorder().withBorder().withColor( Color.Codes.WHITE ).done()
+                .withBackground().withImage( Image.get( texture, 0, 86, 200, 20 ) ).done()
             .done()
             .withState( State.DISABLED )
                 .withPadding().withSpacing( 2 ).done()
-                .withBackground().withColor( Color.Codes.BLACK ).done()
-                .withBorder().withBorder().withColor( Color.Codes.DARKGRAY ).done()
+                .withBackground().withImage( Image.get( texture, 0, 46, 200, 20 ) ).done()
             .done();
     }
 }
