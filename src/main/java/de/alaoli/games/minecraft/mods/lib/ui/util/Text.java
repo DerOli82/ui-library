@@ -40,7 +40,9 @@ public class Text
     private int cursorPos;
     private int cursorLine;
 
-    private boolean hasCursor = false;
+    private boolean isCursorVisible;
+    private boolean isCursorDisabled;
+
 
     /* *************************************************************************************************************
      * Method
@@ -118,17 +120,32 @@ public class Text
 
     public void showCursor()
     {
-        this.hasCursor = true;
+        this.isCursorVisible = true;
     }
 
     public void hideCursor()
     {
-        this.hasCursor = false;
+        this.isCursorVisible = false;
     }
 
-    public boolean hasCursor()
+    public boolean isCursorVisible()
     {
-        return this.hasCursor;
+        return this.isCursorVisible;
+    }
+
+    public void enableCursor()
+    {
+        this.isCursorDisabled = false;
+    }
+
+    public void disableCursor()
+    {
+        this.isCursorDisabled = true;
+    }
+
+    public boolean isCursorDisabled()
+    {
+        return this.isCursorDisabled;
     }
 
     public int getCursorPos()

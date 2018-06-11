@@ -1,4 +1,4 @@
-/**************************************************************************************************************
+/* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,11 +15,10 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- *************************************************************************************************************/
+ ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.renderer.minecraft.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.component.Button;
-import de.alaoli.games.minecraft.mods.lib.ui.component.TextField;
 import de.alaoli.games.minecraft.mods.lib.ui.renderer.Context;
 import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
@@ -63,19 +62,11 @@ public final class ButtonRenderer implements TextRenderer<Button>, BoxRenderer<B
     {
         BoxRenderer.super.render( component, context );
 
-        Text text;
+        Text text = component.getText();
         Region region = component.getRegion();
         TextStyle textStyle = component.getTextStyle();
         BoxStyle boxStyle = component.getBoxStyle();
 
-        if( !component.getText().isEmpty() || component.isFocused() )
-        {
-            text = component.getText();
-        }
-        else
-        {
-            text = component.getPlaceholder();
-        }
         TextRenderer.super.drawText( text, region, textStyle, boxStyle );
     }
 }

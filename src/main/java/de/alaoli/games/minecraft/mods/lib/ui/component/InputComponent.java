@@ -1,4 +1,4 @@
-/**************************************************************************************************************
+/* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
- *************************************************************************************************************/
+ ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardEvent;
@@ -65,7 +65,7 @@ public abstract class InputComponent extends AbstractComponent
 
         this.text.setMaxLength( builder.maxLength );
         this.text.setValue( (builder.text!=null) ? builder.text : "" );
-        this.placeholder.setMaxLength( builder.placeholder.length() );
+        this.placeholder.setMaxLength( (builder.placeholder!=null) ? builder.placeholder.length() : 0 );
         this.placeholder.setValue( (builder.placeholder!=null) ? builder.placeholder : "" );
         this.textStyle = (builder.textStyleBuilder!=null) ? builder.textStyleBuilder.build() : TextStyle.EMPTY;
         this.boxStyle = (builder.boxStyleBuilder!=null) ? builder.boxStyleBuilder.build() : BoxStyle.EMPTY;

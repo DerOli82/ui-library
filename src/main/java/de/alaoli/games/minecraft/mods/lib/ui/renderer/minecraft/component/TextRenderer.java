@@ -177,7 +177,7 @@ public interface TextRenderer<C extends Component&TextComponent> extends Rendere
         {
             this.drawText( textline, x, y, color, style.hasShadow() );
 
-            if( text.hasCursor() )
+            if( text.isCursorVisible() && !text.isCursorDisabled() )
             {
                 if( cursorPos >= 0 && cursorPos <= textline.length() )
                 {

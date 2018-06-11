@@ -62,7 +62,7 @@ public abstract class InputBuilder<P, S extends InputBuilder<P,S,B>,B> extends C
 
     public S withText( String text )
     {
-        return this.withPlaceholder( text, true );
+        return this.withText( text, true );
     }
 
     public S withText(String text, boolean translate )

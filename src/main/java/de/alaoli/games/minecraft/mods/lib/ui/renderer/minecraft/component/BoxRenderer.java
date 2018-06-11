@@ -30,6 +30,10 @@ import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Image;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -70,28 +74,23 @@ public interface BoxRenderer<C extends Component & BoxComponent> extends Rendere
         //Background Image
         if( !bgImage.isEmpty() )
         {
-            /*
-            //GlStateManager.disableLighting();
-            //GlStateManager.disableFog();
+            GlStateManager.disableLighting();
+            GlStateManager.disableFog();
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-            //float factor = 0.00390625F;
-            float factor = 0F;
+            float factor = 0.00390625F;
             int textureX = bgImage.getX(),
                 textureY = bgImage.getY();
             this.getMinecraft().getTextureManager().bindTexture( bgImage.getResource() );
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-
 
             Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer vertexbuffer = tessellator.getBuffer();
-            vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX );
-            vertexbuffer.pos( x, y + height, 0).tex((double)((float)(textureX) * factor), (double)((float)(textureY + height) * factor)).endVertex();
-            vertexbuffer.pos( x + width, y + height, 0).tex((double)((float)(textureX + width) * factor), (double)((float)(textureY + height) * factor)).endVertex();
-            vertexbuffer.pos( x + width, y, 0).tex((double)((float)(textureX + width) * factor), (double)((float)(textureY) * factor)).endVertex();
-            vertexbuffer.pos( x, y, 0).tex((double)((float)(textureX) * factor), (double)((float)(textureY) * factor)).endVertex();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX );
+            bufferbuilder.pos( x, y + height, 0 ).tex( textureX * factor, (textureY + height) * factor ).endVertex();
+            bufferbuilder.pos( x + width, y + height, 0 ).tex( (textureX + width) * factor, (textureY + height) * factor ).endVertex();
+            bufferbuilder.pos( x + width, y, 0 ).tex((double)((float)(textureX + width) * factor), textureY * factor ).endVertex();
+            bufferbuilder.pos( x, y, 0 ).tex( textureX * factor, textureY * factor ).endVertex();
             tessellator.draw();
-            */
         }
 
 

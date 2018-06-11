@@ -36,5 +36,7 @@ public class Button extends InputComponent
     public Button( ButtonBuilder<?> builder)
     {
         super( builder );
+
+        this.text.disableCursor();
     }
 }
