@@ -23,10 +23,8 @@ import de.alaoli.games.minecraft.mods.lib.ui.renderer.Context;
 import de.alaoli.games.minecraft.mods.lib.ui.renderer.Renderer;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
-import net.minecraftforge.fml.client.GuiScrollingList;
 
 import java.util.List;
 
@@ -47,7 +45,7 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
 
         private final ListTextRenderer self;
 
-        public Entry( ListTextRenderer self )
+        private Entry( ListTextRenderer self )
         {
             this.self = self;
         }
@@ -117,6 +115,12 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
     public int getListWidth()
     {
         return this.width;
+    }
+
+    @Override
+    protected int getScrollBarX()
+    {
+        return this.width - 6;
     }
 
     @Override
