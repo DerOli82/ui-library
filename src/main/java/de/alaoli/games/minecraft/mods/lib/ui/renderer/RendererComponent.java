@@ -16,23 +16,14 @@
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
-package de.alaoli.games.minecraft.mods.lib.ui.renderer.minecraft.component;
+package de.alaoli.games.minecraft.mods.lib.ui.renderer;
 
-import de.alaoli.games.minecraft.mods.lib.ui.component.Button;
-import de.alaoli.games.minecraft.mods.lib.ui.renderer.Context;
+import de.alaoli.games.minecraft.mods.lib.ui.component.Component;
+
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class ButtonRenderer implements TextRenderer<Button>, BoxRenderer<Button>
+public interface RendererComponent<C extends Component>
 {
-    /* *************************************************************************************************************
-     * Method - Implement Renderer
-     ************************************************************************************************************* */
-
-    @Override
-    public void render( Button component, Context context )
-    {
-        BoxRenderer.super.render( component, context );
-        TextRenderer.super.render( component, context );
-    }
+    void render( C component, Context context );
 }

@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,16 +11,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.renderer;
 
+import lombok.Getter;
+
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
+@Getter
 public final class Context
 {
     /* *************************************************************************************************************
@@ -34,32 +37,10 @@ public final class Context
      * Method
      ************************************************************************************************************* */
 
-    public int getMouseX()
-    {
-        return this.mouseX;
-    }
-
-    public int getMouseY()
-    {
-        return this.mouseY;
-    }
-
-    public float getPartialTicks()
-    {
-        return this.partialTicks;
-    }
-
     public void update(int mouseX, int mouseY, float partialTicks )
     {
         this.mouseX = mouseX;
         this.mouseY = mouseY;
         this.partialTicks = partialTicks;
-    }
-
-    public void clear()
-    {
-        this.mouseX = 0;
-        this.mouseY = 0;
-        this.partialTicks = 0.0f;
     }
 }

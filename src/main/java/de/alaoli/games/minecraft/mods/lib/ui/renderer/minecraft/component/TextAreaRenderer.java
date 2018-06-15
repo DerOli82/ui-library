@@ -24,9 +24,6 @@ import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
-import net.minecraft.client.gui.FontRenderer;
-
-import java.util.Queue;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -34,30 +31,8 @@ import java.util.Queue;
 public final class TextAreaRenderer implements TextRenderer<TextArea>, BoxRenderer<TextArea>
 {
     /* *************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************* */
-
-    private FontRenderer fontRenderer;
-
-    /* *************************************************************************************************************
-     * Method - Implement TextRenderer
-     ************************************************************************************************************* */
-
-    @Override
-    public FontRenderer getFontRenderer()
-    {
-        return this.fontRenderer;
-    }
-
-    /* *************************************************************************************************************
      * Method - Implement Renderer
      ************************************************************************************************************* */
-
-    @Override
-    public void init()
-    {
-        this.fontRenderer = TextRenderer.super.getFontRenderer();
-    }
 
     @Override
     public void render( TextArea component, Context context )

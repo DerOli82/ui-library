@@ -21,8 +21,11 @@ package de.alaoli.games.minecraft.mods.lib.ui.renderer.minecraft.component;
 import de.alaoli.games.minecraft.mods.lib.ui.component.ListText;
 import de.alaoli.games.minecraft.mods.lib.ui.renderer.Context;
 import de.alaoli.games.minecraft.mods.lib.ui.renderer.Renderer;
+import de.alaoli.games.minecraft.mods.lib.ui.renderer.minecraft.MinecraftRenderer;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
 
@@ -37,25 +40,14 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
      * Attribute
      ************************************************************************************************************* */
 
+    @AllArgsConstructor( access = AccessLevel.PRIVATE )
     private final class Entry implements TextRenderer, IGuiListEntry
     {
         /* *************************************************************************************************************
-         * Method
+         * Attribute
          ************************************************************************************************************* */
 
-        private final ListTextRenderer self;
-
-        private Entry( ListTextRenderer self )
-        {
-            this.self = self;
-        }
-
-        /* *************************************************************************************************************
-         * Method - Implement TextRenderer
-         ************************************************************************************************************* */
-
-        @Override
-        public void init() {}
+        private final ListTextRenderer parent;
 
         /* *************************************************************************************************************
          * Method - Implement IGuiListEntry
@@ -76,9 +68,9 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
         @Override
         public void drawEntry( int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks )
         {
-            String textLine = this.self.tmpList.get( slotIndex );
-            int color = this.self.tmpStyle.getColor().getValue();
-            boolean hasShadow = this.self.tmpStyle.hasShadow();
+            String textLine = this.parent.tmpList.get( slotIndex );
+            int color = this.parent.tmpStyle.getColor().getValue();
+            boolean hasShadow = this.parent.tmpStyle.hasShadow();
 
             this.drawText( textLine, x, y, color, hasShadow );
         }
@@ -93,18 +85,7 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
 
     public ListTextRenderer()
     {
-        super( getMinecraft(), 0, 0, 0, 0, 11 );
-    }
-
-    private static Minecraft getMinecraft()
-    {
-        Minecraft mc = Minecraft.getMinecraft();
-
-        if( mc == null )
-        {
-            throw new IllegalStateException( "Can't initialize Minecraft instance" );
-        }
-        return mc;
+        super( Minecraft.getMinecraft(), 0, 0, 0, 0, 11 );
     }
 
     /* *************************************************************************************************************

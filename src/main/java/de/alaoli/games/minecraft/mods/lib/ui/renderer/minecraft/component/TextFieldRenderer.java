@@ -18,15 +18,12 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.renderer.minecraft.component;
 
-import de.alaoli.games.minecraft.mods.lib.ui.component.Label;
 import de.alaoli.games.minecraft.mods.lib.ui.component.TextField;
 import de.alaoli.games.minecraft.mods.lib.ui.renderer.Context;
 import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
-import de.alaoli.games.minecraft.mods.lib.ui.style.Padding;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
-import net.minecraft.client.gui.FontRenderer;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -34,30 +31,8 @@ import net.minecraft.client.gui.FontRenderer;
 public final class TextFieldRenderer implements TextRenderer<TextField>, BoxRenderer<TextField>
 {
     /* *************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************* */
-
-    private FontRenderer fontRenderer;
-
-    /* *************************************************************************************************************
-     * Method - Implement TextRenderer
-     ************************************************************************************************************* */
-
-    @Override
-    public FontRenderer getFontRenderer()
-    {
-        return this.fontRenderer;
-    }
-
-    /* *************************************************************************************************************
      * Method - Implement Renderer
      ************************************************************************************************************* */
-
-    @Override
-    public void init()
-    {
-        this.fontRenderer = TextRenderer.super.getFontRenderer();
-    }
 
     @Override
     public void render( TextField component, Context context )

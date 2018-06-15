@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,23 +11,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.renderer.minecraft.component;
 
+import de.alaoli.games.minecraft.mods.lib.ui.component.BoxComponent;
 import de.alaoli.games.minecraft.mods.lib.ui.component.Component;
 import de.alaoli.games.minecraft.mods.lib.ui.component.TextComponent;
 import de.alaoli.games.minecraft.mods.lib.ui.renderer.Context;
-import de.alaoli.games.minecraft.mods.lib.ui.renderer.Renderer;
+import de.alaoli.games.minecraft.mods.lib.ui.renderer.RendererComponent;
+import de.alaoli.games.minecraft.mods.lib.ui.renderer.minecraft.MinecraftRenderer;
 import de.alaoli.games.minecraft.mods.lib.ui.style.*;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Point;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 
@@ -36,20 +36,14 @@ import java.util.*;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public interface TextRenderer<C extends Component&TextComponent> extends Renderer<C>
+public interface TextRenderer<C extends Component&TextComponent> extends RendererComponent<C>
 {
     /**
      * @return Returns Minecraft {@link FontRenderer}
      */
     default FontRenderer getFontRenderer()
     {
-        Minecraft mc = Minecraft.getMinecraft();
-
-        if( mc == null || mc.fontRenderer == null)
-        {
-            throw new IllegalStateException( "Can't initialize Minecraft font renderer" );
-        }
-        return mc.fontRenderer;
+        return MinecraftRenderer.getFontRenderer();
     }
 
     default List<String> textToLines( String textline, int width, int height, int lineHeight )
@@ -125,12 +119,7 @@ public interface TextRenderer<C extends Component&TextComponent> extends Rendere
                 //Nothing to do
                 break;
         }
-        return Point.get( x, y );
-    }
-
-    default void drawCursor( int x, int y, int lineHeight, int color )
-    {
-
+        return Point.valueOf( x, y );
     }
 
     default void drawText( Text text, Region region, TextStyle style )
@@ -218,8 +207,13 @@ public interface TextRenderer<C extends Component&TextComponent> extends Rendere
     {
         Region region = component.getRegionAbsolute();
         Text text = component.getText();
-        TextStyle style = component.getTextStyle();
+        TextStyle textStyle = component.getTextStyle();
+        BoxStyle boxStyle = null;
 
-        this.drawText( text, region, style );
+        if( component instanceof BoxComponent )
+        {
+            boxStyle = ((BoxComponent)component).getBoxStyle();
+        }
+        this.drawText( text, region, textStyle, boxStyle );
     }
 }
