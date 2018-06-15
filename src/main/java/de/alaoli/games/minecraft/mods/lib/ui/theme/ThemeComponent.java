@@ -19,39 +19,11 @@
 package de.alaoli.games.minecraft.mods.lib.ui.theme;
 
 import de.alaoli.games.minecraft.mods.lib.ui.builder.Builder;
-import de.alaoli.games.minecraft.mods.lib.ui.theme.minecraft.MinecraftTheme;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-@NoArgsConstructor( access = AccessLevel.PRIVATE )
-public final class ThemeManager
+public interface ThemeComponent<B extends Builder<?>>
 {
-    /* *************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************* */
-
-    private static Theme<Builder<?>> defaultTheme;
-
-    /* *************************************************************************************************************
-     * Method
-     ************************************************************************************************************* */
-
-    public static void init()
-    {
-        setDefaultTheme( new MinecraftTheme() );
-    }
-
-    public static void setDefaultTheme( Theme<Builder<?>> theme )
-    {
-        defaultTheme = (theme!=null) ? theme : new MinecraftTheme();
-        defaultTheme.init();
-    }
-
-    public static void applyOn( Builder<?> builder )
-    {
-        defaultTheme.applyOn( builder );
-    }
+    void applyOn( B builder );
 }

@@ -20,28 +20,18 @@ package de.alaoli.games.minecraft.mods.lib.ui.theme.minecraft.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.component.TextFieldBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
-import de.alaoli.games.minecraft.mods.lib.ui.theme.Theme;
+import de.alaoli.games.minecraft.mods.lib.ui.theme.ThemeComponent;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class TextFieldTheme implements Theme<TextFieldBuilder<?>>
+public class TextFieldTheme implements ThemeComponent<TextFieldBuilder<?>>
 {
-    /* *************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************* */
-
     /* *************************************************************************************************************
      * Method - Implement Theme
      ************************************************************************************************************* */
-
-    @Override
-    public void init()
-    {
-
-    }
 
     @Override
     public void applyOn( TextFieldBuilder<?> builder )

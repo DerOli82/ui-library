@@ -19,25 +19,19 @@
 package de.alaoli.games.minecraft.mods.lib.ui.theme.minecraft.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.component.ButtonBuilder;
-import de.alaoli.games.minecraft.mods.lib.ui.component.TextFieldBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
-import de.alaoli.games.minecraft.mods.lib.ui.theme.Theme;
+import de.alaoli.games.minecraft.mods.lib.ui.theme.ThemeComponent;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
-import de.alaoli.games.minecraft.mods.lib.ui.util.Image;
-import net.minecraft.util.ResourceLocation;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class ButtonTheme implements Theme<ButtonBuilder<?>>
+public class ButtonTheme implements ThemeComponent<ButtonBuilder<?>>
 {
     /* *************************************************************************************************************
      * Method - Implement Theme
      ************************************************************************************************************* */
-
-    @Override
-    public void init() {}
 
     @Override
     public void applyOn( ButtonBuilder<?> builder )
