@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,13 +11,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.screen;
 
+import de.alaoli.games.minecraft.mods.lib.ui.component.BoxComponent;
 import de.alaoli.games.minecraft.mods.lib.ui.component.Component;
 import de.alaoli.games.minecraft.mods.lib.ui.event.*;
 import de.alaoli.games.minecraft.mods.lib.ui.renderer.Context;
@@ -25,6 +26,7 @@ import de.alaoli.games.minecraft.mods.lib.ui.renderer.RendererManager;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Disableable;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Focusable;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Hoverable;
+import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -39,13 +41,14 @@ import java.util.stream.Stream;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public abstract class Screen extends GuiScreen implements Component
+public abstract class Screen extends GuiScreen implements Component, BoxComponent
 {
     /* *************************************************************************************************************
      * Attribute
      ************************************************************************************************************* */
 
     private Region region = Region.EMPTY;
+    private BoxStyle boxStyle = BoxStyle.EMPTY;
 
     private final Context cachedContext = new Context();
     private final List<Component> components = new ArrayList<>();
@@ -78,12 +81,7 @@ public abstract class Screen extends GuiScreen implements Component
     }
 
     private boolean focusAvailable()
-    {/*
-		return !this.focusable.isEmpty() &&
-				this.focusable.stream()
-					.filter(focusable -> !(focusable instanceof Disableable) || !((Disableable) focusable).isDisabled())
-					.count() > 0;
-*/
+    {
         return !this.focusable.isEmpty() &&
                 this.focusable.stream()
                 .anyMatch( focusable -> !(focusable instanceof Disableable) || !((Disableable)focusable).isDisabled() );
@@ -110,7 +108,6 @@ public abstract class Screen extends GuiScreen implements Component
             }
         }
     }
-
 
     private void focusFirst()
     {
@@ -205,7 +202,7 @@ public abstract class Screen extends GuiScreen implements Component
     public void drawScreen( int mouseX, int mouseY, float partialTicks )
     {
         this.cachedContext.update( mouseX, mouseY, partialTicks );
-        RendererManager.INSTANCE.render( this, this.cachedContext );
+        RendererManager.render( this, this.cachedContext );
     }
 
     @Override
@@ -259,7 +256,7 @@ public abstract class Screen extends GuiScreen implements Component
     }
 
     @Override
-    public void handleKeyboardInput() throws IOException
+    public void handleKeyboardInput()
     {
         int eventKey = Keyboard.getEventKey();
         char  eventChar = Keyboard.getEventCharacter();
@@ -300,6 +297,12 @@ public abstract class Screen extends GuiScreen implements Component
         this.mc.dispatchKeypresses();
     }
 
+    protected static boolean isIngame()
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+
+        return mc.world != null && mc.player != null;
+    }
 
     /* *************************************************************************************************************
      * Method - Implement Component
@@ -329,24 +332,21 @@ public abstract class Screen extends GuiScreen implements Component
     @Override
     public void setRegion( Region region )
     {
-        if( region == null )
-        {
-            region = Region.EMPTY;
-        }
-        this.region = region;
+        this.region = (region!=null) ? region : Region.EMPTY;
     }
 
     @Override
     public Region getRegionAbsolute()
     {
-        return this.region; //Size is always absolute, because screen is always root component
+        return this.region; //Region is always absolute, because screen is always root component
     }
-
 
     @Override
     public void addComponent( Component component )
     {
         if( component == this ) { return; }
+
+        component.setParent( this );
 
         this.components.add( component );
     }
@@ -356,6 +356,8 @@ public abstract class Screen extends GuiScreen implements Component
     {
         if( component == this ) { return; }
 
+        component.setParent( null );
+
         this.components.remove( component );
     }
 
@@ -363,5 +365,21 @@ public abstract class Screen extends GuiScreen implements Component
     public Stream<Component> streamChildComponents()
     {
         return this.components.stream();
+    }
+
+    /* *************************************************************************************************************
+     * Method - Implement BoxComponent
+     ************************************************************************************************************* */
+
+    @Override
+    public BoxStyle getBoxStyle()
+    {
+        return this.boxStyle;
+    }
+
+    @Override
+    public void setBoxStyle( BoxStyle boxStyle )
+    {
+        this.boxStyle = (boxStyle!=null) ? boxStyle : BoxStyle.EMPTY;
     }
 }

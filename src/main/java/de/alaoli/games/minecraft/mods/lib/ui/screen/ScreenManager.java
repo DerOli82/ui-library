@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
@@ -66,7 +66,7 @@ public final class ScreenManager
         return show( create( screenClass ) );
     }
 
-    public static <S extends Screen> S show( S screen ) throws InstantiationException, IllegalAccessException
+    public static <S extends Screen> S show( S screen )
     {
         INSTANCE.nextScreen = screen;
 
@@ -99,17 +99,12 @@ public final class ScreenManager
         if( ( this.nextScreen != null ) &&
             ( event.phase == TickEvent.Phase.START ) )
         {
-            Minecraft mc = Minecraft.getMinecraft();
+            Minecraft.getMinecraft().displayGuiScreen( this.nextScreen );
 
-            if( mc != null )
-            {
-                mc.displayGuiScreen( this.nextScreen );
+            this.nextScreen.show();
+            this.nextScreen.resize( this.nextScreen.width, this.nextScreen.height );
 
-                this.nextScreen.show();
-                this.nextScreen.resize( this.nextScreen.width, this.nextScreen.height );
-
-                this.currScreen = this.nextScreen;
-            }
+            this.currScreen = this.nextScreen;
             this.nextScreen = null;
         }
     }
