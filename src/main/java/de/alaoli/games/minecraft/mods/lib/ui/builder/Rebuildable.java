@@ -20,6 +20,8 @@ package de.alaoli.games.minecraft.mods.lib.ui.builder;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
+ *
+ * @param <B> Type of the {@link NestedBuilder}
  */
 public interface Rebuildable<B extends NestedBuilder>
 {
