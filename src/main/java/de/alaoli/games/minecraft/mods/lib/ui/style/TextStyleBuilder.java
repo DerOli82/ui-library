@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,14 +11,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.style;
 
-import de.alaoli.games.minecraft.mods.lib.ui.builder.Builder;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Align;
@@ -145,32 +144,36 @@ public final class TextStyleBuilder<P> extends NestedBuilder<P,TextStyleBuilder<
 
     TextStyleBuilder()
     {
-        Values<TextStyleBuilder<P>> value = new Values<>();
-        value.withParentBuilder( this );
+        Values<TextStyleBuilder<P>> value = new Values<TextStyleBuilder<P>>().withParentBuilder( this );
 
         this.states.put( State.NONE, value );
     }
 
     private TextStyleBuilder( TextStyleBuilder<P> builder )
     {
-        this.states.putAll( builder.states );
+        builder.states.forEach( (state,value) -> this.states.put( state, value.copy() ) );
+    }
+
+    public boolean isEmpty()
+    {
+        return this.states.values().stream().allMatch( Values::isEmpty );
     }
 
     public Values<TextStyleBuilder<P>> withState( State state )
     {
+        Values<TextStyleBuilder<P>> value;
+
         if( !this.states.containsKey( state ) )
         {
-            Values<TextStyleBuilder<P>> value = new Values<>( this.states.get( State.NONE ) );
-            value.withParentBuilder( this );
+            value = this.states.get( State.NONE ).copy().withParentBuilder( this );
 
             this.states.put( state, value );
-
-            return value;
         }
         else
         {
-            return this.states.get( state );
+            value = this.states.get( state );
         }
+        return value;
     }
 
     /* *************************************************************************************************************
@@ -196,6 +199,6 @@ public final class TextStyleBuilder<P> extends NestedBuilder<P,TextStyleBuilder<
     @Override
     public TextStyle build()
     {
-        return new TextStyle( this );
+        return (!this.isEmpty() ) ? new TextStyle( this ) : Styles.emptyTextStyle();
     }
 }

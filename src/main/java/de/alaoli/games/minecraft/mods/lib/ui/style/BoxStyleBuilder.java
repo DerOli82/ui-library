@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,14 +11,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.style;
 
-import de.alaoli.games.minecraft.mods.lib.ui.builder.Builder;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.NestedBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 
@@ -40,11 +39,11 @@ public final class BoxStyleBuilder<P> extends NestedBuilder<P,BoxStyleBuilder<P>
          * Attribute
          ************************************************************************************************************* */
 
-        SpacingBuilder<Values<P>> margin;
-        SpacingBuilder<Values<P>> padding;
+        final SpacingBuilder<Values<P>> margin;
+        final SpacingBuilder<Values<P>> padding;
 
-        BackgroundBuilder<Values<P>> background;
-        BorderBuilder<Values<P>> border;
+        final BackgroundBuilder<Values<P>> background;
+        final BorderBuilder<Values<P>> border;
 
         /* *************************************************************************************************************
          * Method
@@ -52,32 +51,20 @@ public final class BoxStyleBuilder<P> extends NestedBuilder<P,BoxStyleBuilder<P>
 
         private Values()
         {
-            this.margin = new SpacingBuilder<>();
-            this.margin.withParentBuilder( this );
+            this.margin = Styles.<Values<P>>newSpacingBuilder().withParentBuilder( this );
+            this.padding = Styles.<Values<P>>newSpacingBuilder().withParentBuilder( this );
 
-            this.padding = new SpacingBuilder<>();
-            this.padding.withParentBuilder( this );
-
-            this.background = new BackgroundBuilder<>();
-            this.background.withParentBuilder( this );
-
-            this.border = new BorderBuilder<>();
-            this.border.withParentBuilder( this );
+            this.background = Styles.<Values<P>>newBackgroundBuilder().withParentBuilder( this );
+            this.border = Styles.<Values<P>>newBorderBuilder().withParentBuilder( this );
         }
 
         private Values( Values<P> values )
         {
-            this.margin = values.margin.copy();
-            this.margin.withParentBuilder( this );
+            this.margin = values.margin.copy().withParentBuilder( this );
+            this.padding = values.padding.copy().withParentBuilder( this );
 
-            this.padding = values.padding.copy();
-            this.padding.withParentBuilder( this );
-
-            this.background = values.background.copy();
-            this.background.withParentBuilder( this );
-
-            this.border = values.border.copy();
-            this.border.withParentBuilder( this );
+            this.background = values.background.copy().withParentBuilder( this );
+            this.border = values.border.copy().withParentBuilder( this );
         }
 
         boolean isEmpty()
@@ -129,7 +116,7 @@ public final class BoxStyleBuilder<P> extends NestedBuilder<P,BoxStyleBuilder<P>
         @Override
         public BoxStyle.Values build()
         {
-            return new BoxStyle.Values( this );
+            return (!this.isEmpty()) ? new BoxStyle.Values( this ) : BoxStyle.Values.EMPTY;
         }
     }
     final Map<State, Values<BoxStyleBuilder<P>>> states = new HashMap<>();
@@ -140,8 +127,7 @@ public final class BoxStyleBuilder<P> extends NestedBuilder<P,BoxStyleBuilder<P>
 
     BoxStyleBuilder()
     {
-        Values<BoxStyleBuilder<P>> value = new Values<>();
-        value.withParentBuilder( this );
+        Values<BoxStyleBuilder<P>> value = new Values<BoxStyleBuilder<P>>().withParentBuilder( this );
 
         this.states.put( State.NONE, value );
     }
@@ -151,31 +137,31 @@ public final class BoxStyleBuilder<P> extends NestedBuilder<P,BoxStyleBuilder<P>
         this();
 
         builder.states.forEach( (state,value) -> {
-            value.withParentBuilder( this );
+            value.copy().withParentBuilder( this );
             this.states.put( state, value );
         });
     }
 
     boolean isEmpty()
     {
-        return false;
+        return this.states.values().stream().allMatch( Values::isEmpty );
     }
 
     public Values<BoxStyleBuilder<P>> withState( State state )
     {
+        Values<BoxStyleBuilder<P>> value;
+
         if( !this.states.containsKey( state ) )
         {
-            Values<BoxStyleBuilder<P>> value = new Values<>( this.states.get( State.NONE ) );
-            value.withParentBuilder( this );
+            value = this.states.get( State.NONE ).copy().withParentBuilder( this );
 
             this.states.put( state, value );
-
-            return value;
         }
         else
         {
-            return this.states.get( state );
+            value = this.states.get( state );
         }
+        return value;
     }
 
     /* *************************************************************************************************************
@@ -201,6 +187,6 @@ public final class BoxStyleBuilder<P> extends NestedBuilder<P,BoxStyleBuilder<P>
     @Override
     public BoxStyle build()
     {
-        return ( !this.isEmpty() ) ? new BoxStyle( this ) : BoxStyle.EMPTY;
+        return ( !this.isEmpty() ) ? new BoxStyle( this ) : Styles.emptyBoxStyle();
     }
 }

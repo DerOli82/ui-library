@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
@@ -21,6 +21,7 @@ package de.alaoli.games.minecraft.mods.lib.ui.style;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Stateable;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,19 +34,22 @@ public final class BoxStyle implements Stateable
      * Attribute
      ************************************************************************************************************* */
 
-    public static final BoxStyle EMPTY = new BoxStyle();
+    static final BoxStyle EMPTY = new BoxStyle();
 
+    @Immutable
     static final class Values
     {
         /* *************************************************************************************************************
          * Attribute
          ************************************************************************************************************* */
 
-        private Margin margin;
-        private Padding padding;
+        static final Values EMPTY = new Values();
 
-        private Background background;
-        private Border border;
+        private final Margin margin;
+        private final Padding padding;
+
+        private final Background background;
+        private final Border border;
 
         /* *************************************************************************************************************
          * Method
@@ -53,11 +57,11 @@ public final class BoxStyle implements Stateable
 
         private Values()
         {
-            this.margin = Spacing.EMPTY;
-            this.padding = Spacing.EMPTY;
+            this.margin = Styles.emptySpacing();
+            this.padding = Styles.emptySpacing();
 
-            this.background = Background.EMPTY;
-            this.border = Border.EMPTY;
+            this.background = Styles.emptyBackground();
+            this.border = Styles.emptyBorder();
         }
 
         Values( BoxStyleBuilder.Values<?> builder )
@@ -79,7 +83,7 @@ public final class BoxStyle implements Stateable
 
     private BoxStyle()
     {
-        this.states.put( State.NONE, new Values() );
+        this.states.put( State.NONE, Values.EMPTY );
     }
 
     BoxStyle( BoxStyleBuilder<?> builder )
@@ -90,6 +94,11 @@ public final class BoxStyle implements Stateable
         {
             this.states.put( State.NONE, new Values() );
         }
+    }
+
+    public boolean isEmpty()
+    {
+        return this == EMPTY;
     }
 
     public Margin getMargin()

@@ -112,6 +112,6 @@ public final class SpacingBuilder<P> extends NestedBuilder<P, SpacingBuilder<P>,
     @Override
     public Spacing build()
     {
-        return (!this.isEmpty()) ? new Spacing( this ) : Spacing.EMPTY;
+        return (!this.isEmpty()) ? new Spacing( this ) : Styles.emptySpacing();
     }
 }

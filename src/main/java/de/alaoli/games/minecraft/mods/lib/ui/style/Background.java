@@ -21,12 +21,14 @@ package de.alaoli.games.minecraft.mods.lib.ui.style;
 import de.alaoli.games.minecraft.mods.lib.ui.builder.Rebuildable;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Image;
+import lombok.Getter;
 
 import javax.annotation.concurrent.Immutable;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
+@Getter
 @Immutable
 public final class Background implements Rebuildable<BackgroundBuilder>
 {
@@ -34,7 +36,7 @@ public final class Background implements Rebuildable<BackgroundBuilder>
      * Attribute
      ************************************************************************************************************* */
 
-    static final Background EMPTY = new Background();
+    static final Background EMPTY = new Background( Color.DEFAULT, Image.EMPTY );
 
     private final Color color;
     private final Image image;
@@ -43,15 +45,10 @@ public final class Background implements Rebuildable<BackgroundBuilder>
      * Method
      ************************************************************************************************************* */
 
-    private Background()
+    private Background(Color color, Image image )
     {
-        this( Color.DEFAULT, Image.EMPTY );
-    }
-
-    private Background( Color color, Image image )
-    {
-        this.color = (color!=null) ? color : Color.DEFAULT;
-        this.image = (image!=null) ? image : Image.EMPTY;
+        this.color = Color.valueOrDefault( color );
+        this.image = Image.valueOrEmpty( image );
     }
 
     Background( BackgroundBuilder<?> builder )
@@ -59,14 +56,9 @@ public final class Background implements Rebuildable<BackgroundBuilder>
         this( builder.color, builder.image );
     }
 
-    public Color getColor()
+    public boolean isEmpty()
     {
-        return this.color;
-    }
-
-    public Image getImage()
-    {
-        return this.image;
+        return this == EMPTY;
     }
 
     /* *************************************************************************************************************
@@ -76,6 +68,6 @@ public final class Background implements Rebuildable<BackgroundBuilder>
     @Override
     public <P> BackgroundBuilder<P> toBuilder()
     {
-        return new BackgroundBuilder<P>().withColor( this.color ).withImage( this.image );
+        return Styles.<P>newBackgroundBuilder().withColor( this.color ).withImage( this.image );
     }
 }

@@ -32,18 +32,13 @@ final class Spacing implements Margin, Padding, Rebuildable<SpacingBuilder>
      * Attribute
      ************************************************************************************************************* */
 
-    public static final Spacing EMPTY = new Spacing();
+    static final Spacing EMPTY = new Spacing( 0, 0, 0 ,0 );
 
     private final int top, left, right, bottom;
 
     /* *************************************************************************************************************
      * Method
      ************************************************************************************************************* */
-
-    private Spacing()
-    {
-        this( 0, 0, 0, 0 );
-    }
 
     private Spacing( int top, int left, int right, int bottom )
     {
@@ -60,7 +55,7 @@ final class Spacing implements Margin, Padding, Rebuildable<SpacingBuilder>
 
     public boolean isEmpty()
     {
-        return this.top == 0 && this.left == 0 && this.right == 0 && this.bottom == 0;
+        return this == EMPTY;
     }
 
     /* *************************************************************************************************************

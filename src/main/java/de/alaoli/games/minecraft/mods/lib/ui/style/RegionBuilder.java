@@ -100,8 +100,8 @@ public final class RegionBuilder<P> extends NestedBuilder<P,RegionBuilder<P>,Reg
 
     public RegionBuilder<P> translate( int x, int y )
     {
-        x += this.x;
-        y += this.y;
+        this.x += x;
+        this.y += y;
 
         return this;
     }
@@ -155,6 +155,6 @@ public final class RegionBuilder<P> extends NestedBuilder<P,RegionBuilder<P>,Reg
     @Override
     public Region build()
     {
-        return (!this.isEmpty()) ? new Region( this ) : Region.EMPTY;
+        return (!this.isEmpty()) ? new Region( this ) : Styles.emptyRegion();
     }
 }

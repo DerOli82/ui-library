@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
@@ -20,6 +20,7 @@ package de.alaoli.games.minecraft.mods.lib.ui.style;
 
 import de.alaoli.games.minecraft.mods.lib.ui.builder.Rebuildable;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Color;
+import lombok.Getter;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -33,8 +34,9 @@ public final class Border implements Rebuildable<BorderBuilder>
      * Attribute
      ************************************************************************************************************* */
 
-    static final Border EMPTY = new Border();
+    static final Border EMPTY = new Border( Color.DEFAULT, false, false, false, false );
 
+    @Getter
     private final Color color;
     private final boolean hasTop, hasLeft, hasRight, hasBottom;
 
@@ -42,14 +44,9 @@ public final class Border implements Rebuildable<BorderBuilder>
      * Method
      ************************************************************************************************************* */
 
-    private Border()
-    {
-        this( Color.DEFAULT, false, false, false, false );
-    }
-
     private Border( Color color, boolean hasTop, boolean hasLeft, boolean hasRight, boolean hasBottom )
     {
-        this.color = color;
+        this.color = Color.valueOrDefault( color );
 
         this.hasTop = hasTop;
         this.hasLeft = hasLeft;
@@ -64,13 +61,7 @@ public final class Border implements Rebuildable<BorderBuilder>
 
     public boolean isEmpty()
     {
-        return ( ( this.color == null ) || ( this.color == Color.DEFAULT ) ) ||
-                ( ( !this.hasTop ) && ( !this.hasLeft ) && ( !this.hasRight ) && ( !this.hasBottom ) );
-    }
-
-    public Color getColor()
-    {
-        return this.color;
+        return this == EMPTY;
     }
 
     public boolean hasTop()
@@ -100,7 +91,7 @@ public final class Border implements Rebuildable<BorderBuilder>
     @Override
     public <P> BorderBuilder<P> toBuilder()
     {
-        return new BorderBuilder<P>()
+        return Styles.<P>newBorderBuilder()
             .withColor( this.color )
             .withBorder( this.hasTop, this.hasLeft, this.hasRight, this.hasBottom );
     }

@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
@@ -37,7 +37,7 @@ public final class TextStyle implements Stateable, Rebuildable<TextStyleBuilder>
      * Attribute
      ************************************************************************************************************* */
 
-    public static final TextStyle EMPTY = new TextStyle();
+    static final TextStyle EMPTY = new TextStyle();
 
     @Immutable
     static final class Values implements Rebuildable<TextStyleBuilder.Values>
@@ -46,7 +46,7 @@ public final class TextStyle implements Stateable, Rebuildable<TextStyleBuilder>
          * Attribute
          ************************************************************************************************************* */
 
-        public static final Values EMPTY = new Values();
+        static final Values EMPTY = new Values();
 
         private final Align align;
         private final Color color;
@@ -68,9 +68,14 @@ public final class TextStyle implements Stateable, Rebuildable<TextStyleBuilder>
         Values( TextStyleBuilder.Values builder )
         {
             this.align = builder.align;
-            this.color = builder.color;
+            this.color = Color.valueOrDefault( builder.color );
             this.hasShadow = builder.hasShadow;
             this.lineHeight = builder.lineHeight;
+        }
+
+        public boolean isEmpty()
+        {
+            return this == EMPTY;
         }
 
         /* *************************************************************************************************************
@@ -87,7 +92,7 @@ public final class TextStyle implements Stateable, Rebuildable<TextStyleBuilder>
                 .withLineHeight( this.lineHeight );
         }
     }
-    final Map<State,Values> states = new HashMap<>();
+    private final Map<State,Values> states = new HashMap<>();
 
     private State state = State.NONE;
 
@@ -108,6 +113,11 @@ public final class TextStyle implements Stateable, Rebuildable<TextStyleBuilder>
         {
             this.states.put( State.NONE, Values.EMPTY );
         }
+    }
+
+    public boolean isEmpty()
+    {
+        return this.states.values().stream().allMatch( Values::isEmpty );
     }
 
     public Align getAlign()
