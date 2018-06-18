@@ -40,7 +40,7 @@ public final class TextFieldRenderer implements TextRenderer<TextField>, BoxRend
         BoxRenderer.super.render( component, context );
 
         Text text;
-        Region region = component.getRegion();
+        Region region = component.getRegionAbsolute();
         TextStyle textStyle = component.getTextStyle();
         BoxStyle boxStyle = component.getBoxStyle();
 

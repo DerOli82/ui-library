@@ -40,7 +40,7 @@ public final class TextAreaRenderer implements TextRenderer<TextArea>, BoxRender
         BoxRenderer.super.render( component, context );
 
         Text text;
-        Region region = component.getRegion();
+        Region region = component.getRegionAbsolute();
         TextStyle textStyle = component.getTextStyle();
         BoxStyle boxStyle = component.getBoxStyle();
 

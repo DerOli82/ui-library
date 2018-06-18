@@ -129,7 +129,7 @@ public final class ListTextRenderer extends GuiListExtended implements Renderer<
     @Override
     public void render( ListText component, Context context )
     {
-        Region region = component.getRegion();
+        Region region = component.getRegionAbsolute();
 
         this.tmpList = component.getList();
         this.tmpStyle = component.getTextStyle();

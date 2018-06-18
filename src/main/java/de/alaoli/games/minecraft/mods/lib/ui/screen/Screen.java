@@ -222,7 +222,7 @@ public abstract class Screen extends GuiScreen implements Component, BoxComponen
             .filter( listener -> listener instanceof MouseListener )
             .collect(Collectors.toCollection( ArrayList::new ))
             .forEach( listener -> {
-                boolean hovered = ((MouseListener)listener).getRegion().contains( x, y );
+                boolean hovered = ((MouseListener)listener).getRegionAbsolute().contains( x, y );
 
                 //Element entered or exited event
                 if( listener instanceof Hoverable)
