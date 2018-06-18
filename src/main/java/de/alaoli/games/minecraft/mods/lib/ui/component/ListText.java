@@ -18,6 +18,7 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
+import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
 
@@ -44,12 +45,11 @@ public final class ListText extends AbstractComponent implements TextComponent
     {
         super( builder );
 
-        this.textStyle = (builder.textStyleBuilder!=null) ? builder.textStyleBuilder.build() : TextStyle.EMPTY;
-
         if( builder.list!=null )
         {
             this.list.addAll( builder.list );
         }
+        this.setTextStyle( builder.textStyleBuilder );
     }
 
     public List<String> getList()
@@ -76,6 +76,6 @@ public final class ListText extends AbstractComponent implements TextComponent
     @Override
     public void setTextStyle( TextStyle textStyle )
     {
-        this.textStyle = (textStyle!=null) ? textStyle : TextStyle.EMPTY;
+        this.textStyle = Styles.valueOrEmpty( textStyle );
     }
 }

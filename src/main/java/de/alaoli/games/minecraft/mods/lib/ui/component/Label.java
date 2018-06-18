@@ -18,6 +18,7 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
+import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
 
@@ -65,6 +66,6 @@ public final class Label extends AbstractComponent implements TextComponent
     @Override
     public void setTextStyle( TextStyle textStyle )
     {
-        this.textStyle = (textStyle!=null) ? textStyle : TextStyle.EMPTY;
+        this.textStyle = Styles.valueOrEmpty( textStyle );
     }
 }

@@ -22,6 +22,7 @@ import de.alaoli.games.minecraft.mods.lib.ui.event.Listener;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Margin;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import de.alaoli.games.minecraft.mods.lib.ui.style.RegionListener;
+import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -37,7 +38,7 @@ abstract class AbstractComponent implements Component, RegionListener
 
     private Component parent;
 
-    private Region region = Region.EMPTY;
+    private Region region = Styles.emptyRegion();
     private Region regionAbsolute;
 
     private final List<Component> childComponents = new ArrayList<>();
@@ -126,7 +127,7 @@ abstract class AbstractComponent implements Component, RegionListener
     public void setRegion( Region region )
     {
         Region oldRegion = this.region;
-        this.region = (region!=null) ? region : Region.EMPTY;
+        this.region = Styles.valueOrEmpty( region );
 
         this.notifyRegionChanged( oldRegion, this.region );
     }

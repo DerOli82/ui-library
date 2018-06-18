@@ -20,6 +20,7 @@ package de.alaoli.games.minecraft.mods.lib.ui.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
 import de.alaoli.games.minecraft.mods.lib.ui.style.RegionBuilder;
+import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +42,7 @@ public interface Component
 
     default void setRegion( RegionBuilder<?> builder )
     {
-        this.setRegion( (builder!=null) ? builder.build() : Region.EMPTY );
+        this.setRegion( (builder!=null) ? builder.build() : Styles.emptyRegion() );
     }
     void setRegion( Region region );
 

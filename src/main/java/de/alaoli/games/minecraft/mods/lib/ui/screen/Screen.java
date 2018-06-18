@@ -28,6 +28,7 @@ import de.alaoli.games.minecraft.mods.lib.ui.state.Focusable;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Hoverable;
 import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
+import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
@@ -47,8 +48,8 @@ public abstract class Screen extends GuiScreen implements Component, BoxComponen
      * Attribute
      ************************************************************************************************************* */
 
-    private Region region = Region.EMPTY;
-    private BoxStyle boxStyle = BoxStyle.EMPTY;
+    private Region region = Styles.emptyRegion();
+    private BoxStyle boxStyle = Styles.emptyBoxStyle();
 
     private final Context cachedContext = new Context();
     private final List<Component> components = new ArrayList<>();
@@ -332,7 +333,7 @@ public abstract class Screen extends GuiScreen implements Component, BoxComponen
     @Override
     public void setRegion( Region region )
     {
-        this.region = (region!=null) ? region : Region.EMPTY;
+        this.region = Styles.valueOrEmpty( region );
     }
 
     @Override
@@ -380,6 +381,6 @@ public abstract class Screen extends GuiScreen implements Component, BoxComponen
     @Override
     public void setBoxStyle( BoxStyle boxStyle )
     {
-        this.boxStyle = (boxStyle!=null) ? boxStyle : BoxStyle.EMPTY;
+        this.boxStyle = Styles.valueOrEmpty( boxStyle );
     }
 }

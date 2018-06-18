@@ -18,80 +18,90 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
-import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
-import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
+import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyleBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public final class Pane extends AbstractComponent implements BoxComponent, Layout
+public final class WidgetBuilder<P> extends ComponentBuilder<P, WidgetBuilder<P>,Widget>
 {
     /* *************************************************************************************************************
      * Attribute
      ************************************************************************************************************* */
 
-    private BoxStyle boxStyle;
-    private boolean needsLayout = true;
+    LabelBuilder<WidgetBuilder<P>> labelBuilder;
+    ButtonBuilder<WidgetBuilder<P>> buttonBuilder;
+
+    Layout content;
+
+    BoxStyleBuilder<WidgetBuilder<P>> boxStyleBuilder;
 
     /* *************************************************************************************************************
      * Method
      ************************************************************************************************************* */
 
-    Pane( PaneBuilder<?> builder )
+    WidgetBuilder()
     {
-        super( builder );
-        this.setBoxStyle( builder.boxStyleBuilder );
+        super();
+
+        this.labelBuilder = Components.<WidgetBuilder<P>>buildLabel().withParentBuilder( this );
+        this.buttonBuilder = Components.<WidgetBuilder<P>>buildButton().withParentBuilder( this );
     }
 
-    /* *************************************************************************************************************
-     * Method - Implement RegionListener
-     ************************************************************************************************************* */
-
-    @Override
-    public void onRegionChanged( Region oldRegion, Region newRegion )
+    public LabelBuilder<WidgetBuilder<P>> withTitle()
     {
-        super.onRegionChanged( oldRegion, newRegion );
-
-        this.invalidateLayout();
+        return this.labelBuilder;
     }
 
-    /* *************************************************************************************************************
-     * Method - Implement BoxComponent
-     ************************************************************************************************************* */
-
-    @Override
-    public BoxStyle getBoxStyle()
+    public ButtonBuilder<WidgetBuilder<P>> withCloseButton()
     {
-        return this.boxStyle;
+        return this.buttonBuilder;
     }
 
-    @Override
-    public void setBoxStyle( BoxStyle boxStyle )
+    public WidgetBuilder<P> withContent( Layout content )
     {
-        this.boxStyle = Styles.valueOrEmpty( boxStyle );
+        this.content = content;
+
+        return this;
     }
 
-    /* *************************************************************************************************************
-     * Method - Implement Layout
-     ************************************************************************************************************* */
-
-    @Override
-    public void layout() {}
-
-    @Override
-    public void validateLayout()
+    public BoxStyleBuilder<WidgetBuilder<P>> withBoxStyle()
     {
-        if( this.needsLayout )
+        if( this.boxStyleBuilder == null )
         {
-            this.layout();
-            this.needsLayout = false;
+            this.boxStyleBuilder = Styles.newBoxStyleBuilder();
+            this.boxStyleBuilder.withParentBuilder( this );
         }
+        return this.boxStyleBuilder;
+    }
+
+    /* *************************************************************************************************************
+     * Method - Implement NestedBuilder
+     ************************************************************************************************************* */
+    @Override
+    protected WidgetBuilder<P> self()
+    {
+        return this;
     }
 
     @Override
-    public void invalidateLayout()
+    public WidgetBuilder<P> copy()
     {
-        this.needsLayout = true;
+        WidgetBuilder<P> builder = new WidgetBuilder<>();
+        builder.boxStyleBuilder = this.boxStyleBuilder.copy();
+
+        return builder;
     }
+
+    /* *************************************************************************************************************
+     * Method - Implement NestedBuilder
+     ************************************************************************************************************* */
+
+    @Override
+    public Widget build()
+    {
+        return new Widget( this );
+    }
+
 }

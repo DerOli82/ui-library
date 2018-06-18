@@ -18,6 +18,7 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
+import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyleBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
@@ -32,7 +33,7 @@ public interface TextComponent extends Component
 
     default void setTextStyle( TextStyleBuilder<?> builder )
     {
-        this.setTextStyle( (builder!=null) ? builder.build() : TextStyle.EMPTY );
+        this.setTextStyle( (builder!=null) ? builder.build() : Styles.emptyTextStyle() );
     }
     void setTextStyle( TextStyle textStyle );
 }

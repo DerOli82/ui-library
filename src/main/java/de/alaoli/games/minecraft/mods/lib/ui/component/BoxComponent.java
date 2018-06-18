@@ -20,6 +20,7 @@ package de.alaoli.games.minecraft.mods.lib.ui.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyleBuilder;
+import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -30,7 +31,7 @@ public interface BoxComponent
 
     default void setBoxStyle( BoxStyleBuilder<?> builder )
     {
-        this.setBoxStyle( (builder!=null) ? builder.build() : BoxStyle.EMPTY );
+        this.setBoxStyle( (builder!=null) ? builder.build() : Styles.emptyBoxStyle() );
     }
     void setBoxStyle( BoxStyle boxStyle );
 }

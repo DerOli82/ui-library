@@ -27,6 +27,7 @@ import de.alaoli.games.minecraft.mods.lib.ui.state.Focusable;
 import de.alaoli.games.minecraft.mods.lib.ui.state.Hoverable;
 import de.alaoli.games.minecraft.mods.lib.ui.state.State;
 import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
+import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyle;
 import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
 
@@ -111,7 +112,7 @@ abstract class InputComponent extends AbstractComponent
     @Override
     public void setTextStyle( TextStyle textStyle )
     {
-        this.textStyle = (textStyle!=null) ? textStyle : TextStyle.EMPTY;
+        this.textStyle = Styles.valueOrEmpty( textStyle );
     }
 
     /* *************************************************************************************************************
