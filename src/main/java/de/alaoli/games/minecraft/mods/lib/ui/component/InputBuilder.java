@@ -21,13 +21,12 @@ package de.alaoli.games.minecraft.mods.lib.ui.component;
 import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyleBuilder;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyleBuilder;
-import de.alaoli.games.minecraft.mods.lib.ui.theme.ThemeManager;
 import net.minecraft.client.resources.I18n;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public abstract class InputBuilder<P, S extends InputBuilder<P,S,B>,B> extends ComponentBuilder<P,S,B>
+abstract class InputBuilder<P, S extends InputBuilder<P,S,B>,B> extends ComponentBuilder<P,S,B>
 {
     /* **************************************************************************************************************
      * Attribute
@@ -39,7 +38,7 @@ public abstract class InputBuilder<P, S extends InputBuilder<P,S,B>,B> extends C
     TextStyleBuilder<S> textStyleBuilder;
     BoxStyleBuilder<S> boxStyleBuilder;
 
-    int maxLength = 32;
+    int maxLength;
 
     /* **************************************************************************************************************
      * Method
@@ -47,14 +46,16 @@ public abstract class InputBuilder<P, S extends InputBuilder<P,S,B>,B> extends C
 
     InputBuilder()
     {
-        ThemeManager.INSTANCE.applyOn( this );
+        super();
     }
 
-    protected InputBuilder(S builder )
+    InputBuilder( S builder )
     {
+        super( builder );
+
         this.placeholder = builder.placeholder;
-        this.textStyleBuilder = builder.textStyleBuilder;
-        this.boxStyleBuilder = builder.boxStyleBuilder;
+        this.textStyleBuilder = (builder.textStyleBuilder!=null) ? builder.textStyleBuilder.copy() : null;
+        this.boxStyleBuilder = (builder.boxStyleBuilder!=null) ? builder.boxStyleBuilder.copy() : null;
 
         this.maxLength = builder.maxLength;
     }
@@ -65,19 +66,19 @@ public abstract class InputBuilder<P, S extends InputBuilder<P,S,B>,B> extends C
         return this.withText( text, true );
     }
 
-    public S withText(String text, boolean translate )
+    public S withText( String text, boolean translate )
     {
         this.text = (translate) ? I18n.format( text ) : text;
 
         return this.self();
     }
 
-    public S withPlaceholder(String placeholder )
+    public S withPlaceholder( String placeholder )
     {
         return this.withPlaceholder( placeholder, true );
     }
 
-    public S withPlaceholder(String placeholder, boolean translate )
+    public S withPlaceholder( String placeholder, boolean translate )
     {
         this.placeholder = (translate) ? I18n.format( placeholder ) : placeholder;
 
@@ -88,8 +89,7 @@ public abstract class InputBuilder<P, S extends InputBuilder<P,S,B>,B> extends C
     {
         if( this.textStyleBuilder == null )
         {
-            this.textStyleBuilder = Styles.newTextStyleBuilder();
-            this.textStyleBuilder.withParentBuilder( this.self() );
+            this.textStyleBuilder = Styles.<S>newTextStyleBuilder().withParentBuilder( this.self() );
         }
         return this.textStyleBuilder;
     }
@@ -98,16 +98,15 @@ public abstract class InputBuilder<P, S extends InputBuilder<P,S,B>,B> extends C
     {
         if( this.boxStyleBuilder == null )
         {
-            this.boxStyleBuilder = Styles.newBoxStyleBuilder();
-            this.boxStyleBuilder.withParentBuilder( this.self() );
+            this.boxStyleBuilder = Styles.<S>newBoxStyleBuilder().withParentBuilder( this.self() );
         }
         return this.boxStyleBuilder;
     }
 
-    public InputBuilder<P,S,B> withMaxLength(int maxLength )
+    public S withMaxLength( int maxLength )
     {
         this.maxLength = maxLength;
 
-        return this;
+        return this.self();
     }
 }

@@ -19,34 +19,22 @@
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.event.KeyboardEvent;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.lwjgl.input.Keyboard;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class TextArea extends InputComponent
+public final class TextArea extends InputComponent
 {
-    /* *************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************* */
-
-    private int maxLines;
-
     /* *************************************************************************************************************
      * Method
      ************************************************************************************************************* */
 
-    private TextArea()
-    {
-        super();
-    }
-
     TextArea( TextAreaBuilder<?> builder )
     {
         super( builder );
-
-        this.maxLines = builder.maxLines;
     }
 
     /* *************************************************************************************************************
@@ -56,39 +44,41 @@ public class TextArea extends InputComponent
     @Override
     public void onKeyPressed( KeyboardEvent event )
     {
-        if( !this.focused ) { return; }
+        if( !this.isFocused() ) { return; }
+
+        Text text = this.getText();
 
         switch( event.getEventKey() )
         {
             case Keyboard.KEY_LEFT:
-                this.text.cursorPosPrev();
+                text.cursorPosPrev();
                 break;
 
             case Keyboard.KEY_RIGHT:
-                this.text.cursorPosNext();
+                text.cursorPosNext();
                 break;
 
             case Keyboard.KEY_HOME:
-                this.text.cursorPosFirst();
+                text.cursorPosFirst();
                 break;
 
             case Keyboard.KEY_END:
-                this.text.cursorPosLast();
+                text.cursorPosLast();
                 break;
 
             case Keyboard.KEY_BACK:
-                this.text.cursorPosPrev();
-                this.text.delete();
+                text.cursorPosPrev();
+                text.delete();
                 break;
 
             case Keyboard.KEY_DELETE:
-                this.text.delete();
+                text.delete();
                 break;
 
             default:
                 char c = event.getEventChar();
 
-                if( ChatAllowedCharacters.isAllowedCharacter( c ) ) { this.text.insert( c ); }
+                if( ChatAllowedCharacters.isAllowedCharacter( c ) ) { text.insert( c ); }
                 break;
         }
         super.onKeyPressed( event );

@@ -18,19 +18,12 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
-import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyle;
-import de.alaoli.games.minecraft.mods.lib.ui.style.BoxStyleBuilder;
+import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public interface BoxComponent
+public interface PlaceholderComponent extends TextComponent
 {
-    BoxStyle getBoxStyle();
-
-    default void setBoxStyle( BoxStyleBuilder<?> builder )
-    {
-        this.setBoxStyle( (builder!=null) ? builder.build() : BoxStyle.EMPTY );
-    }
-    void setBoxStyle( BoxStyle boxStyle );
+    Text getPlaceholder();
 }

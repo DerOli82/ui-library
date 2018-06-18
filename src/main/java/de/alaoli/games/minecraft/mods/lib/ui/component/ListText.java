@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public class ListText extends AbstractComponent implements TextComponent
+public final class ListText extends AbstractComponent implements TextComponent
 {
     /* **************************************************************************************************************
      * Attribute

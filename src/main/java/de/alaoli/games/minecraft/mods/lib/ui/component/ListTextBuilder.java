@@ -20,8 +20,8 @@ package de.alaoli.games.minecraft.mods.lib.ui.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyleBuilder;
-import de.alaoli.games.minecraft.mods.lib.ui.theme.ThemeManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,10 +42,22 @@ public final class ListTextBuilder<P> extends ComponentBuilder<P, ListTextBuilde
 
     ListTextBuilder()
     {
-        ThemeManager.INSTANCE.applyOn( this );
+        super();
     }
 
-    public ListTextBuilder<P> withEntries(List<String> entries )
+    private ListTextBuilder( ListTextBuilder<P> builder )
+    {
+        super( builder );
+
+        if( ( builder.list != null ) && ( !builder.list.isEmpty() ) )
+        {
+            this.list = new ArrayList<>();
+            this.list.addAll( builder.list );
+        }
+        this.textStyleBuilder = (builder.textStyleBuilder!=null) ? builder.textStyleBuilder.copy() : null;
+    }
+
+    public ListTextBuilder<P> withEntries( List<String> entries )
     {
         this.list = entries;
 
@@ -56,8 +68,7 @@ public final class ListTextBuilder<P> extends ComponentBuilder<P, ListTextBuilde
     {
         if( this.textStyleBuilder == null )
         {
-            this.textStyleBuilder = Styles.newTextStyleBuilder();
-            this.textStyleBuilder.withParentBuilder( this );
+            this.textStyleBuilder = Styles.<ListTextBuilder<P>>newTextStyleBuilder().withParentBuilder( this );
         }
         return this.textStyleBuilder;
     }
@@ -75,12 +86,7 @@ public final class ListTextBuilder<P> extends ComponentBuilder<P, ListTextBuilde
     @Override
     public ListTextBuilder<P> copy()
     {
-        ListTextBuilder<P> builder = new ListTextBuilder<>();
-
-        builder.list = this.list;
-        builder.textStyleBuilder = this.textStyleBuilder.copy();
-
-        return builder;
+        return new ListTextBuilder<>( this );
     }
 
     /* **************************************************************************************************************

@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
@@ -47,11 +47,9 @@ abstract class AbstractComponent implements Component, RegionListener
      * Method
      ************************************************************************************************************* */
 
-    AbstractComponent() {}
-
     AbstractComponent( ComponentBuilder<?,?,?> builder )
     {
-        this.region = (builder.regionBuilder!=null) ? builder.regionBuilder.build() : Region.EMPTY;
+        this.setRegion( builder.regionBuilder );
     }
 
     public void addListener( Listener listener )
@@ -69,7 +67,7 @@ abstract class AbstractComponent implements Component, RegionListener
         this.listeners.clear();
     }
 
-    protected void notifyRegionChanged( Region oldRegion, Region newRegion )
+    private void notifyRegionChanged( Region oldRegion, Region newRegion )
     {
         for( Component parent = this.parent; parent != null; parent = parent.getParent().orElse(null) )
         {
@@ -89,7 +87,7 @@ abstract class AbstractComponent implements Component, RegionListener
         this.regionAbsolute = null;
     }
 
-    protected Stream<Listener> streamListeners()
+    Stream<Listener> streamListeners()
     {
         return this.listeners.stream();
     }
@@ -128,19 +126,15 @@ abstract class AbstractComponent implements Component, RegionListener
     public void setRegion( Region region )
     {
         Region oldRegion = this.region;
+        this.region = (region!=null) ? region : Region.EMPTY;
 
-        if( region == null )
-        {
-            region = Region.EMPTY;
-        }
-        this.region = region;
         this.notifyRegionChanged( oldRegion, this.region );
     }
 
     @Override
     public Region getRegionAbsolute()
     {
-        int x, y;
+        int x, y, width, height;
 
         if (this.regionAbsolute == null )
         {
@@ -148,8 +142,10 @@ abstract class AbstractComponent implements Component, RegionListener
 
             for( Component parent = this.parent; parent != null; parent = parent.getParent().orElse(null) )
             {
-                x = 0;
-                y = 0;
+                x = parent.getRegion().getX();
+                y = parent.getRegion().getY();
+                width = 0;
+                height = 0;
 
                 if( parent instanceof BoxComponent )
                 {
@@ -157,13 +153,13 @@ abstract class AbstractComponent implements Component, RegionListener
 
                     x += margin.getLeft();
                     y += margin.getTop();
-
-                    this.regionAbsolute = this.regionAbsolute.toBuilder().shrink( margin.getRight(), margin.getBottom() ).build();
+                    width -= margin.getRight();
+                    height -= margin.getBottom();
                 }
-                x += parent.getRegion().getX();
-                y += parent.getRegion().getY();
-
-                this.regionAbsolute = this.regionAbsolute.toBuilder().translate( x, y ).build();
+                this.regionAbsolute = this.regionAbsolute.toBuilder()
+                    .translate( x, y )
+                    .shrink( width, height )
+                .build();
             }
         }
         return this.regionAbsolute;

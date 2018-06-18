@@ -19,7 +19,9 @@
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
 import de.alaoli.games.minecraft.mods.lib.ui.style.Region;
+import de.alaoli.games.minecraft.mods.lib.ui.style.RegionBuilder;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -36,16 +38,17 @@ public interface Component
 
     Region getRegion();
     Region getRegionAbsolute();
+
+    default void setRegion( RegionBuilder<?> builder )
+    {
+        this.setRegion( (builder!=null) ? builder.build() : Region.EMPTY );
+    }
     void setRegion( Region region );
 
     default void addComponent( Component... components )
     {
-        for( Component component : components)
-        {
-            this.addComponent( component );
-        }
+        this.addComponent( Arrays.asList( components ) );
     }
-
     default void addComponent( List<Component> components )
     {
         components.forEach( this::addComponent );
@@ -54,12 +57,8 @@ public interface Component
 
     default void removeComponent( Component... components )
     {
-        for( Component component : components)
-        {
-            this.removeComponent( components );
-        }
+        this.removeComponent( Arrays.asList( components ) );
     }
-
     default void removeComponent( List<Component> components )
     {
         components.forEach( this::removeComponent );

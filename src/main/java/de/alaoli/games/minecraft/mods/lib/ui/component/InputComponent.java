@@ -33,33 +33,28 @@ import de.alaoli.games.minecraft.mods.lib.ui.util.Text;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
-public abstract class InputComponent extends AbstractComponent
-        implements TextComponent, BoxComponent, Hoverable, Focusable, Disableable, MouseListener, KeyboardListener
+abstract class InputComponent extends AbstractComponent
+        implements PlaceholderComponent, BoxComponent, Hoverable, Focusable, Disableable, MouseListener, KeyboardListener
 {
     /* *************************************************************************************************************
      * Attribute
      ************************************************************************************************************* */
 
-    protected final Text text = new Text();
-    protected final Text placeholder = new Text();
+    private final Text text = new Text();
+    private final Text placeholder = new Text();
 
-    protected TextStyle textStyle;
-    protected BoxStyle boxStyle;
+    private TextStyle textStyle;
+    private BoxStyle boxStyle;
 
-    protected boolean hovered = false;
-    protected boolean focused = false;
-    protected boolean disabled = false;
+    private boolean hovered = false;
+    private boolean focused = false;
+    private boolean disabled = false;
 
     /* *************************************************************************************************************
      * Method
      ************************************************************************************************************* */
 
-    protected InputComponent()
-    {
-        super();
-    }
-
-    InputComponent(InputBuilder<?,?,?> builder )
+    InputComponent( InputBuilder<?,?,?> builder )
     {
         super( builder );
 
@@ -67,16 +62,11 @@ public abstract class InputComponent extends AbstractComponent
         this.text.setValue( (builder.text!=null) ? builder.text : "" );
         this.placeholder.setMaxLength( (builder.placeholder!=null) ? builder.placeholder.length() : 0 );
         this.placeholder.setValue( (builder.placeholder!=null) ? builder.placeholder : "" );
-        this.textStyle = (builder.textStyleBuilder!=null) ? builder.textStyleBuilder.build() : TextStyle.EMPTY;
-        this.boxStyle = (builder.boxStyleBuilder!=null) ? builder.boxStyleBuilder.build() : BoxStyle.EMPTY;
+        this.setTextStyle( builder.textStyleBuilder );
+        this.setBoxStyle( builder.boxStyleBuilder );
     }
 
-    public Text getPlaceholder()
-    {
-        return this.placeholder;
-    }
-
-    protected void updateState()
+    private void updateState()
     {
         State state = State.NONE;
 
@@ -97,13 +87,19 @@ public abstract class InputComponent extends AbstractComponent
     }
 
     /* *************************************************************************************************************
-     * Method - Implement TextComponent
+     * Method - Implement Text- & PlaceholderComponent
      ************************************************************************************************************* */
 
     @Override
     public Text getText()
     {
         return this.text;
+    }
+
+    @Override
+    public Text getPlaceholder()
+    {
+        return this.placeholder;
     }
 
     @Override

@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,17 +11,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.component;
 
-import de.alaoli.games.minecraft.mods.lib.ui.builder.Builder;
 import de.alaoli.games.minecraft.mods.lib.ui.style.Styles;
 import de.alaoli.games.minecraft.mods.lib.ui.style.TextStyleBuilder;
-import de.alaoli.games.minecraft.mods.lib.ui.theme.ThemeManager;
 import net.minecraft.client.resources.I18n;
 
 /**
@@ -33,7 +31,7 @@ public final class LabelBuilder<P> extends ComponentBuilder<P, LabelBuilder<P>, 
      * Attribute
      ************************************************************************************************************** */
 
-    String text;
+    String text = "";
     TextStyleBuilder<LabelBuilder<P>> textStyleBuilder;
 
     /* **************************************************************************************************************
@@ -42,7 +40,15 @@ public final class LabelBuilder<P> extends ComponentBuilder<P, LabelBuilder<P>, 
 
     LabelBuilder()
     {
-        ThemeManager.INSTANCE.applyOn( this );
+        super();
+    }
+
+    private LabelBuilder( LabelBuilder<P> builder )
+    {
+        super( builder );
+
+        this.text = builder.text;
+        this.textStyleBuilder = (builder.textStyleBuilder!=null) ? builder.textStyleBuilder.copy() : null;
     }
 
     public LabelBuilder<P> withText( String text )
@@ -52,7 +58,7 @@ public final class LabelBuilder<P> extends ComponentBuilder<P, LabelBuilder<P>, 
 
     public LabelBuilder<P> withText( String text, boolean translate )
     {
-        this.text = (translate) ? I18n.format( text ) : text;
+        this.text = (text!=null) ? ( (translate) ? I18n.format( text ) : text ) : "";
 
         return this;
     }
@@ -61,8 +67,7 @@ public final class LabelBuilder<P> extends ComponentBuilder<P, LabelBuilder<P>, 
     {
         if( this.textStyleBuilder == null )
         {
-            this.textStyleBuilder = Styles.newTextStyleBuilder();
-            this.textStyleBuilder.withParentBuilder( this );
+            this.textStyleBuilder = Styles.<LabelBuilder<P>>newTextStyleBuilder().withParentBuilder( this );
         }
         return this.textStyleBuilder;
     }
@@ -80,12 +85,7 @@ public final class LabelBuilder<P> extends ComponentBuilder<P, LabelBuilder<P>, 
     @Override
     public LabelBuilder<P> copy()
     {
-        LabelBuilder<P> builder = new LabelBuilder<>();
-
-        builder.text = this.text;
-        builder.textStyleBuilder = this.textStyleBuilder.copy();
-
-        return builder;
+        return new LabelBuilder<>( this );
     }
 
     /* **************************************************************************************************************

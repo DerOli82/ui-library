@@ -23,16 +23,19 @@ package de.alaoli.games.minecraft.mods.lib.ui.component;
  */
 public final class Components
 {
+    /*
+     * @TODO Builder pool?
+     */
     private Components() {}
-
-    public static <P> LabelBuilder<P> buildLabel()
-    {
-        return new LabelBuilder<>();
-    }
 
     public static <P> PaneBuilder<P> buildPane()
     {
         return new PaneBuilder<>();
+    }
+
+    public static <P> LabelBuilder<P> buildLabel()
+    {
+        return new LabelBuilder<>();
     }
 
     public static <P> TextFieldBuilder<P> buildTextField()

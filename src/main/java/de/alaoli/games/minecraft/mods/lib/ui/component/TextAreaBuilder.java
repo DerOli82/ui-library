@@ -24,12 +24,6 @@ package de.alaoli.games.minecraft.mods.lib.ui.component;
 public final class TextAreaBuilder<P> extends InputBuilder<P, TextAreaBuilder<P>,TextArea>
 {
     /* **************************************************************************************************************
-     * Attribute
-     ************************************************************************************************************** */
-
-    int maxLines;
-
-    /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
@@ -38,19 +32,11 @@ public final class TextAreaBuilder<P> extends InputBuilder<P, TextAreaBuilder<P>
         super();
 
         this.maxLength = 5120;
-        this.maxLines = 5;
     }
 
     private TextAreaBuilder( TextAreaBuilder<P> builder )
     {
         super( builder );
-    }
-
-    public TextAreaBuilder<P> withMaxLines( int maxLines )
-    {
-        this.maxLines = maxLines;
-
-        return this;
     }
     /* **************************************************************************************************************
      * Method - Implements NestedBuilder

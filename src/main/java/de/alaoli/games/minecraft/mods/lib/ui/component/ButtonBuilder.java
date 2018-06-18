@@ -21,9 +21,9 @@ package de.alaoli.games.minecraft.mods.lib.ui.component;
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
+
 public final class ButtonBuilder<P> extends InputBuilder<P, ButtonBuilder<P>,Button>
 {
-
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
@@ -31,13 +31,24 @@ public final class ButtonBuilder<P> extends InputBuilder<P, ButtonBuilder<P>,But
     ButtonBuilder()
     {
         super();
-
-        this.maxLength = 32;
     }
 
-    private ButtonBuilder(ButtonBuilder<P> builder )
+    private ButtonBuilder( ButtonBuilder<P> builder )
     {
         super( builder );
+    }
+
+    /* **************************************************************************************************************
+     * Method - Implements InputBuilder
+     ************************************************************************************************************** */
+
+    @Override
+    public ButtonBuilder<P> withText( String text, boolean translate )
+    {
+        super.withText( text, translate );
+        this.maxLength = this.text.length();
+
+        return this;
     }
 
     /* **************************************************************************************************************
