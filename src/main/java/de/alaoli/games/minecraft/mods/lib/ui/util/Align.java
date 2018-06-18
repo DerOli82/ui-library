@@ -18,9 +18,14 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.util;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
+@Getter
+@AllArgsConstructor
 public enum Align 
 {
 	/* **************************************************************************************************************
@@ -37,18 +42,12 @@ public enum Align
 	BOTTOM( 2, "bottom" ),
 	BOTTOMRIGHT( 3, "bottomright" );
 	
-	public final int id;
-	public final String name;
+	private final int id;
+	private final String name;
 
 	/* **************************************************************************************************************
 	 * Method
 	 ************************************************************************************************************** */
-
-	Align( int id, String name )
-	{
-		this.id = id;
-		this.name = name;
-	}
 
 	@Override
 	public String toString() 

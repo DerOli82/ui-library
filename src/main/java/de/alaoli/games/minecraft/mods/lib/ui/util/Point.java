@@ -18,74 +18,31 @@
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.util;
 
-import java.util.Objects;
+import lombok.Data;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
+@Data
 public final class Point
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
-    public static Point EMPTY = new Point();
+    public static Point EMPTY = new Point( 0, 0 );
 
     private final int x, y;
-    private int hashCode;
 
     /* **************************************************************************************************************
      * Method
      ************************************************************************************************************** */
 
-    private Point()
-    {
-        this.x = 0;
-        this.y = 0;
-    }
-
-    private Point( int x, int y )
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    public static Point get( int x, int y )
+    public static Point valueOf(int x, int y )
     {
         /*
-         * @TODO caching
+         * @TODO caching?
          */
         return new Point( x, y );
-    }
-
-    @Override
-    public boolean equals( Object obj )
-    {
-        if( this == obj ) { return true; }
-        if( obj == null || getClass() != obj.getClass() ) { return false; }
-
-        Point point = (Point) obj;
-
-        return this.x == point.x && this.y == point.y;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        if( this.hashCode == 0 )
-        {
-            this.hashCode = Objects.hash( this.x, this.y );
-        }
-        return this.hashCode;
-    }
-
-    public int getX()
-    {
-        return this.x;
-    }
-
-    public int getY()
-    {
-        return this.y;
     }
 }

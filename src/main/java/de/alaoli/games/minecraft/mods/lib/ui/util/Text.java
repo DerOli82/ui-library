@@ -1,7 +1,7 @@
 /* *************************************************************************************************************
  * Copyright (c) 2017 - 2018 DerOli82 <https://github.com/DerOli82>
  *
- * This program is free software: you can redistribute it and/or toBuilder
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -11,16 +11,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a toBuilder of the GNU Lesser General Public License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see:
  *
  * https://www.gnu.org/licenses/lgpl-3.0.html
  ************************************************************************************************************* */
 package de.alaoli.games.minecraft.mods.lib.ui.util;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
@@ -32,7 +28,6 @@ public class Text
      ************************************************************************************************************* */
 
     private final StringBuffer value = new StringBuffer();
-    private Queue<String> words;
 
     private int maxLength;
     private int maxLines;
@@ -69,15 +64,6 @@ public class Text
         return this.value.length();
     }
 
-    public Queue<String> getWords()
-    {
-        if( this.words == null )
-        {
-            this.words = new LinkedList<>(Arrays.asList(this.value.toString().split(" ")));
-        }
-        return this.words;
-    }
-
     public void setMaxLength( int maxLength )
     {
         this.maxLength = maxLength;
@@ -95,8 +81,6 @@ public class Text
         this.value.setLength( 0 );
         this.value.append( value );
         this.cursorPosLast();
-
-        this.words = null;
     }
 
     public void insert( char c )
@@ -105,8 +89,6 @@ public class Text
 
         this.value.insert( this.cursorPos, c );
         this.cursorPosNext();
-
-        this.words = null;
     }
 
     public void delete()
@@ -114,8 +96,6 @@ public class Text
         if( this.isEmpty() || this.cursorPos >= this.length() ) { return; }
 
         this.value.deleteCharAt( this.cursorPos );
-
-        this.words = null;
     }
 
     public void showCursor()

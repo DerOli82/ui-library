@@ -20,28 +20,29 @@ package de.alaoli.games.minecraft.mods.lib.ui.util;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import lombok.*;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.concurrent.Immutable;
-import java.util.Objects;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
+@Getter
 @Immutable
+@EqualsAndHashCode
+@AllArgsConstructor( access = AccessLevel.PRIVATE )
 public final class Image
 {
     /* **************************************************************************************************************
      * Attribute
      ************************************************************************************************************** */
 
-    public static final Image EMPTY = new Image();
+    public static final Image EMPTY = new Image( null, 0, 0, 1.0F );
 
+    private final ResourceLocation resource;
     private final int x, y;
     private final float factor;
-
-    private ResourceLocation resource;
-    private int hashCode;
 
     private static final Cache<String,Image> IMAGES = CacheBuilder.newBuilder()
         .maximumSize( 64 )
@@ -52,48 +53,15 @@ public final class Image
      * Method
      ************************************************************************************************************** */
 
-    private Image()
+    public static Image valueOrEmpty( Image image )
     {
-        this.x = 0;
-        this.y = 0;
-        this.factor = 1.0F;
-    }
-
-    private Image( ResourceLocation resource,  int x, int y, float factor )
-    {
-        this.resource = resource;
-
-        this.x = x;
-        this.y = y;
-        this.factor = factor;
-    }
-
-    @Override
-    public boolean equals( Object o )
-    {
-        if( this == o ) { return true; }
-        if( o == null || getClass() != o.getClass() ) { return false; }
-
-        Image image = (Image) o;
-
-        return this.x == image.x &&
-                this.y == image.y &&
-                this.factor == image.factor &&
-                Objects.equals( this.resource, image.resource );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        if( this.hashCode == 0 )
-        {
-            this.hashCode = Objects.hash( this.x, this.y, this.factor, this.resource );
-        }
-        return this.hashCode;
+        return (image!=null) ? image : EMPTY;
     }
 
     public static Image get( String location, int x, int y, float factor )
     {
+        if( ( location == null ) || ( location.isEmpty() ) ) { return  EMPTY; }
+
         Image result;
         String key = location + " { x:" + x + ",y:" + y + ",factor:" + factor + "}";
 
@@ -104,7 +72,7 @@ public final class Image
         }
         else
         {
-            result = IMAGES.asMap().get( key );
+            result = IMAGES.asMap().getOrDefault( key, EMPTY );
         }
         return result;
     }
@@ -112,25 +80,5 @@ public final class Image
     public boolean isEmpty()
     {
         return this.resource == null;
-    }
-
-    public int getX()
-    {
-        return this.x;
-    }
-
-    public int getY()
-    {
-        return this.y;
-    }
-
-    public float getFactor()
-    {
-        return this.factor;
-    }
-
-    public ResourceLocation getResource()
-    {
-        return this.resource;
     }
 }

@@ -20,14 +20,18 @@ package de.alaoli.games.minecraft.mods.lib.ui.util;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import lombok.*;
 
 import javax.annotation.concurrent.Immutable;
-import java.util.Objects;
 
 /**
  * @author DerOli82 <https://github.com/DerOli82>
  */
+@Getter
+@ToString
 @Immutable
+@EqualsAndHashCode
+@AllArgsConstructor( access = AccessLevel.PRIVATE )
 public final class Color
 {
 	/* **************************************************************************************************************
@@ -39,6 +43,8 @@ public final class Color
 	/**
 	 * Default Minecraft color codes
 	 */
+	@Getter
+	@AllArgsConstructor
 	public enum Codes
 	{
 		BLACK( 0x000000 ),
@@ -59,16 +65,6 @@ public final class Color
 		WHITE( 0xFFFFFF );
 
 		private final int value;
-
-		Codes( int value )
-		{
-			this.value = value;
-		}
-
-		public int getValue()
-		{
-			return this.value;
-		}
 	}
 
 	/**
@@ -89,45 +85,9 @@ public final class Color
 	 * Method
 	 ************************************************************************************************************** */
 
-	/**
-	 * @param value ARGB color value
-	 */
-	private Color( int value )
-	{
-		this.value = value;
-	}
-
-	@Override
-	public boolean equals( Object o )
-	{
-		if( this == o ) { return true; }
-		if( o == null || getClass() != o.getClass() ) { return false; }
-
-		Color color = (Color) o;
-
-		return value == color.value;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return this.value;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "{\"type\":\"color\", \"argb\":" + this.value + "}";
-	}
-
 	public boolean isEmpty()
 	{
 		return this.value == 0;
-	}
-
-	public int getValue()
-	{
-		return this.value;
 	}
 
 	public int getAlpha()
@@ -153,6 +113,11 @@ public final class Color
 	/* **************************************************************************************************************
 	 * Method - Static
 	 ************************************************************************************************************** */
+
+	public static Color valueOrDefault( Color color )
+	{
+		return (color!=null) ? color : DEFAULT;
+	}
 
 	public static Color valueOf( Codes code ) throws IllegalArgumentException
 	{
@@ -192,16 +157,18 @@ public final class Color
 
 		if( value == DEFAULT.value ) { return DEFAULT; }
 
+		Color result;
+
 		//No cache hit
 		if( !CACHE.asMap().containsKey( value ) )
 		{
-			CACHE.put( value, new Color( value ) );
+			result = new Color( value );
+			CACHE.put( value, result );
 		}
-		return CACHE.asMap().getOrDefault( value, DEFAULT );
-	}
-
-	public static void clear()
-	{
-		CACHE.cleanUp();
+		else
+		{
+			result = CACHE.asMap().getOrDefault( value, DEFAULT );
+		}
+		return result;
 	}
 }
